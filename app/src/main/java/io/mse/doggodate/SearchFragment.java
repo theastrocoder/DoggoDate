@@ -8,9 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.TextView;
-
+//https://www.androidhive.info/2012/02/android-gridview-layout-tutorial/
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,7 +21,8 @@ import android.widget.TextView;
 public class SearchFragment extends Fragment {
 
     public Button countBtn;
-
+    GridView gridView;
+    private ImageButton dog;
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -26,14 +30,21 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.map_fragment, container, false);
-        countBtn = (Button) view.findViewById(R.id.count_btn);
-        countBtn.setOnClickListener(new View.OnClickListener() {
+        View view = inflater.inflate(R.layout.search_fragment, container, false);
+
+        GridView gridView = (GridView) view.findViewById(R.id.grid_view);
+        // Instance of ImageAdapter Class
+        gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(), (AppCompatActivity) getActivity()));
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                changeFragment();
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+
+                // Sending image id to FullScreenActivity
+               changeFragment();
             }
         });
+
         return view;
     }
 

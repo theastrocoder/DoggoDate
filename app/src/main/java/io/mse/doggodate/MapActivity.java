@@ -17,22 +17,7 @@ public class MapActivity extends AppCompatActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    Intent toMain = new Intent(MapActivity.this,MainActivity.class);
-                    startActivity(toMain);
-                    return true;
-                case R.id.navigation_map:
-                    return true;
-                case R.id.navigation_doggos:
-                    Intent toSearch = new Intent(MapActivity.this,SearchActivity.class);
-                    startActivity(toSearch);
-                    return true;
-                case R.id.navigation_profile:
-                    Intent toProfile = new Intent(MapActivity.this,ProfileActivity.class);
-                    startActivity(toProfile);
-                    return true;
-            }
+
             return false;
         }
     };
