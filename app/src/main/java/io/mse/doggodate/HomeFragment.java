@@ -36,6 +36,9 @@ public class HomeFragment extends Fragment {
             }
         });
         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("DoggoDate");
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         return view;
     }

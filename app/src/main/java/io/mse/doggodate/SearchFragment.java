@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,28 +31,30 @@ public class SearchFragment extends Fragment {
         countBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                increaseCount();
+                changeFragment();
             }
         });
         return view;
     }
 
-    private void increaseCount() {
+    private void toOtherProfileFragment() {
 
 
-    Fragment newFragment = new OtherProfileFragment();
     FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
 // Replace whatever is in the fragment_container view with this fragment,
 // and add the transaction to the back stack
-        String tag = "SearchFragment";
-transaction.replace(R.id.main_container, newFragment);
-transaction.addToBackStack(null);
+    transaction.replace(R.id.main_container,((MainActivity)getActivity()).getFragment("5"));
+
+    transaction.addToBackStack(null);
 
 // Commit the transaction
-transaction.commit();
-        transaction.addToBackStack(null);
-        ((MainActivity)getActivity()).setActive(newFragment, this);
+        transaction.commit();
+
+        ((MainActivity)getActivity()).setActive(((MainActivity)getActivity()).getFragment("5"), this);
+    }
+    private void changeFragment() {
+        ((MainActivity)getActivity()).toOtherProfile();
     }
 
 }
