@@ -6,17 +6,21 @@ import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
 
     final Fragment fragment1 = new HomeFragment();
     final Fragment fragment2 = new MapFragment();
     final Fragment fragment3 = new SearchFragment();
     final Fragment fragment4 = new ProfileFragment();
+    final Fragment otherProfileFragment = new OtherProfileFragment();
 
     final FragmentManager fm = getSupportFragmentManager();
     Fragment active = fragment1;
@@ -26,12 +30,22 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+            if (active == otherProfileFragment) {
+                Log.i(TAG, "current fragment is profile");
+            }
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     fm.beginTransaction().hide(active).show(fragment1).commit();
                     active = fragment1;
                     item.setChecked(true);
-                    getSupportActionBar().show();
+                    ActionBar ab = getSupportActionBar();
+                    ab.show();
+                    ab.setHomeButtonEnabled(false);
+                    ab.setDisplayHomeAsUpEnabled(false);
+                    ab.setTitle("DoggoDate");
+
+                    Log.i(TAG, "homescreen opened");
 
                     break;
                 case R.id.navigation_map:
@@ -41,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
                     fm.beginTransaction().hide(active).show(fragment2).commit();
                     active = fragment2;
                     getSupportActionBar().hide();
+                    Log.i(TAG, "navigation opened");
 
                     break;
                 case R.id.navigation_doggos:
@@ -50,12 +65,15 @@ public class MainActivity extends AppCompatActivity {
                     active = fragment3;
                     item.setChecked(true);
                     getSupportActionBar().hide();
+                    Log.i(TAG, "doggos opened");
+
                     break;
                 case R.id.navigation_profile:
                     item.setChecked(true);
                     fm.beginTransaction().hide(active).show(fragment4).commit();
                     active = fragment4;
                     getSupportActionBar().hide();
+                    Log.i(TAG, "profile opened");
 
                     break;
             }
@@ -64,8 +82,9 @@ public class MainActivity extends AppCompatActivity {
     };
 
     public void setActive(Fragment fragment, Fragment old) {
+        Log.i(TAG, "Setting the active fragment other profile from search fragment");
+        fm.beginTransaction().hide(active).show(fragment).commit();
         active = fragment;
-        fm.beginTransaction().hide(old).show(fragment).commit();
 
     }
     @Override
@@ -73,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
+        fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).commit();
         fm.beginTransaction().add(R.id.main_container, fragment4, "4").hide(fragment4).commit();
         fm.beginTransaction().add(R.id.main_container, fragment3, "3").hide(fragment3).commit();
         fm.beginTransaction().add(R.id.main_container, fragment2, "2").hide(fragment2).commit();
@@ -103,8 +123,30 @@ public class MainActivity extends AppCompatActivity {
         } else {
             getSupportFragmentManager().popBackStack();
         }
-
-
     }
 
+    public Fragment getFragment(String integer) {
+        switch(integer) {
+            case "1":
+                return fragment1;
+            case "2":
+                return fragment2;
+            case "3":
+                return fragment3;
+            case "4":
+                return fragment4;
+            case "5":
+                return otherProfileFragment;
+        }
+        return null;
+    }
+        public void toOtherProfile() {
+            fm.beginTransaction().hide(active).show(otherProfileFragment).commit();
+            active = otherProfileFragment;
+            getSupportActionBar().show();
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("");
+
+        }
 }

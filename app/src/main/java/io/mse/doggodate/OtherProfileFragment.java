@@ -34,7 +34,8 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+       //Button button = view.findViewById(R.id.followButton);
+       // button.setVisibility(View.VISIBLE);
         return view;
     }
 
