@@ -11,12 +11,29 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import io.mse.doggodate.Entity.Doggo;
+
 public class ListHelperFragment extends Fragment {
 
 
     ListView list;
-
+    private Doggo selectedDoggo;
+    private boolean followers;
     public ListHelperFragment() {
+
+    }
+
+
+    public void setSelectedDoggo(Doggo selectedDoggo) {
+        this.selectedDoggo = selectedDoggo;
+    }
+
+    public boolean isFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(boolean followers) {
+        this.followers = followers;
     }
 
     @Override
@@ -26,17 +43,16 @@ public class ListHelperFragment extends Fragment {
         list = (ListView) view.findViewById(R.id.list);
         ArrayList<String> stringList = new ArrayList();
 
-        stringList.add("Item 1A");
-        stringList.add("Item 1B");
-        stringList.add("Item 1C");
-        stringList.add("Item 1D");
-        stringList.add("Item 1D");
-        stringList.add("Item 1A");
-        stringList.add("Item 1B");
-        stringList.add("Item 1C");
-        stringList.add("Item 1D");
-        stringList.add("Item 1D");
-        Log.i("ListFragment", "created 4 items");
+        if (followers) {
+            for (int i = 0; i < selectedDoggo.getFollowers().size(); i++) {
+                stringList.add(selectedDoggo.getFollowers().get(i).getName());
+            }
+        } else {
+            for (int i = 0; i < selectedDoggo.getFollowings().size(); i++) {
+                stringList.add(selectedDoggo.getFollowings().get(i).getName());
+            }
+        }
+
         CustomAdapter adapter = new CustomAdapter(stringList,(AppCompatActivity)getActivity());
         list.setAdapter(adapter);
 

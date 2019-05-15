@@ -16,7 +16,6 @@ import android.widget.TextView;
 public class HomeFragment extends Fragment {
 
     public TextView countTv;
-    public Button countBtn;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -25,16 +24,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.map_fragment, container, false);
-        countTv = (TextView) view.findViewById(R.id.count_tv);
-        countTv.setText("0");
-        countBtn = (Button) view.findViewById(R.id.count_btn);
-        countBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                increaseCount();
-            }
-        });
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("DoggoDate");
         ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
@@ -42,11 +32,4 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
-
-    private void increaseCount() {
-        int current = Integer.parseInt((String) countTv.getText());
-        countTv.setText(String.valueOf(current+1));
-
-    }
-
 }

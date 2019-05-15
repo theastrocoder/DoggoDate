@@ -13,14 +13,21 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
+import io.mse.doggodate.Entity.Doggo;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+
+    Doggo activeDog;
+    ArrayList<Doggo> defaultSearchDoggos = new ArrayList<>();
 
     final Fragment fragment1 = new HomeFragment();
     final Fragment fragment2 = new MapFragment();
     final Fragment fragment3 = new SearchFragment();
-    final Fragment fragment4 = new ProfileFragment();
-    final Fragment otherProfileFragment = new OtherProfileFragment();
+    Fragment fragment4 = new ProfileFragment();
+    Fragment otherProfileFragment = new OtherProfileFragment();;
 
     final FragmentManager fm = getSupportFragmentManager();
     Fragment active = fragment1;
@@ -31,9 +38,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-            if (active == otherProfileFragment) {
-                Log.i(TAG, "current fragment is profile");
-            }
+
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     fm.beginTransaction().hide(active).show(fragment1).commit();
@@ -70,16 +75,31 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.navigation_profile:
                     item.setChecked(true);
-                    fm.beginTransaction().hide(active).show(fragment4).commit();
-                    active = fragment4;
+                    //fm.beginTransaction().hide(active).show(fragment4).commit();
                     getSupportActionBar().hide();
                     Log.i(TAG, "profile opened");
+
+
+                    fragment4 = new ProfileFragment();
+                    ((ProfileFragment) fragment4).setActiveDoggo(activeDog);
+                    fm.beginTransaction().add(R.id.main_container, fragment4, "4").hide(fragment4).commit();
+                    fm.beginTransaction().hide(active).show(fragment4).commit();
+                    active = fragment4;
+
 
                     break;
             }
             return false;
         }
     };
+
+    public ArrayList<Doggo> getDefaultSearch() {
+        return defaultSearchDoggos;
+    }
+
+    public void setDefaultSearch(ArrayList<Doggo> defaultSearch) {
+        this.defaultSearchDoggos = defaultSearch;
+    }
 
     public void setActive(Fragment fragment, Fragment old) {
         Log.i(TAG, "Setting the active fragment other profile from search fragment");
@@ -100,6 +120,97 @@ public class MainActivity extends AppCompatActivity {
 
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        Doggo Bonnie = new Doggo("Bonnie", "Golden retriever", R.drawable.profile_image);
+        Doggo Alex = new Doggo("Alex", "Labrador",  R.drawable.labrador_profile);
+        Doggo Chichi = new Doggo("Chichi", "Chivava", R.drawable.chivava_prof);
+        Doggo Rex = new Doggo("Rex", "Wolfdog", R.drawable.wolfdog_profile);
+        Doggo Akki = new Doggo("Akki", "Akita Inu", R.drawable.akita_profile);
+        Doggo Alfonz = new Doggo("Alfonz", "Buldog", R.drawable.dog4);
+        Doggo Nina = new Doggo("Nina", "Labrador", R.drawable.dog3);
+        Doggo Bowie = new Doggo("Bowie", "Retriever", R.drawable.dog2);
+        Doggo Makawa = new Doggo("Makawa", "Chivuavua", R.drawable.chivava_1);
+
+
+        /** SETTING ACTIVE DOG ATTRIBUTES */
+        activeDog = Bonnie;
+        ArrayList<Doggo> followers = new ArrayList<>();
+        followers.add(Alex);
+        followers.add(Chichi);
+        followers.add(Alfonz);
+        followers.add(Nina);
+        followers.add(Bowie);
+        followers.add(Makawa);
+        Bonnie.setFollowers(followers);
+
+        ArrayList<Doggo> followings = new ArrayList<>();
+        //followings.add(Rex);
+        //followings.add(Akki);
+        //followers.add(Bowie);
+        Bonnie.setFollowings(followings);
+
+        ArrayList<Integer> photos = new ArrayList<>();
+        photos.add(R.drawable.golden2);
+        photos.add(R.drawable.golden3);
+        photos.add(R.drawable.golden4);
+        photos.add(R.drawable.golden5);
+
+        Bonnie.setPhotos(photos);
+        Bonnie.setProfilePic(R.drawable.profile_image);
+        ((ProfileFragment)fragment4).setActiveDoggo(activeDog);
+
+        ArrayList<Integer> alexPhotos = new ArrayList<>();
+        alexPhotos.add(R.drawable.labrador_1);
+        alexPhotos.add(R.drawable.labrador_2);
+        alexPhotos.add(R.drawable.labrador_3);
+        alexPhotos.add(R.drawable.labrador_profile);
+        Alex.setPhotos(alexPhotos);
+        Alex.setFollowers(followers);
+        Alex.setFollowings(followings);
+
+        ArrayList<Integer> ChiChiPhotos = new ArrayList<>();
+        ChiChiPhotos.add(R.drawable.chivava_1);
+        ChiChiPhotos.add(R.drawable.chivava_2);
+        ChiChiPhotos.add(R.drawable.chivava3);
+        Chichi.setPhotos(ChiChiPhotos);
+        Chichi.setFollowers(followers);
+        Chichi.setFollowings(followings);
+
+        ArrayList<Integer> rexPhotos = new ArrayList<>();
+        rexPhotos.add(R.drawable.wd_2);
+        rexPhotos.add(R.drawable.wd_1);
+        rexPhotos.add(R.drawable.wd_3);
+        rexPhotos.add(R.drawable.wd_4);
+        Rex.setPhotos(rexPhotos);
+        Rex.setFollowers(followers);
+        Rex.setFollowings(followings);
+
+        ArrayList<Integer> akkiPhotos = new ArrayList<>();
+        akkiPhotos.add(R.drawable.akita_1);
+        akkiPhotos.add(R.drawable.akita_2);
+        akkiPhotos.add(R.drawable.akita_3);
+        akkiPhotos.add(R.drawable.akita_4);
+        akkiPhotos.add(R.drawable.akita_profile);
+        Akki.setPhotos(akkiPhotos);
+        Akki.setFollowers(followers);
+        Akki.setFollowings(followers);
+
+        Alfonz.setFollowings(followers);
+        Nina.setFollowings(followings);
+        Makawa.setFollowings(followings);
+        Bowie.setFollowings(followers);
+        Nina.setFollowers(followers);
+        Makawa.setFollowers(followers);
+
+        /** SETTING ALL DOGS LIST */
+        defaultSearchDoggos.add(Bonnie);
+        defaultSearchDoggos.addAll(followers);
+        defaultSearchDoggos.addAll(followings);
+
+        ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(Rex);
+    }
+
+    public Doggo getActiveDog() {
+        return activeDog;
     }
 
     protected OnBackPressedListener onBackPressedListener;
@@ -140,7 +251,12 @@ public class MainActivity extends AppCompatActivity {
         }
         return null;
     }
-        public void toOtherProfile() {
+        public void toOtherProfile(int position) {
+
+            otherProfileFragment = new OtherProfileFragment();
+            fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).commit();
+            Log.i("MainActivity", "selected dogs name is" + defaultSearchDoggos.get(position).getName());
+            ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(defaultSearchDoggos.get(position));
             fm.beginTransaction().hide(active).show(otherProfileFragment).commit();
             active = otherProfileFragment;
             getSupportActionBar().show();
