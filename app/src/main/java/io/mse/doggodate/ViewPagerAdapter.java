@@ -5,10 +5,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
+import io.mse.doggodate.Entity.Doggo;
+
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
-    public ViewPagerAdapter(FragmentManager fm) {
+    private Doggo selectedDoggo;
+
+    public ViewPagerAdapter(FragmentManager fm, Doggo selectedDoggo) {
         super(fm);
+        this.selectedDoggo = selectedDoggo;
     }
 
     @Override
@@ -17,17 +22,24 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         if (position == 0)
         {
             fragment = new GridHelperFragment();
+            ((GridHelperFragment) fragment).setSearch(false);
+            ((GridHelperFragment) fragment).setSelectedDoggo(this.selectedDoggo);
+
             Log.i("ViewPagerAdapter", "first tab");
         }
         else if (position == 1)
         {
             fragment = new ListHelperFragment();
+            ((ListHelperFragment) fragment).setFollowers(false);
+            ((ListHelperFragment) fragment).setSelectedDoggo(this.selectedDoggo);
             Log.i("ViewPagerAdapter", "second tab");
 
         }
         else if (position == 2)
         {
             fragment = new ListHelperFragment();
+            ((ListHelperFragment) fragment).setFollowers(true);
+            ((ListHelperFragment) fragment).setSelectedDoggo(this.selectedDoggo);
             Log.i("ViewPagerAdapter", "third tab");
 
         }

@@ -10,6 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import java.util.ArrayList;
+
+import io.mse.doggodate.Entity.Doggo;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -27,6 +31,24 @@ public class GridHelperFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private boolean isSearch;
+    private Doggo selectedDoggo;
+
+    public Doggo getSelectedDoggo() {
+        return selectedDoggo;
+    }
+
+    public void setSelectedDoggo(Doggo selectedDoggo) {
+        this.selectedDoggo = selectedDoggo;
+    }
+
+    public boolean isSearch() {
+        return isSearch;
+    }
+
+    public void setSearch(boolean search) {
+        isSearch = search;
+    }
 
     private OnFragmentInteractionListener mListener;
 
@@ -68,7 +90,21 @@ public class GridHelperFragment extends Fragment {
          View view = inflater.inflate(R.layout.fragment_grid_helper, container, false);
         GridView gridView = (GridView) view.findViewById(R.id.grid_view);
         // Instance of ImageAdapter Class
-        gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(), (AppCompatActivity) getActivity()));
+
+        ArrayList<Integer> images = new ArrayList<>();
+
+        //if it is search, then show all dogs
+        if (isSearch) {
+            for (int i = 0; i < ((MainActivity) getActivity()).getDefaultSearch().size(); i++) {
+                images.add(((MainActivity) getActivity()).getDefaultSearch().get(i).getProfilePic());
+            }
+            //if its profile, show all images of the dog
+        } else {
+            for (int i = 0; i < this.selectedDoggo.getPhotos().size(); i++) {
+                images.add(this.selectedDoggo.getPhotos().get(i));
+            }
+        }
+        gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(), (AppCompatActivity) getActivity(),images));
         return view;
     }
 

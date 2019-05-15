@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
     private AppCompatActivity activity;
@@ -28,20 +30,23 @@ public class ImageAdapter extends BaseAdapter {
 
     };
 
+    private ArrayList<Integer> photos;
+
     // Constructor
-    public ImageAdapter(Context c, AppCompatActivity activity){
+    public ImageAdapter(Context c, AppCompatActivity activity, ArrayList<Integer> photos){
         mContext = c;
         this.activity = activity;
+        this.photos = photos;
     }
 
     @Override
     public int getCount() {
-        return mThumbIds.length;
+        return photos.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return mThumbIds[position];
+        return photos.get(position);
     }
 
     @Override
@@ -52,7 +57,7 @@ public class ImageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView = new ImageView(mContext);
-        imageView.setImageResource(mThumbIds[position]);
+        imageView.setImageResource(photos.get(position));
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setLayoutParams(new GridView.LayoutParams( activity.getWindowManager().getDefaultDisplay().getWidth()/4,activity.getWindowManager().getDefaultDisplay().getWidth()/4 ));
 

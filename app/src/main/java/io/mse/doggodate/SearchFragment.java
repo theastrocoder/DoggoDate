@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 //https://www.androidhive.info/2012/02/android-gridview-layout-tutorial/
 
 /**
@@ -20,35 +22,36 @@ import android.widget.TextView;
  */
 public class SearchFragment extends Fragment {
 
-    public Button countBtn;
     GridView gridView;
-    private ImageButton dog;
-    public SearchFragment() {
-        // Required empty public constructor
-    }
+    public SearchFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_fragment, container, false);
 
-        GridView gridView = (GridView) view.findViewById(R.id.grid_view);
+        //SET GRIDVIEW WITH DEFAULT IMAGES
+        gridView = (GridView) view.findViewById(R.id.grid_view);
         // Instance of ImageAdapter Class
-        gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(), (AppCompatActivity) getActivity()));
+        ArrayList<Integer> images = new ArrayList<>();
+        for (int i=0;i<((MainActivity)getActivity()).getDefaultSearch().size();i++){
+            images.add(((MainActivity)getActivity()).getDefaultSearch().get(i).getProfilePic());
+        }
+        gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(), (AppCompatActivity) getActivity(),images));
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
-                // Sending image id to FullScreenActivity
-               changeFragment();
+               openProfile(position);
             }
         });
 
         return view;
     }
 
-    private void toOtherProfileFragment() {
+   /* private void toOtherProfileFragment() {
 
 
     FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -64,8 +67,9 @@ public class SearchFragment extends Fragment {
 
         ((MainActivity)getActivity()).setActive(((MainActivity)getActivity()).getFragment("5"), this);
     }
-    private void changeFragment() {
-        ((MainActivity)getActivity()).toOtherProfile();
+    */
+    private void openProfile(int position) {
+        ((MainActivity)getActivity()).toOtherProfile(position);
     }
 
 }
