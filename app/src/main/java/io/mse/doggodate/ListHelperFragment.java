@@ -30,6 +30,12 @@ public class ListHelperFragment extends Fragment {
         stringList.add("Item 1B");
         stringList.add("Item 1C");
         stringList.add("Item 1D");
+        stringList.add("Item 1D");
+        stringList.add("Item 1A");
+        stringList.add("Item 1B");
+        stringList.add("Item 1C");
+        stringList.add("Item 1D");
+        stringList.add("Item 1D");
         Log.i("ListFragment", "created 4 items");
         CustomAdapter adapter = new CustomAdapter(stringList,(AppCompatActivity)getActivity());
         list.setAdapter(adapter);
