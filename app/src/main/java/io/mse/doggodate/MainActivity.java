@@ -16,12 +16,16 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import io.mse.doggodate.Entity.Doggo;
+import io.mse.doggodate.Entity.DoggoZone;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     Doggo activeDog;
     ArrayList<Doggo> defaultSearchDoggos = new ArrayList<>();
+    private DoggoZone park1;
+    private DoggoZone park2;
+
 
     final Fragment fragment1 = new HomeFragment();
     final Fragment fragment2 = new MapFragment();
@@ -207,6 +211,13 @@ public class MainActivity extends AppCompatActivity {
         defaultSearchDoggos.addAll(followings);
 
         ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(Rex);
+
+
+        /** Creating Doggo Zones*/
+        park1 = new DoggoZone(48.239539376028745, 16.333220189004898,
+                "Hugo-Wolf-Park" ,8169, false);
+        park2 = new DoggoZone(48.22027912193935, 16.480529082068596,
+                "GA Aspernstraße",323, true);
     }
 
     public Doggo getActiveDog() {
@@ -214,6 +225,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected OnBackPressedListener onBackPressedListener;
+
+    public DoggoZone getPark2() {
+        return park2;
+    }
+
+    public DoggoZone getPark1() {
+        return park1;
+    }
 
     public interface OnBackPressedListener {
         void doBack();
