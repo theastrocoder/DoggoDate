@@ -67,7 +67,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         }
         else if (position == 2)
         {
-            title = selectedDoggo.getEvents().size() +" Doggos";
+            title = selectedDoggo.getFollowings().size() +" Doggos";
         }
         else if (position == 3)
         {
@@ -75,7 +75,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         }
         else if (position == 1)
         {
-            title = selectedDoggo.getFollowers().size() +" Events";
+            title = selectedDoggo.getEvents().size() +" Events";
         }
         return title;
     }
