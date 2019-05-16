@@ -9,12 +9,21 @@ public class Doggo {
     private ArrayList<Doggo> followers = new ArrayList<>();
     private ArrayList<Doggo> followings = new ArrayList<>();
     private ArrayList<Integer> photos = new ArrayList<>();
+    private ArrayList<DoggoEvent> events = new ArrayList<>();
     private int profilePic;
 
     public Doggo(String name, String breed, int profilePic) {
         this.name = name;
         this.breed = breed;
         this.profilePic = profilePic;
+    }
+
+    public ArrayList<DoggoEvent> getEvents() {
+        return events;
+    }
+
+    public void setEvents(ArrayList<DoggoEvent> events) {
+        this.events = events;
     }
 
     public String getName() {

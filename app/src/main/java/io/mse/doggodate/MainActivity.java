@@ -3,6 +3,7 @@ package io.mse.doggodate;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,9 +16,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import io.mse.doggodate.Entity.Doggo;
+import io.mse.doggodate.Entity.DoggoEvent;
 import io.mse.doggodate.Entity.DoggoZone;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private DoggoZone park2;
     private DoggoZone selectedDoggoZone;
     MenuItem searchItem;
-
-
+    private BottomNavigationView navView;
+    private ArrayList<DoggoEvent> activeDoggoEvents = new ArrayList<>();
     final Fragment fragment1 = new HomeFragment();
     final Fragment fragment2 = new MapFragment();
     final Fragment fragment3 = new SearchFragment();
@@ -119,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
         fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).commit();
         fm.beginTransaction().add(R.id.main_container, fragment4, "4").hide(fragment4).commit();
         fm.beginTransaction().add(R.id.main_container, fragment3, "3").hide(fragment3).commit();
@@ -209,6 +212,18 @@ public class MainActivity extends AppCompatActivity {
         Nina.setFollowers(followers);
         Makawa.setFollowers(followers);
 
+        /** Creating Doggo Zones*/
+        park1 = new DoggoZone(48.239539376028745, 16.333220189004898,
+                "Hugo-Wolf-Park" ,8169, false);
+        park2 = new DoggoZone(48.22027912193935, 16.480529082068596,
+                "GA Aspernstraße",323, true);
+        DoggoEvent e1 = new DoggoEvent(LocalDateTime.of(2019, 6, 15, 14,30),park2, Bonnie);
+        DoggoEvent e2 = new DoggoEvent(LocalDateTime.of(2019, 5, 17, 10,30),park2, Bonnie);
+        DoggoEvent e3 = new DoggoEvent(LocalDateTime.of(2019, 5, 20, 11,30),park1, Bonnie);
+        activeDoggoEvents.add(e1);
+        activeDoggoEvents.add(e2);
+        activeDoggoEvents.add(e3);
+        Bonnie.setEvents(activeDoggoEvents);
         /** SETTING ALL DOGS LIST */
         //defaultSearchDoggos.add(Bonnie);
         defaultSearchDoggos.add(Alfonz);
@@ -225,11 +240,7 @@ public class MainActivity extends AppCompatActivity {
         ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(Rex);
 
 
-        /** Creating Doggo Zones*/
-        park1 = new DoggoZone(48.239539376028745, 16.333220189004898,
-                "Hugo-Wolf-Park" ,8169, false);
-        park2 = new DoggoZone(48.22027912193935, 16.480529082068596,
-                "GA Aspernstraße",323, true);
+
     }
 
     public Doggo getActiveDog() {
@@ -297,6 +308,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void toOtherProfile(int position) {
 
+        navView.setSelectedItemId(R.id.navigation_doggos);
+
             searchItem.setVisible(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("Doggos");
@@ -306,7 +319,6 @@ public class MainActivity extends AppCompatActivity {
             ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(defaultSearchDoggos.get(position));
             fm.beginTransaction().hide(active).show(otherProfileFragment).commit();
             active = otherProfileFragment;
-
 
     }
 
@@ -321,5 +333,13 @@ public class MainActivity extends AppCompatActivity {
         fm.beginTransaction().hide(active).show(doggoZoneFragment).commit();
         active=doggoZoneFragment;
 
+    }
+
+    public ArrayList<DoggoEvent> getActiveDoggoEvents() {
+        return activeDoggoEvents;
+    }
+
+    public void setActiveDoggoEvents(ArrayList<DoggoEvent> activeDoggoEvents) {
+        this.activeDoggoEvents = activeDoggoEvents;
     }
 }

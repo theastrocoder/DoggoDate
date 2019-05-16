@@ -7,8 +7,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import io.mse.doggodate.Entity.Doggo;
@@ -18,7 +20,7 @@ public class ListHelperFragment extends Fragment {
 
     ListView list;
     private Doggo selectedDoggo;
-    private boolean followers;
+    private Boolean followers;
     public ListHelperFragment() {
 
     }
@@ -32,7 +34,7 @@ public class ListHelperFragment extends Fragment {
         return followers;
     }
 
-    public void setFollowers(boolean followers) {
+    public void setFollowers(Boolean followers) {
         this.followers = followers;
     }
 
@@ -43,19 +45,34 @@ public class ListHelperFragment extends Fragment {
         list = (ListView) view.findViewById(R.id.list);
         ArrayList<String> stringList = new ArrayList();
 
-        if (followers) {
+        if (followers != null && followers) {
             for (int i = 0; i < selectedDoggo.getFollowers().size(); i++) {
                 stringList.add(selectedDoggo.getFollowers().get(i).getName());
             }
-        } else {
+        } else if (followers != null && !followers){
             for (int i = 0; i < selectedDoggo.getFollowings().size(); i++) {
                 stringList.add(selectedDoggo.getFollowings().get(i).getName());
+            }
+        }else {
+            for (int i = 0; i < selectedDoggo.getEvents().size(); i++) {
+                stringList.add(selectedDoggo.getEvents().get(i).getZone().getName() + " " + selectedDoggo.getEvents().get(i).getDateTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")) );
             }
         }
 
         CustomAdapter adapter = new CustomAdapter(stringList,(AppCompatActivity)getActivity());
         list.setAdapter(adapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
 
+                openProfile(position);
+            }
+        });
         return view;
+    }
+
+    private void openProfile(int position) {
+        ((MainActivity)getActivity()).toOtherProfile(position);
     }
 }

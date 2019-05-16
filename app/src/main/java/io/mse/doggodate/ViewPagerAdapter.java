@@ -27,7 +27,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
             Log.i("ViewPagerAdapter", "first tab");
         }
-        else if (position == 1)
+        else if (position == 2)
         {
             fragment = new ListHelperFragment();
             ((ListHelperFragment) fragment).setFollowers(false);
@@ -35,12 +35,19 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             Log.i("ViewPagerAdapter", "second tab");
 
         }
-        else if (position == 2)
+        else if (position == 3)
         {
             fragment = new ListHelperFragment();
             ((ListHelperFragment) fragment).setFollowers(true);
             ((ListHelperFragment) fragment).setSelectedDoggo(this.selectedDoggo);
             Log.i("ViewPagerAdapter", "third tab");
+
+        } else if (position == 1)
+        {
+            fragment = new ListHelperFragment();
+            ((ListHelperFragment) fragment).setFollowers(null);
+            ((ListHelperFragment) fragment).setSelectedDoggo(this.selectedDoggo);
+            Log.i("ViewPagerAdapter", "forth tab");
 
         }
         return fragment;
@@ -48,7 +55,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -58,13 +65,17 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         {
             title = selectedDoggo.getPhotos().size() +" Photos";
         }
-        else if (position == 1)
-        {
-            title = selectedDoggo.getFollowings().size() +" Followings";
-        }
         else if (position == 2)
         {
-            title = selectedDoggo.getFollowers().size() +" Followers";
+            title = selectedDoggo.getFollowings().size() +" Doggos";
+        }
+        else if (position == 3)
+        {
+            title = selectedDoggo.getFollowers().size() +" Flwrz";
+        }
+        else if (position == 1)
+        {
+            title = selectedDoggo.getFollowers().size() +" Events";
         }
         return title;
     }
