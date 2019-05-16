@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchFragment">
+    tools:context=".SearchFragment"
+    android:layout_marginTop="?attr/actionBarSize">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -12,15 +13,6 @@
 
 
 
-        <SearchView
-            android:id="@+id/searchView"
-            android:layout_width="fill_parent"
-            android:layout_height="80dp"
-            app:layout_constraintBottom_toTopOf="@layout/gridview_search"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
 
        <!-- <ImageButton
             android:id="@+id/dog"
@@ -30,16 +22,28 @@
             app:layout_constraintTop_toBottomOf="@id/searchView"
             tools:layout_editor_absoluteX="-16dp"
             android:src="@drawable/profile_image"
-            android:translationY="15dp"/>-->
+            android:translationY="15dp"/>
+
+              <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="fill_parent"
+            android:layout_height="80dp"
+            app:layout_constraintBottom_toTopOf="@layout/gridview_search"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />-->
         <include
             layout="@layout/gridview_search"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/searchView"
+        app:layout_constraintTop_toTopOf="parent"
            />
+
+
 
     </android.support.constraint.ConstraintLayout>
 

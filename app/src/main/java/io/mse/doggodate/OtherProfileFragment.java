@@ -87,7 +87,6 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
         ((MainActivity)getActivity()).getActiveDog().getFollowings().add(selectedDoggo);
         this.selectedDoggo.getFollowers().add(((MainActivity)getActivity()).getActiveDog());
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
         Toast.makeText(getContext(),"You started following " + this.selectedDoggo.getName(),Toast.LENGTH_SHORT).show();
 
        /* // Setting Alert Dialog Title
