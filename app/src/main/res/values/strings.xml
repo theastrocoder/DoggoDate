@@ -10,5 +10,11 @@
     <string name="title_activity_maps">Map</string>
     <string name="search">Search</string>
     <string name="msg">Messages</string>
+    <string-array name="days">
+        <item>Today</item>
+        <item>Tomorrow</item>
+        <item>Pick a Date</item>
+    </string-array>
+
 
 </resources>

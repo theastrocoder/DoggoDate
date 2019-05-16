@@ -97,6 +97,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         Log.i("MapFragment", "Marker title is " + marker.getTitle());
         zoneName.setText(marker.getTitle());
         slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        ((MainActivity)getActivity()).setSelectedDoggoZone(park1);
         return true;
     }
 
