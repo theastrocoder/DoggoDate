@@ -17,9 +17,8 @@
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
@@ -31,7 +30,7 @@
             android:layout_gravity="center_horizontal"
             android:text="Bonnie"
             android:textSize="32sp"
-            android:translationY="15dp"
+            android:translationY="10dp"
             app:layout_constraintBottom_toTopOf="@+id/breed"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -71,23 +70,13 @@
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_marginTop="5dp"
+            android:paddingTop="10dp"
             app:layout_constraintTop_toBottomOf="@+id/tabLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             />
 
-
-       <!-- <include
-            layout="@layout/gridview_search"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tabLayout" />-->
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/followButton"
             android:layout_width="wrap_content"
@@ -97,7 +86,7 @@
             android:layout_margin="16dp"
             android:layout_marginEnd="8dp"
             android:clickable="true"
-            android:src="@android:drawable/ic_input_add"
+            android:src="@drawable/ic_add_black_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.93"
