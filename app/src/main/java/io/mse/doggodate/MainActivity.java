@@ -10,7 +10,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Doggo> defaultSearchDoggos = new ArrayList<>();
     private DoggoZone park1;
     private DoggoZone park2;
+    private boolean otherProfile = false;
 
 
     final Fragment fragment1 = new HomeFragment();
@@ -38,10 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
@@ -53,19 +54,19 @@ public class MainActivity extends AppCompatActivity {
                     ab.setHomeButtonEnabled(false);
                     ab.setDisplayHomeAsUpEnabled(false);
                     ab.setTitle("DoggoDate");
-
+                    invalidateOptionsMenu();
                     Log.i(TAG, "homescreen opened");
-
+                    otherProfile=false;
                     break;
                 case R.id.navigation_map:
-               /*Intent toMap = new Intent(MainActivity.this,MapActivity.class);
-               startActivity(toMap);*/
                     item.setChecked(true);
                     fm.beginTransaction().hide(active).show(fragment2).commit();
                     active = fragment2;
-                    getSupportActionBar().hide();
+                    getSupportActionBar().setTitle("Search DoggoZones");
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                    invalidateOptionsMenu();
                     Log.i(TAG, "navigation opened");
-
+                    otherProfile=false;
                     break;
                 case R.id.navigation_doggos:
               /* Intent toSearch = new Intent(MainActivity.this,SearchActivity.class);
@@ -73,14 +74,18 @@ public class MainActivity extends AppCompatActivity {
                     fm.beginTransaction().hide(active).show(fragment3).commit();
                     active = fragment3;
                     item.setChecked(true);
-                    getSupportActionBar().hide();
+                    getSupportActionBar().setTitle("Search Doggos");
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                    invalidateOptionsMenu();
                     Log.i(TAG, "doggos opened");
-
+                    otherProfile=false;
                     break;
                 case R.id.navigation_profile:
                     item.setChecked(true);
                     //fm.beginTransaction().hide(active).show(fragment4).commit();
-                    getSupportActionBar().hide();
+                    getSupportActionBar().setTitle("My Profile");
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                    invalidateOptionsMenu();
                     Log.i(TAG, "profile opened");
 
 
@@ -90,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     fm.beginTransaction().hide(active).show(fragment4).commit();
                     active = fragment4;
 
-
+                    otherProfile=false;
                     break;
             }
             return false;
@@ -263,6 +268,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.search);
+
+        if(active!=fragment2 && active!=fragment3){
+            searchItem.setVisible(false);
+        }else {
+            if(otherProfile){
+                searchItem.setVisible(false);
+            }else {
+                searchItem.setVisible(true);
+            }
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
     public Fragment getFragment(String integer) {
         switch(integer) {
             case "1":
@@ -278,18 +301,25 @@ public class MainActivity extends AppCompatActivity {
         }
         return null;
     }
-        public void toOtherProfile(int position) {
+
+    public void toOtherProfile(int position) {
+
+            otherProfile=true;
             getSupportActionBar().show();
-            getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("");
+            getSupportActionBar().setTitle("Doggos");
             otherProfileFragment = new OtherProfileFragment();
             fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).commit();
             Log.i("MainActivity", "selected dogs name is" + defaultSearchDoggos.get(position).getName());
             ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(defaultSearchDoggos.get(position));
             fm.beginTransaction().hide(active).show(otherProfileFragment).commit();
             active = otherProfileFragment;
+            invalidateOptionsMenu();
 
+    }
 
-        }
+    public void goToDoggoZone(View view){
+        Log.i("MapFragment","GO to DOGGO ZONE" );
+        getSupportActionBar().show();
+    }
 }
