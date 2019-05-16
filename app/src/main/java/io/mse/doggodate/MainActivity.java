@@ -277,18 +277,19 @@ public class MainActivity extends AppCompatActivity {
         }
         return null;
     }
+
     public void toOtherProfile(int position) {
 
-        otherProfileFragment = new OtherProfileFragment();
-        fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).commit();
-        Log.i("MainActivity", "selected dogs name is" + defaultSearchDoggos.get(position).getName());
-        ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(defaultSearchDoggos.get(position));
-        fm.beginTransaction().hide(active).show(otherProfileFragment).commit();
-        active = otherProfileFragment;
-        getSupportActionBar().show();
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("");
+            getSupportActionBar().show();
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("");
+            otherProfileFragment = new OtherProfileFragment();
+            fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).commit();
+            Log.i("MainActivity", "selected dogs name is" + defaultSearchDoggos.get(position).getName());
+            ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(defaultSearchDoggos.get(position));
+            fm.beginTransaction().hide(active).show(otherProfileFragment).commit();
+            active = otherProfileFragment;
 
     }
 

@@ -56,15 +56,15 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         String title = null;
         if (position == 0)
         {
-            title = "Photos";
+            title = "4 Photos";
         }
         else if (position == 1)
         {
-            title = "Followings";
+            title = "0 Followings";
         }
         else if (position == 2)
         {
-            title = "Followers";
+            title = "5 Followers";
         }
         return title;
     }
