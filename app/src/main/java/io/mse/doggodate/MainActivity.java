@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -58,8 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
                     break;
                 case R.id.navigation_map:
-               /*Intent toMap = new Intent(MainActivity.this,MapActivity.class);
-               startActivity(toMap);*/
                     item.setChecked(true);
                     fm.beginTransaction().hide(active).show(fragment2).commit();
                     active = fragment2;
@@ -270,18 +269,22 @@ public class MainActivity extends AppCompatActivity {
         }
         return null;
     }
-        public void toOtherProfile(int position) {
+    public void toOtherProfile(int position) {
 
-            otherProfileFragment = new OtherProfileFragment();
-            fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).commit();
-            Log.i("MainActivity", "selected dogs name is" + defaultSearchDoggos.get(position).getName());
-            ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(defaultSearchDoggos.get(position));
-            fm.beginTransaction().hide(active).show(otherProfileFragment).commit();
-            active = otherProfileFragment;
-            getSupportActionBar().show();
-            getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("");
+        otherProfileFragment = new OtherProfileFragment();
+        fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).commit();
+        Log.i("MainActivity", "selected dogs name is" + defaultSearchDoggos.get(position).getName());
+        ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(defaultSearchDoggos.get(position));
+        fm.beginTransaction().hide(active).show(otherProfileFragment).commit();
+        active = otherProfileFragment;
+        getSupportActionBar().show();
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
-        }
+    }
+
+    public void goToDoggoZone(View view){
+        Log.i("MapFragment","GO to DOGGO ZONE" );
+    }
 }

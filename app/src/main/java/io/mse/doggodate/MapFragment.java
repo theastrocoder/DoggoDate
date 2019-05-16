@@ -4,14 +4,11 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,9 +19,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.util.Arrays;
-import java.util.List;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import io.mse.doggodate.Entity.DoggoZone;
 
@@ -37,9 +32,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private GoogleMap mMap;
     private Context context;
     private TextView zoneName;
-    private Button joinBtn;
+    private ImageButton joinBtn;
     private DoggoZone park1;
     private DoggoZone park2;
+    private SlidingUpPanelLayout slider;
 
     public MapFragment() {
         // Required empty public constructor
@@ -49,7 +45,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         context = container.getContext();
-        View view = inflater.inflate(R.layout.activity_maps, container, false);
+        View view = inflater.inflate(R.layout.maps_fragment, container, false);
         park1 = ((MainActivity)getActivity()).getPark1();
         park2  = ((MainActivity)getActivity()).getPark2();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -57,9 +53,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        slider = (SlidingUpPanelLayout) view.findViewById(R.id.slider);
+        slider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         zoneName = (TextView) view.findViewById(R.id.zone_name);
-        joinBtn = (Button) view.findViewById(R.id.join_zone);
-        joinBtn.setText("Join");
+        joinBtn = (ImageButton) view.findViewById(R.id.join_zone);
         return view;
     }
 
@@ -95,8 +92,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        Log.i("onMarkrerClick", "Marker title is " + marker.getTitle());
+        Log.i("MapFragment", "Marker title is " + marker.getTitle());
         zoneName.setText(marker.getTitle());
+        slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         return true;
     }
+
+
 }
