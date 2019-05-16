@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                     ab.setTitle("DoggoDate");
                     invalidateOptionsMenu();
                     Log.i(TAG, "homescreen opened");
-
+                    otherProfile=false;
                     break;
                 case R.id.navigation_map:
                     item.setChecked(true);
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                     invalidateOptionsMenu();
                     Log.i(TAG, "navigation opened");
-
+                    otherProfile=false;
                     break;
                 case R.id.navigation_doggos:
               /* Intent toSearch = new Intent(MainActivity.this,SearchActivity.class);
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                     invalidateOptionsMenu();
                     Log.i(TAG, "doggos opened");
-
+                    otherProfile=false;
                     break;
                 case R.id.navigation_profile:
                     item.setChecked(true);
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     fm.beginTransaction().hide(active).show(fragment4).commit();
                     active = fragment4;
 
-
+                    otherProfile=false;
                     break;
             }
             return false;
