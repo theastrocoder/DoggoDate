@@ -4,13 +4,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import io.mse.doggodate.Entity.DoggoZone;
 
@@ -40,6 +45,15 @@ public class DoggoZoneFragment extends Fragment {
         ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource((MainActivity)getContext(), R.array.days, android.R.layout.simple_spinner_dropdown_item);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(arrayAdapter);
+
+        GridView gridView = (GridView) view.findViewById(R.id.grid_view);
+        ArrayList<Integer> images = new ArrayList<>();
+        //set which dogs' pics should be shown
+        for (int i=0;i<((MainActivity)getActivity()).getDefaultSearch().size();i++){
+            images.add(((MainActivity)getActivity()).getDefaultSearch().get(i).getProfilePic());
+        }
+        gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(), (AppCompatActivity) getActivity(),images));
+
         return view;
     }
 
