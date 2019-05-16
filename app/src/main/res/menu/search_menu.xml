@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/search"
+        android:title="@string/search"
+        app:showAsAction="always|collapseActionView"
+        android:icon="@drawable/ic_search_black_24dp"
+        app:actionViewClass="android.widget.SearchView"/>
+    <item
+        android:title="@string/msg"
+        android:id="@+id/messages"
+        app:showAsAction="always|collapseActionView"
+        android:icon="@drawable/ic_message_black_24dp"
+        />
+</menu>

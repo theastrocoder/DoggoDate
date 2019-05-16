@@ -56,9 +56,6 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
 
         Log.i("OtherProfileDog", "selected dogs name is" + this.selectedDoggo.getName());
         imageView.setImageResource(this.selectedDoggo.getProfilePic());
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
         viewPagerAdapter = new ViewPagerAdapter( getChildFragmentManager(), this.selectedDoggo);
