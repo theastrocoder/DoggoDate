@@ -56,15 +56,15 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         String title = null;
         if (position == 0)
         {
-            title = "4 Photos";
+            title = selectedDoggo.getPhotos().size() +" Photos";
         }
         else if (position == 1)
         {
-            title = "0 Followings";
+            title = selectedDoggo.getFollowings().size() +" Followings";
         }
         else if (position == 2)
         {
-            title = "5 Followers";
+            title = selectedDoggo.getFollowers().size() +" Followers";
         }
         return title;
     }
