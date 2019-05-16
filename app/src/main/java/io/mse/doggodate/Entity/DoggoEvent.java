@@ -50,4 +50,13 @@ public class DoggoEvent {
     public void setDoggosJoining(ArrayList<Doggo> doggosJoining) {
         this.doggosJoining = doggosJoining;
     }
+
+    public String joiningDoggosToString() {
+        String doggos = "";
+        for (int i = 0; i < this.doggosJoining.size(); i++) {
+            doggos += this.doggosJoining.get(i).getName() + "\n";
+        }
+        return doggos;
+
+    }
 }

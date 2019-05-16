@@ -19,6 +19,7 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onItemClick(DoggoEvent item) {
-                areYouReallyWannaJoin();
+                areYouReallyWannaJoin(item);
             }});
 
         recList.setAdapter(ca);
@@ -69,11 +70,13 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    private void areYouReallyWannaJoin() {
+    private void areYouReallyWannaJoin(DoggoEvent item) {
         // Setting Alert Dialog Title
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder.setMessage("Your Doggo " + item.getCreator().getName() +" scheduled the walk for " + item.getDateTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")) +". " +
+                "\nOthers are joining: \n" +item.joiningDoggosToString());
+        alertDialogBuilder.setTitle("Wanna go for a walk? ");
 
-        alertDialogBuilder.setTitle("Wanna go? ");
         // Icon Of Alert Dialog
         //alertDialogBuilder.setIcon(R.drawable.question);
         // Setting Alert Dialog Message
