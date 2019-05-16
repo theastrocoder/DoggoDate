@@ -88,8 +88,12 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
 
     public void follow(View view){
         ((MainActivity)getActivity()).getActiveDog().getFollowings().add(selectedDoggo);
+        this.selectedDoggo.getFollowers().add(((MainActivity)getActivity()).getActiveDog());
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-        // Setting Alert Dialog Title
+        Toast.makeText(getContext(),"You started following " + this.selectedDoggo.getName(),Toast.LENGTH_SHORT).show();
+
+       /* // Setting Alert Dialog Title
         alertDialogBuilder.setTitle("You started following " + this.selectedDoggo.getName());
         // Icon Of Alert Dialog
         //alertDialogBuilder.setIcon(R.drawable.question);
@@ -101,13 +105,12 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
 
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-                //Toast.makeText(getContext(),"You clicked on ok",Toast.LENGTH_SHORT).show();
             }
         });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
-        Log.i("OtherProfileFragment", "you follow the Doggo" + this.selectedDoggo.getName());
+        Log.i("OtherProfileFragment", "you follow the Doggo" + this.selectedDoggo.getName());*/
     }
 
  @Override
