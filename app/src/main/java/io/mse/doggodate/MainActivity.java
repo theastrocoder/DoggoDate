@@ -205,9 +205,17 @@ public class MainActivity extends AppCompatActivity {
         Makawa.setFollowers(followers);
 
         /** SETTING ALL DOGS LIST */
-        defaultSearchDoggos.add(Bonnie);
-        defaultSearchDoggos.addAll(followers);
-        defaultSearchDoggos.addAll(followings);
+        //defaultSearchDoggos.add(Bonnie);
+        defaultSearchDoggos.add(Alfonz);
+        defaultSearchDoggos.add(Nina);
+        defaultSearchDoggos.add(Makawa);
+        defaultSearchDoggos.add(Bowie);
+        defaultSearchDoggos.add(Akki);
+        defaultSearchDoggos.add(Rex);
+        defaultSearchDoggos.add(Chichi);
+        defaultSearchDoggos.add(Alex);
+
+
 
         ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(Rex);
 
