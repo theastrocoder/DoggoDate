@@ -1,26 +1,21 @@
 package io.mse.doggodate;
 
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.internal.BottomNavigationMenuView;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import io.mse.doggodate.Entity.Doggo;
@@ -32,13 +27,23 @@ public class MainActivity extends AppCompatActivity {
 
     Doggo activeDog;
     ArrayList<Doggo> defaultSearchDoggos = new ArrayList<>();
+
     private DoggoZone park1;
     private DoggoZone park2;
+    private DoggoZone park3;
+    private DoggoZone park4;
+    private DoggoZone park5;
+    private DoggoZone park6;
+
     private DoggoZone selectedDoggoZone;
+
     private MenuItem searchItem;
     private MenuItem favoritesItem;
+
     private BottomNavigationView navView;
+
     private ArrayList<DoggoEvent> activeDoggoEvents = new ArrayList<>();
+
     final Fragment fragment1 = new HomeFragment();
     final Fragment fragment2 = new MapFragment();
     Fragment fragment3 = new SearchFragment();
@@ -223,6 +228,14 @@ public class MainActivity extends AppCompatActivity {
                 "Hugo-Wolf-Park" ,8169, false);
         park2 = new DoggoZone(48.22027912193935, 16.480529082068596,
                 "GA Aspernstraße",323, true);
+        park3 = new DoggoZone(48.19845005423561, 16.330519111538322,
+                "Reithofferpark" ,671, true);
+        park4 = new DoggoZone(48.212801596627564, 16.339838642282885,
+                "Hernalser Gürtel",672, true);
+        park5 = new DoggoZone(48.16948327975529, 16.428887264076906,
+                "PA Blériotgasse" ,1850, true);
+        park6 = new DoggoZone(48.27240496690655, 16.447774667101427,
+                "PA Gitlbauergasse",1983, true);
         DoggoEvent e1 = new DoggoEvent(LocalDateTime.of(2019, 6, 15, 14,30),park2, Bonnie);
         DoggoEvent e2 = new DoggoEvent(LocalDateTime.of(2019, 5, 17, 10,30),park2, Bonnie);
         DoggoEvent e3 = new DoggoEvent(LocalDateTime.of(2019, 5, 20, 11,30),park1, Bonnie);
@@ -295,6 +308,22 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    public DoggoZone getPark4() {
+        return park4;
+    }
+
+    public DoggoZone getPark3() {
+        return park3;
+    }
+
+    public DoggoZone getPark5() {
+        return park5;
+    }
+
+    public DoggoZone getPark6() {
+        return park6;
     }
 
     public interface OnBackPressedListener {

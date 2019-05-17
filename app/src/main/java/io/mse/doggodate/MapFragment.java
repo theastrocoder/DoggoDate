@@ -38,6 +38,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private ImageButton favoritesBtn;
     private DoggoZone park1;
     private DoggoZone park2;
+    private DoggoZone park3;
+    private DoggoZone park4;
+    private DoggoZone park5;
+    private DoggoZone park6;
     private SlidingUpPanelLayout slider;
 
     public MapFragment() {
@@ -51,6 +55,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         View view = inflater.inflate(R.layout.maps_fragment, container, false);
         park1 = ((MainActivity)getActivity()).getPark1();
         park2  = ((MainActivity)getActivity()).getPark2();
+        park3  = ((MainActivity)getActivity()).getPark3();
+        park4  = ((MainActivity)getActivity()).getPark4();
+        park5  = ((MainActivity)getActivity()).getPark5();
+        park6  = ((MainActivity)getActivity()).getPark6();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
@@ -63,7 +71,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     public void setFavorites(){
-        favoritesBtn.setBackgroundResource(R.drawable.heart);
+        favoritesBtn.setImageResource(R.drawable.heart);
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -88,9 +96,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMap.setOnMarkerClickListener(this);
         LatLng park1Pos = new LatLng(park1.getLatitude(),park1.getLongitude());
         LatLng park2Pos = new LatLng(park2.getLatitude(),park2.getLongitude());
+        LatLng park3Pos = new LatLng(park3.getLatitude(),park3.getLongitude());
+        LatLng park4Pos = new LatLng(park4.getLatitude(),park4.getLongitude());
+        LatLng park5Pos = new LatLng(park5.getLatitude(),park5.getLongitude());
+        LatLng park6Pos = new LatLng(park6.getLatitude(),park5.getLongitude());
         mMap.addMarker(new MarkerOptions().position(park1Pos).title(park1.getName()));
         mMap.addMarker(new MarkerOptions().position(park2Pos).title(park2.getName()));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(park1Pos,17));
+        mMap.addMarker(new MarkerOptions().position(park3Pos).title(park3.getName()));
+        mMap.addMarker(new MarkerOptions().position(park4Pos).title(park4.getName()));
+        mMap.addMarker(new MarkerOptions().position(park5Pos).title(park5.getName()));
+        mMap.addMarker(new MarkerOptions().position(park6Pos).title(park6.getName()));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(park1Pos,12));
 
     }
 
