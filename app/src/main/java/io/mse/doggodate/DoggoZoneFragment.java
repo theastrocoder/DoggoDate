@@ -69,16 +69,13 @@ public class DoggoZoneFragment extends Fragment {
                         Toast.makeText(getContext(),"Doggos at Park Tomorrow",Toast.LENGTH_LONG).show();
                         break;
                     case 2:
-                        Log.i("DoggoZone", "CASE 2");
                         if(date.size()==3){
                             pickDate();
                         }else {
-                            Log.i("DoggoZone", "HIII");
                             Toast.makeText(getContext(), "Doggos in Park on " + date.get(2)+ " shown", Toast.LENGTH_LONG).show();
                         }
                         break;
                     case 3:
-                        Log.i("DoggoZone", "CASE 3");
                         if(date.get(3)!= null) {
                            pickDate();
                         }
