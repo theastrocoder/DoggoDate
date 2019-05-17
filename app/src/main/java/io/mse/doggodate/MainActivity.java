@@ -180,32 +180,59 @@ public class MainActivity extends AppCompatActivity {
         Bonnie.setProfilePic(R.drawable.profile_image);
         ((ProfileFragment)fragment4).setActiveDoggo(activeDog);
 
+        /**-------ALEX---------*/
         ArrayList<Integer> alexPhotos = new ArrayList<>();
         alexPhotos.add(R.drawable.labrador_1);
         alexPhotos.add(R.drawable.labrador_2);
         alexPhotos.add(R.drawable.labrador_3);
         alexPhotos.add(R.drawable.labrador_profile);
         Alex.setPhotos(alexPhotos);
-        Alex.setFollowers(followers);
-        Alex.setFollowings(followings);
-
+        ArrayList<Doggo> followingsA = new ArrayList<>();
+        followingsA.add(Rex);
+        ArrayList<Doggo> followersA = new ArrayList<>();
+        followersA.add(Chichi);
+        followersA.add(Alfonz);
+        followersA.add(Nina);
+        followersA.add(Bowie);
+        followersA.add(Makawa);
+        Alex.setFollowers(followersA);
+        Alex.setFollowings(followingsA);
+        /**-------CHICHI---------*/
         ArrayList<Integer> ChiChiPhotos = new ArrayList<>();
         ChiChiPhotos.add(R.drawable.chivava_1);
         ChiChiPhotos.add(R.drawable.chivava_2);
         ChiChiPhotos.add(R.drawable.chivava3);
         Chichi.setPhotos(ChiChiPhotos);
-        Chichi.setFollowers(followers);
-        Chichi.setFollowings(followings);
-
+        ArrayList<Doggo> followingsC = new ArrayList<>();
+        followingsC.add(Rex);
+        ArrayList<Doggo> followersC = new ArrayList<>();
+        followersC.add(Chichi);
+        followersC.add(Alfonz);
+        followersC.add(Nina);
+        followersC.add(Bowie);
+        followersC.add(Makawa);
+        Chichi.setFollowers(followersC);
+        Chichi.setFollowings(followingsC);
+        /**-------REX---------*/
         ArrayList<Integer> rexPhotos = new ArrayList<>();
         rexPhotos.add(R.drawable.wd_2);
         rexPhotos.add(R.drawable.wd_1);
         rexPhotos.add(R.drawable.wd_3);
         rexPhotos.add(R.drawable.wd_4);
         Rex.setPhotos(rexPhotos);
-        Rex.setFollowers(followers);
-        Rex.setFollowings(followings);
+        ArrayList<Doggo> followingsR = new ArrayList<>();
+        followingsR.add(Alfonz);
+        ArrayList<Doggo> followersR = new ArrayList<>();
+        followersR.add(Alex);
+        followersR.add(Chichi);
+        followersR.add(Alfonz);
+        followersR.add(Nina);
+        followersR.add(Bowie);
+        followersR.add(Makawa);
+        Rex.setFollowers(followersR);
+        Rex.setFollowings(followingsR);
 
+        /**-------AKKI---------*/
         ArrayList<Integer> akkiPhotos = new ArrayList<>();
         akkiPhotos.add(R.drawable.akita_1);
         akkiPhotos.add(R.drawable.akita_2);
@@ -215,13 +242,21 @@ public class MainActivity extends AppCompatActivity {
         Akki.setPhotos(akkiPhotos);
         Akki.setFollowers(followers);
         Akki.setFollowings(followers);
+        ArrayList<Doggo> followingsAk = new ArrayList<>();
+        followingsAk.add(Alfonz);
+        followingsAk.add(Nina);
+        followingsAk.add(Makawa);
+        followingsAk.add(Bowie);
+        ArrayList<Doggo> followersAk = new ArrayList<>();
+        followersAk.add(Alex);
+        followersAk.add(Chichi);
+        followersAk.add(Alfonz);
+        followersAk.add(Nina);
+        followersAk.add(Bowie);
+        followersAk.add(Makawa);
+        Rex.setFollowers(followersAk);
+        Rex.setFollowings(followingsAk);
 
-        Alfonz.setFollowings(followers);
-        Nina.setFollowings(followings);
-        Makawa.setFollowings(followings);
-        Bowie.setFollowings(followers);
-        Nina.setFollowers(followers);
-        Makawa.setFollowers(followers);
 
         /** Creating Doggo Zones*/
         park1 = new DoggoZone(48.239539376028745, 16.333220189004898,
