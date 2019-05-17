@@ -70,7 +70,7 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    private void areYouReallyWannaJoin(DoggoEvent item) {
+    private void areYouReallyWannaJoin(final DoggoEvent item) {
         // Setting Alert Dialog Title
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
         alertDialogBuilder.setMessage("Your Doggo " + item.getCreator().getName() +" scheduled the walk for " + item.getDateTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")) +". " +
@@ -87,6 +87,8 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
+                ((MainActivity)getActivity()).getActiveDog().getEvents().add(item);
+                ((MainActivity)getActivity()).updateMyProfile();
                 Toast.makeText(getContext(), "You joined for the walk!", Toast.LENGTH_LONG).show();
 
             }
@@ -107,11 +109,9 @@ public class HomeFragment extends Fragment {
     private List<DoggoEvent> createEventList(int size) {
 
         List<DoggoEvent> result = new ArrayList<DoggoEvent>();
-        for (int i=1; i < ((MainActivity)getActivity()).getDefaultSearch().size(); i++) {
-            DoggoZone park1 = new DoggoZone(48.239539376028745, 16.333220189004898,
-                    "Hugo-Wolf-Park" ,8169, false);
+        for (int i=0; i < ((MainActivity)getActivity()).getActiveDoggoEvents().size(); i++) {
 
-            DoggoEvent event = new DoggoEvent(LocalDateTime.now(),park1,((MainActivity)getActivity()).getDefaultSearch().get(i));
+            DoggoEvent event = ((MainActivity)getActivity()).getActiveDoggoEvents().get(i);
             event.setDoggosJoining(((MainActivity)getActivity()).getDefaultSearch());
             result.add(event);
 
