@@ -75,7 +75,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         }
         else if (position == 1)
         {
-            title = selectedDoggo.getFollowers().size() +" Events";
+            title = selectedDoggo.getEvents().size() +" Events";
         }
         return title;
     }

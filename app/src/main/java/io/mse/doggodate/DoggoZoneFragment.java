@@ -98,6 +98,7 @@ public class DoggoZoneFragment extends Fragment {
         for (int i=0;i<((MainActivity)getActivity()).getDefaultSearch().size();i++){
             images.add(((MainActivity)getActivity()).getDefaultSearch().get(i).getProfilePic());
         }
+
         gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(), (AppCompatActivity) getActivity(),images));
         FloatingActionButton scheduleWalk = (FloatingActionButton) view.findViewById(R.id.schedule_walk);
         scheduleWalk.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +107,10 @@ public class DoggoZoneFragment extends Fragment {
                 pickTime();
             }
         });
+
+        gridView.setAdapter(new SearchImageAdapter(getActivity().getApplicationContext(), (MainActivity) getActivity()));
+
+
         return view;
     }
 
