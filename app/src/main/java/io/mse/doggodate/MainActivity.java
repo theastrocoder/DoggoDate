@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<DoggoEvent> activeDoggoEvents = new ArrayList<>();
     final Fragment fragment1 = new HomeFragment();
     final Fragment fragment2 = new MapFragment();
-    final Fragment fragment3 = new SearchFragment();
+    Fragment fragment3 = new SearchFragment();
     Fragment fragment4 = new ProfileFragment();
     Fragment otherProfileFragment = new OtherProfileFragment();
     Fragment doggoZoneFragment;
@@ -344,6 +344,18 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
+    public void updateOtherProfileFragment(Doggo selectedDoggo) {
+        otherProfileFragment = new OtherProfileFragment();
+        ((OtherProfileFragment) otherProfileFragment).setSelectedDoggo(selectedDoggo);
+        fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).commit();
+        ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(selectedDoggo);
+        fm.beginTransaction().hide(active).show(otherProfileFragment).commit();
+        active = otherProfileFragment;
+
+        fragment3 = new SearchFragment();
+        fm.beginTransaction().add(R.id.main_container, fragment3, "3").hide(fragment3).commit();
+
+    }
     public void toOtherProfile(int position) {
 
         Log.i("yollooo","wanna go to doggooooooo");

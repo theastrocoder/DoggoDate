@@ -32,7 +32,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             fragment = new ListHelperFragment();
             ((ListHelperFragment) fragment).setFollowers(false);
             ((ListHelperFragment) fragment).setSelectedDoggo(this.selectedDoggo);
-            Log.i("ViewPagerAdapter", "second tab");
+            Log.i("ViewPagerAdapter", "third tab");
 
         }
         else if (position == 3)
@@ -40,14 +40,14 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             fragment = new ListHelperFragment();
             ((ListHelperFragment) fragment).setFollowers(true);
             ((ListHelperFragment) fragment).setSelectedDoggo(this.selectedDoggo);
-            Log.i("ViewPagerAdapter", "third tab");
+            Log.i("ViewPagerAdapter", "forth tab");
 
         } else if (position == 1)
         {
             fragment = new ListHelperFragment();
             ((ListHelperFragment) fragment).setFollowers(null);
             ((ListHelperFragment) fragment).setSelectedDoggo(this.selectedDoggo);
-            Log.i("ViewPagerAdapter", "forth tab");
+            Log.i("ViewPagerAdapter", "second tab");
 
         }
         return fragment;

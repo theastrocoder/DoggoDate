@@ -83,15 +83,15 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
         } else {
             fab.show();
         }
-       //Button button = view.findViewById(R.id.followButton);
-       // button.setVisibility(View.VISIBLE);
+
         return view;
     }
 
     public void follow(View view){
-        ((MainActivity)getActivity()).getActiveDog().getFollowings().add(selectedDoggo);
+        ((MainActivity)getActivity()).getActiveDog().getFollowings().add(this.selectedDoggo);
         this.selectedDoggo.getFollowers().add(((MainActivity)getActivity()).getActiveDog());
 
+        ((MainActivity)getActivity()).updateOtherProfileFragment(this.selectedDoggo);
         Toast.makeText(getContext(),"You started following " + this.selectedDoggo.getName(),Toast.LENGTH_SHORT).show();
 
        /* // Setting Alert Dialog Title

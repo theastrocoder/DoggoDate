@@ -49,7 +49,7 @@ public class ProfileFragment extends Fragment {
         imageView.setImageResource(activeDoggo.getProfilePic());
 
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
-        viewPagerAdapter = new ViewPagerAdapter( getChildFragmentManager(), activeDoggo);
+        viewPagerAdapter = new ViewPagerAdapter( getChildFragmentManager(), this.activeDoggo);
         viewPager.setAdapter(viewPagerAdapter);
 
         tabs = (TabLayout) view.findViewById(R.id.tabLayout);

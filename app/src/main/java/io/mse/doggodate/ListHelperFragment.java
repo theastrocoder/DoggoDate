@@ -30,7 +30,7 @@ public class ListHelperFragment extends Fragment {
         this.selectedDoggo = selectedDoggo;
     }
 
-    public boolean isFollowers() {
+    public Boolean isFollowers() {
         return followers;
     }
 
@@ -53,7 +53,7 @@ public class ListHelperFragment extends Fragment {
             for (int i = 0; i < selectedDoggo.getFollowings().size(); i++) {
                 stringList.add(selectedDoggo.getFollowings().get(i).getName());
             }
-        }else {
+        }else if (followers == null){
             for (int i = 0; i < selectedDoggo.getEvents().size(); i++) {
                 stringList.add(selectedDoggo.getEvents().get(i).getZone().getName() + " " + selectedDoggo.getEvents().get(i).getDateTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")) );
             }
