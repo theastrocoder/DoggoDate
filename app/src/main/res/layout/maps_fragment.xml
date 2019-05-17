@@ -67,7 +67,8 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:onClick="addToFavorites"
-                android:background="@drawable/heart_outline"/>
+                android:src="@drawable/heart_outline"
+                android:background="@color/cardview_light_background"/>
 
             <ImageButton
                 android:id="@+id/join_zone"
