@@ -399,7 +399,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(getSupportFragmentManager().getBackStackEntryCount()>0) {
+        if(getSupportFragmentManager().getBackStackEntryCount()>1) {
             super.onBackPressed();
             String fragmentName = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName();
             active = getSupportFragmentManager().findFragmentByTag(fragmentName);
@@ -416,9 +416,14 @@ public class MainActivity extends AppCompatActivity {
                 case "4":
                     navView.setSelectedItemId(R.id.navigation_profile);
                     break;
+                    default:
+                        super.onBackPressed();
+                        break;
             }
             invalidateOptionsMenu();
-        }else super.onBackPressed();
+        }else {
+            super.onBackPressed();
+        }
 
     }
 
