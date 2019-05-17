@@ -289,13 +289,22 @@ public class MainActivity extends AppCompatActivity {
                 "PA Blériotgasse" ,1850, true);
         park6 = new DoggoZone(48.27240496690655, 16.447774667101427,
                 "PA Gitlbauergasse",1983, true);
-        DoggoEvent e1 = new DoggoEvent(LocalDateTime.of(2019, 6, 15, 14,30),park2, Bonnie);
-        DoggoEvent e2 = new DoggoEvent(LocalDateTime.of(2019, 5, 17, 10,30),park2, Bonnie);
+        DoggoEvent e1 = new DoggoEvent(LocalDateTime.of(2019, 6, 15, 14,30),park3, Nina);
+        DoggoEvent e2 = new DoggoEvent(LocalDateTime.of(2019, 5, 17, 10,30),park2, Chichi);
         DoggoEvent e3 = new DoggoEvent(LocalDateTime.of(2019, 5, 20, 11,30),park1, Bonnie);
+        DoggoEvent e4 = new DoggoEvent(LocalDateTime.of(2019, 5, 19, 10,50),park4, Alex);
+        DoggoEvent e5 = new DoggoEvent(LocalDateTime.of(2019, 5, 21, 19,30),park5, Alfonz);
+        DoggoEvent e6 = new DoggoEvent(LocalDateTime.of(2019, 5, 23, 9,35),park6, Rex);
+        DoggoEvent e7 = new DoggoEvent(LocalDateTime.of(2019, 5, 24, 10,20),park4, Bowie);
+
         activeDoggoEvents.add(e1);
         activeDoggoEvents.add(e2);
         activeDoggoEvents.add(e3);
-        Bonnie.setEvents(activeDoggoEvents);
+        activeDoggoEvents.add(e4);
+        activeDoggoEvents.add(e5);
+        activeDoggoEvents.add(e6);
+        activeDoggoEvents.add(e7);
+
         /** SETTING ALL DOGS LIST */
         //defaultSearchDoggos.add(Bonnie);
         defaultSearchDoggos.add(Alfonz);
@@ -503,7 +512,6 @@ public class MainActivity extends AppCompatActivity {
     }
     public void toOtherProfile(int position) {
 
-        Log.i("yollooo","wanna go to doggooooooo");
         navView.setSelectedItemId(R.id.navigation_doggos);
             searchItem.setVisible(false);
             favoritesItem.setVisible(false);
@@ -529,6 +537,17 @@ public class MainActivity extends AppCompatActivity {
         ((DoggoZoneFragment)doggoZoneFragment).setSelectedDogoZone(selectedDoggoZone);
         fm.beginTransaction().hide(active).show(doggoZoneFragment).commit();
         active=doggoZoneFragment;
+
+    }
+
+    public void updateMyProfile() {
+        //fm.beginTransaction().hide(active).show(fragment4).commit();
+
+        Log.i(TAG, "profile opened");
+        fragment4 = new ProfileFragment();
+        ((ProfileFragment) fragment4).setActiveDoggo(activeDog);
+        fm.beginTransaction().add(R.id.main_container, fragment4, "4").hide(fragment4).commit();
+        fm.beginTransaction().hide(fragment4).commit();
 
     }
 
