@@ -28,21 +28,28 @@
             android:id="@+id/area"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:paddingBottom="5dp"/>
 
         <TextView
             android:id="@+id/type"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:paddingBottom="5dp"/>
 
         <TextView
             android:id="@+id/fence"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:textSize="17sp"
+            android:paddingBottom="5dp"/>
+
+        <TextView
+            android:id="@+id/doggos_joining"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
             android:paddingBottom="5dp"/>
 
         <View

@@ -47,11 +47,13 @@ public class DoggoZoneFragment extends Fragment {
         TextView parkArea = (TextView) view.findViewById(R.id.area);
         TextView type = (TextView) view.findViewById(R.id.type);
         TextView fence = (TextView) view.findViewById(R.id.fence);
+        TextView doggos = (TextView) view.findViewById(R.id.doggos_joining);
 
         parkName.setText(selectedDogoZone.getName());
         parkArea.setText("Area: " + String.valueOf(selectedDogoZone.getSurface() + "m2"));
         type.setText("Type: Dog Zone");
         fence.setText("Fence: Yes");
+        doggos.setText("8 other are joining");
 
         spinner = (Spinner) view.findViewById(R.id.spinner);
         arrayAdapter =new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, date );
