@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         Bonnie.setFollowers(followers);
 
         ArrayList<Doggo> followings = new ArrayList<>();
-        //followings.add(Rex);
+        followings.add(Rex);
         //followings.add(Akki);
         //followers.add(Bowie);
         Bonnie.setFollowings(followings);
@@ -308,6 +308,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void toOtherProfile(int position) {
 
+        Log.i("yollooo","wanna go to doggooooooo");
         navView.setSelectedItemId(R.id.navigation_doggos);
 
             searchItem.setVisible(false);

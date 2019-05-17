@@ -37,7 +37,7 @@ public class SearchFragment extends Fragment {
         for (int i=0;i<((MainActivity)getActivity()).getDefaultSearch().size();i++){
             images.add(((MainActivity)getActivity()).getDefaultSearch().get(i).getProfilePic());
         }
-        gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(), (AppCompatActivity) getActivity(),images));
+        gridView.setAdapter(new SearchImageAdapter(getActivity().getApplicationContext(), (MainActivity) getActivity()));
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
