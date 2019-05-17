@@ -17,7 +17,7 @@
         android:title="@string/title_doggos" />
     <item
         android:id="@+id/navigation_profile"
-        android:icon="@drawable/ic_person_black_24dp"
+        android:icon="@drawable/dog"
         android:title="@string/title_profile" />
 
 </menu>
