@@ -69,6 +69,7 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
         tabs = (TabLayout) view.findViewById(R.id.tabLayout);
         tabs.setupWithViewPager(viewPager);
 
+
         fab = (FloatingActionButton)view.findViewById(R.id.followButton);
         fab.setOnClickListener(new View.OnClickListener() {
 
@@ -77,7 +78,11 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
                 follow(v);
             }
         });
-        fab.show();
+        if (((MainActivity)getActivity()).getActiveDog().getFollowings().contains(this.selectedDoggo)) {
+            fab.hide();
+        } else {
+            fab.show();
+        }
        //Button button = view.findViewById(R.id.followButton);
        // button.setVisibility(View.VISIBLE);
         return view;
