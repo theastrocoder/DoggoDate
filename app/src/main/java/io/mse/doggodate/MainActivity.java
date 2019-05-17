@@ -1,5 +1,6 @@
 package io.mse.doggodate;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -15,8 +17,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import io.mse.doggodate.Entity.Doggo;
@@ -31,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private DoggoZone park1;
     private DoggoZone park2;
     private DoggoZone selectedDoggoZone;
-    MenuItem searchItem;
+    private MenuItem searchItem;
+    private MenuItem favoritesItem;
     private BottomNavigationView navView;
     private ArrayList<DoggoEvent> activeDoggoEvents = new ArrayList<>();
     final Fragment fragment1 = new HomeFragment();
@@ -60,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
                     ab.setDisplayHomeAsUpEnabled(false);
                     ab.setTitle("DoggoDate");
                     searchItem.setVisible(false);
+                    favoritesItem.setVisible(false);
                     Log.i(TAG, "homescreen opened");
                     break;
                 case R.id.navigation_map:
@@ -69,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                     getSupportActionBar().setTitle("DoggoZones");
                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                     searchItem.setVisible(true);
+                    favoritesItem.setVisible(true);
                     Log.i(TAG, "navigation opened");
                     break;
                 case R.id.navigation_doggos:
@@ -80,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     getSupportActionBar().setTitle("Doggos");
                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                     searchItem.setVisible(true);
+                    favoritesItem.setVisible(false);
                     Log.i(TAG, "doggos opened");
                     break;
                 case R.id.navigation_profile:
@@ -89,14 +97,12 @@ public class MainActivity extends AppCompatActivity {
                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                     searchItem.setVisible(false);
                     Log.i(TAG, "profile opened");
-
-
+                    favoritesItem.setVisible(false);
                     fragment4 = new ProfileFragment();
                     ((ProfileFragment) fragment4).setActiveDoggo(activeDog);
                     fm.beginTransaction().add(R.id.main_container, fragment4, "4").hide(fragment4).commit();
                     fm.beginTransaction().hide(active).show(fragment4).commit();
                     active = fragment4;
-
 
                     break;
             }
@@ -261,6 +267,36 @@ public class MainActivity extends AppCompatActivity {
         this.selectedDoggoZone = selectedDoggoZone;
     }
 
+    public void addToFavorites(View view) {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        alertDialogBuilder.setMessage("You can add DoggoZones to your favorites for easy search");
+        alertDialogBuilder.setTitle("Wanna add this DoggoZone to Favorites? ");
+
+        alertDialogBuilder.setCancelable(false);
+
+        alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                Toast.makeText(MainActivity.this, "Added to Favorites", Toast.LENGTH_LONG).show();
+                ((MapFragment)fragment2).setFavorites();
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                Toast.makeText(MainActivity.this, "Add to Favorites rejected!", Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
     public interface OnBackPressedListener {
         void doBack();
     }
@@ -286,7 +322,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_menu, menu);
         searchItem = menu.findItem(R.id.search);
-
+        favoritesItem = menu.findItem(R.id.favorites);
+        searchItem.setVisible(false);
+        favoritesItem.setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -311,6 +349,7 @@ public class MainActivity extends AppCompatActivity {
         navView.setSelectedItemId(R.id.navigation_doggos);
 
             searchItem.setVisible(false);
+            favoritesItem.setVisible(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("Doggos");
             otherProfileFragment = new OtherProfileFragment();
@@ -325,6 +364,7 @@ public class MainActivity extends AppCompatActivity {
     public void goToDoggoZone(View view){
 
         searchItem.setVisible(false);
+        favoritesItem.setVisible(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         doggoZoneFragment = new DoggoZoneFragment();
         fm.beginTransaction().add(R.id.main_container, doggoZoneFragment, "6").hide(doggoZoneFragment).commit();

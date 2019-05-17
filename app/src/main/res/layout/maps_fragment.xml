@@ -58,6 +58,18 @@
                 android:id="@+id/zone_name" />
 
             <ImageButton
+                android:id="@+id/add_favorites"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:gravity="center_vertical|end"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:onClick="addToFavorites"
+                android:background="@drawable/heart_outline"/>
+
+            <ImageButton
                 android:id="@+id/join_zone"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
@@ -67,7 +79,8 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:onClick="goToDoggoZone"
-                android:background="@drawable/ic_person_pin_circle_black_24dp" />
+                android:src="@drawable/dog_service"
+                android:background="@drawable/round_btm"/>
 
 
         </LinearLayout>

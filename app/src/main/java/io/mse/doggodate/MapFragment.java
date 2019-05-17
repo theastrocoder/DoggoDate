@@ -35,7 +35,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private GoogleMap mMap;
     private Context context;
     private TextView zoneName;
-    private ImageButton joinBtn;
+    private ImageButton favoritesBtn;
     private DoggoZone park1;
     private DoggoZone park2;
     private SlidingUpPanelLayout slider;
@@ -58,11 +58,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         slider = (SlidingUpPanelLayout) view.findViewById(R.id.slider);
         slider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         zoneName = (TextView) view.findViewById(R.id.zone_name);
-        joinBtn = (ImageButton) view.findViewById(R.id.join_zone);
+        favoritesBtn = (ImageButton) view.findViewById(R.id.add_favorites);
         return view;
     }
 
-
+    public void setFavorites(){
+        favoritesBtn.setBackgroundResource(R.drawable.heart);
+    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;

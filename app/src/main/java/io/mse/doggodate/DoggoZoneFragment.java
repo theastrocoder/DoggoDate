@@ -1,28 +1,40 @@
 package io.mse.doggodate;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import io.mse.doggodate.Entity.DoggoZone;
 
 public class DoggoZoneFragment extends Fragment {
 
     private DoggoZone selectedDogoZone;
-
+    private ArrayList<String> date = new ArrayList<>(Arrays.asList("Today", "Tomorrow", "Pick a date"));
+    Spinner spinner;
+    ArrayAdapter<String> arrayAdapter;
     public DoggoZoneFragment() {
 
     }
@@ -41,10 +53,44 @@ public class DoggoZoneFragment extends Fragment {
         type.setText("Type: Park");
         fence.setText("Fence: Ja");
 
-        Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource((MainActivity)getContext(), R.array.days, android.R.layout.simple_spinner_dropdown_item);
+        spinner = (Spinner) view.findViewById(R.id.spinner);
+        arrayAdapter =new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, date );
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(arrayAdapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        Toast.makeText(getContext(),"Doggos at Park Today",Toast.LENGTH_LONG).show();
+                        break;
+                    case 1:
+                        Toast.makeText(getContext(),"Doggos at Park Tomorrow",Toast.LENGTH_LONG).show();
+                        break;
+                    case 2:
+                        Log.i("DoggoZone", "CASE 2");
+                        if(date.size()==3){
+                            pickDate();
+                        }else {
+                            Log.i("DoggoZone", "HIII");
+                            Toast.makeText(getContext(), "Doggos in Park on " + date.get(2)+ " shown", Toast.LENGTH_LONG).show();
+                        }
+                        break;
+                    case 3:
+                        Log.i("DoggoZone", "CASE 3");
+                        if(date.get(3)!= null) {
+                           pickDate();
+                        }
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         GridView gridView = (GridView) view.findViewById(R.id.grid_view);
         ArrayList<Integer> images = new ArrayList<>();
@@ -53,7 +99,13 @@ public class DoggoZoneFragment extends Fragment {
             images.add(((MainActivity)getActivity()).getDefaultSearch().get(i).getProfilePic());
         }
         gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(), (AppCompatActivity) getActivity(),images));
-
+        FloatingActionButton scheduleWalk = (FloatingActionButton) view.findViewById(R.id.schedule_walk);
+        scheduleWalk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pickTime();
+            }
+        });
         return view;
     }
 
@@ -63,5 +115,48 @@ public class DoggoZoneFragment extends Fragment {
 
     public void setSelectedDogoZone(DoggoZone selectedDogoZone) {
         this.selectedDogoZone = selectedDogoZone;
+    }
+
+    private void pickTime() {
+
+        Calendar mcurrentTime = Calendar.getInstance();
+        int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+        int minute = mcurrentTime.get(Calendar.MINUTE);
+        TimePickerDialog mTimePicker;
+        mTimePicker = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                Toast.makeText(getContext(),"Scheduled walk in " + selectedHour + ":" + selectedMinute,Toast.LENGTH_LONG).show();
+            }
+        }, hour, minute, true);//Yes 24 hour time
+        mTimePicker.setTitle("Select Time");
+        mTimePicker.show();
+    }
+
+    private void pickDate() {
+
+        Calendar currentDate = Calendar.getInstance();
+        int year = currentDate.get(Calendar.YEAR);
+        int month = currentDate.get(Calendar.MONTH);
+        final int day = currentDate.get(Calendar.DAY_OF_MONTH);
+        final DatePickerDialog datePickerDialog;
+        datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                if(date.size()==4){
+                    date.remove(date.size()-1);
+                    date.remove(2);
+                }else {
+                    date.remove(date.size()-1);
+                }
+                date.add(dayOfMonth + "." + month + "." + year);
+                date.add("Pick a date");
+                arrayAdapter.notifyDataSetChanged();
+                spinner.setSelection(2);
+                Log.i("DogooZone","ARRAy " + date);
+            }
+        },year,month,day);
+        datePickerDialog.setTitle("Pick a date");
+        datePickerDialog.show();
     }
 }
