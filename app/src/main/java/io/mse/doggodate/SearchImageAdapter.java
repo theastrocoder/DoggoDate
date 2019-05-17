@@ -82,7 +82,6 @@ public class SearchImageAdapter extends BaseAdapter {
         // object item based on the position
 
         // get the TextView from the ViewHolder and then set the text (item name) and tag (item ID) values
-        Log.i("IMAGEFRAGMENT", "FRAGMETN " + activity.getActive().getTag());
         if(activity.getActive().getTag().equals("3") ) {
             viewHolder.textViewItem.setText(doggos.get(position).getName() + " " + ((activity.getActiveDog().getFollowings().contains(doggos.get(position))) ? "" : "+"));
             viewHolder.textViewItem.setTag(position);
@@ -90,8 +89,7 @@ public class SearchImageAdapter extends BaseAdapter {
             viewHolder.imageViewItem.setImageResource(doggos.get(position).getProfilePic());
 
         }else if(activity.getActive().getTag().equals("6")) {
-            Log.i("IMAGEFRAGMENT", "HII");
-            viewHolder.textViewItem.setText("In 3 min " + ((activity.getActiveDog().getFollowings().contains(doggos.get(position))) ? "" : "+"));
+            viewHolder.textViewItem.setText("3 min " + ((activity.getActiveDog().getFollowings().contains(doggos.get(position))) ? "" : "+"));
             viewHolder.textViewItem.setTag(position);
             viewHolder.textViewItem.setBackgroundColor(((Activity) activity).getResources().getColor((activity.getActiveDog().getFollowings().contains(doggos.get(position))) ? R.color.colorPrimaryLight : R.color.colorPrimaryLighter));
 

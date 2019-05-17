@@ -13,6 +13,7 @@
     sothree:umanoShadowHeight="4dp"
     sothree:umanoParallaxOffset="100dp"
     sothree:umanoDragView="@+id/dragview"
+    android:background="@color/cardview_light_background"
     sothree:umanoOverlay="false"
     sothree:umanoScrollableView="@+id/list"
     tools:context=".MapFragment">
@@ -86,12 +87,38 @@
 
         </LinearLayout>
 
-        <ListView
-            android:id="@+id/list"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-        </ListView>
+            android:layout_height="match_parent"
+            android:paddingStart="10dp">
+            <TextView
+                android:id="@+id/area"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:paddingBottom="5dp"/>
+
+            <TextView
+                android:id="@+id/type"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:paddingBottom="5dp"/>
+
+            <TextView
+                android:id="@+id/fence"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:paddingBottom="5dp"/>
+            <TextView
+                android:id="@+id/doggos_joining"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:paddingBottom="5dp"/>
+        </LinearLayout>
 
     </LinearLayout>
 

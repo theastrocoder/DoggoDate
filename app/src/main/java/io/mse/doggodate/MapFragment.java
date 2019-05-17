@@ -52,6 +52,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private DoggoZone park5;
     private DoggoZone park6;
     private SlidingUpPanelLayout slider;
+    private TextView parkArea;
+    private TextView fence;
+    private TextView type;
+    private TextView doggosJoining;
 
     public MapFragment() {
         // Required empty public constructor
@@ -76,6 +80,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         slider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         zoneName = (TextView) view.findViewById(R.id.zone_name);
         favoritesBtn = (ImageButton) view.findViewById(R.id.add_favorites);
+        parkArea = (TextView)view.findViewById(R.id.area);
+        fence= (TextView)view.findViewById(R.id.fence);
+        type=(TextView)view.findViewById(R.id.type);
+        doggosJoining=(TextView)view.findViewById(R.id.doggos_joining);
         return view;
     }
 
@@ -124,7 +132,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         Log.i("MapFragment", "Marker title is " + marker.getTitle());
         zoneName.setText(marker.getTitle());
         slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-        ((MainActivity)getActivity()).setSelectedDoggoZone((DoggoZone) marker.getTag());
+        DoggoZone selectedZone = (DoggoZone) marker.getTag();
+        ((MainActivity)getActivity()).setSelectedDoggoZone(selectedZone);
+        parkArea.setText("Area: " + String.valueOf(selectedZone.getSurface()) + "m2");
+        fence.setText("Fence: Yes"  );
+        type.setText("Type: Dog Zone");
+        doggosJoining.setText("8 others are joining");
         return true;
     }
 
@@ -132,8 +145,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Drawable background = ContextCompat.getDrawable(context, id);
             background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
-            Drawable vectorDrawable = ContextCompat.getDrawable(context, R.drawable.ic_pets_black_24dp);
-            vectorDrawable.setBounds(20, 10, vectorDrawable.getIntrinsicWidth()+20, vectorDrawable.getIntrinsicHeight()+10);
+            Drawable vectorDrawable = ContextCompat.getDrawable(context, R.drawable.tree_outline);
+            vectorDrawable.setBounds(15, 10, vectorDrawable.getIntrinsicWidth()+15, vectorDrawable.getIntrinsicHeight()+10);
 
             Bitmap bitmap = Bitmap.createBitmap(background.getIntrinsicWidth(), background.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(bitmap);

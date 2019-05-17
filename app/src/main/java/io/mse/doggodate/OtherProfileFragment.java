@@ -114,6 +114,8 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
         Log.i("OtherProfileFragment", "you follow the Doggo" + this.selectedDoggo.getName());*/
     }
 
+
+
  @Override
     public void doBack() {
             // I'm viewing Fragment C

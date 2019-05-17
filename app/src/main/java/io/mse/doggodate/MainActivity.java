@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TabHost;
 import android.widget.Toast;
 
 import java.time.LocalDateTime;
@@ -65,8 +66,12 @@ public class MainActivity extends AppCompatActivity {
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    fm.beginTransaction().hide(active).show(fragment1).commit();
-                    active = fragment1;
+                    Log.i(TAG,"Active " + active);
+                    if(!active.equals(fragment1)) {
+                        Log.i(TAG, "NOT DOuble");
+                        fm.beginTransaction().hide(active).show(fragment1).addToBackStack("1").commit();
+                    }
+                    setActive(fragment1,active);
                     item.setChecked(true);
                     ActionBar ab = getSupportActionBar();
                     ab.show();
@@ -79,8 +84,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.navigation_map:
                     item.setChecked(true);
-                    fm.beginTransaction().hide(active).show(fragment2).commit();
-                    active = fragment2;
+                    Log.i(TAG,"Active " + active);
+                    if(active!=fragment2) {
+                        Log.i(TAG, "NOT DOuble");
+                        fm.beginTransaction().hide(active).show(fragment2).addToBackStack("2").commit();
+                    }
+                    setActive(fragment2,active);
                     getSupportActionBar().setTitle("DoggoZones");
                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                     searchItem.setVisible(true);
@@ -88,10 +97,12 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "navigation opened");
                     break;
                 case R.id.navigation_doggos:
-              /* Intent toSearch = new Intent(MainActivity.this,SearchActivity.class);
-               startActivity(toSearch);*/
-                    fm.beginTransaction().hide(active).show(fragment3).commit();
-                    active = fragment3;
+                    Log.i(TAG,"Active " + active);
+                    if(!active.equals(fragment3)) {
+                        Log.i(TAG, "NOT DOuble");
+                        fm.beginTransaction().hide(active).show(fragment3).addToBackStack("3").commit();
+                    }
+                    setActive(fragment3,active);
                     item.setChecked(true);
                     getSupportActionBar().setTitle("Doggos");
                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -100,18 +111,21 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "doggos opened");
                     break;
                 case R.id.navigation_profile:
+                    Log.i(TAG,"Active " + active);
                     item.setChecked(true);
-                    //fm.beginTransaction().hide(active).show(fragment4).commit();
                     getSupportActionBar().setTitle("My Profile");
                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                     searchItem.setVisible(false);
                     Log.i(TAG, "profile opened");
                     favoritesItem.setVisible(false);
-                    fragment4 = new ProfileFragment();
                     ((ProfileFragment) fragment4).setActiveDoggo(activeDog);
-                    fm.beginTransaction().add(R.id.main_container, fragment4, "4").hide(fragment4).commit();
-                    fm.beginTransaction().hide(active).show(fragment4).commit();
-                    active = fragment4;
+                    if(!active.equals(fragment4)){
+                        Log.i(TAG, "NOT DOuble");
+                       // fm.beginTransaction().add(R.id.main_container, fragment4, "4").hide(fragment4).addToBackStack("4").commit();
+                        fm.beginTransaction().hide(active).show(fragment4).addToBackStack("4").commit();
+                    }
+
+                    setActive(fragment4,active);
 
                     break;
             }
@@ -129,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setActive(Fragment fragment, Fragment old) {
         Log.i(TAG, "Setting the active fragment other profile from search fragment");
-        fm.beginTransaction().hide(active).show(fragment).commit();
+        fm.beginTransaction().hide(old).show(fragment).commit();
         active = fragment;
 
     }
@@ -139,10 +153,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         navView = findViewById(R.id.nav_view);
         fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).commit();
-        fm.beginTransaction().add(R.id.main_container, fragment4, "4").hide(fragment4).commit();
-        fm.beginTransaction().add(R.id.main_container, fragment3, "3").hide(fragment3).commit();
-        fm.beginTransaction().add(R.id.main_container, fragment2, "2").hide(fragment2).commit();
-        fm.beginTransaction().add(R.id.main_container, fragment1, "1").commit();
+        fm.beginTransaction().add(R.id.main_container, fragment4, "4").hide(fragment4).addToBackStack("4").commit();
+        fm.beginTransaction().add(R.id.main_container, fragment3, "3").hide(fragment3).addToBackStack("3").commit();
+        fm.beginTransaction().add(R.id.main_container, fragment2, "2").hide(fragment2).addToBackStack("2").commit();
+        fm.beginTransaction().add(R.id.main_container, fragment1, "1").addToBackStack("1").commit();
 
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -297,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
 
         ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(Rex);
 
-
+        Log.i(TAG,"COUNT AT BEGG " + getSupportFragmentManager().getBackStackEntryCount());
 
     }
 
@@ -373,26 +387,76 @@ public class MainActivity extends AppCompatActivity {
         this.onBackPressedListener = onBackPressedListener;
     }
 
+
     @Override
     public void onBackPressed() {
-
-        int count = getSupportFragmentManager().getBackStackEntryCount();
-
-        if (count == 0) {
+        if(getSupportFragmentManager().getBackStackEntryCount()>0) {
             super.onBackPressed();
-            //additional code
-        } else {
-            getSupportFragmentManager().popBackStack();
-        }
+            String fragmentName = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName();
+            active = getSupportFragmentManager().findFragmentByTag(fragmentName);
+            switch (active.getTag()) {
+                case "1":
+                    navView.setSelectedItemId(R.id.navigation_home);
+                    break;
+                case "2":
+                    navView.setSelectedItemId(R.id.navigation_map);
+                    break;
+                case "3":
+                    navView.setSelectedItemId(R.id.navigation_doggos);
+                    break;
+                case "4":
+                    navView.setSelectedItemId(R.id.navigation_profile);
+                    break;
+            }
+            invalidateOptionsMenu();
+        }else super.onBackPressed();
+
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_menu, menu);
         searchItem = menu.findItem(R.id.search);
         favoritesItem = menu.findItem(R.id.favorites);
-        searchItem.setVisible(false);
-        favoritesItem.setVisible(false);
+
+        switch (active.getTag()){
+            case "1":
+                getSupportActionBar().setTitle("DoggoDate");
+                searchItem.setVisible(false);
+                favoritesItem.setVisible(false);
+                break;
+            case "2":
+                getSupportActionBar().setTitle("DoggoZones");
+                searchItem.setVisible(true);
+                favoritesItem.setVisible(true);
+                break;
+            case "3":
+                getSupportActionBar().setTitle("Doggos");
+                searchItem.setVisible(true);
+                favoritesItem.setVisible(false);
+                break;
+            case "4":
+                getSupportActionBar().setTitle("My Profile");
+                navView.setSelectedItemId(R.id.navigation_profile);
+                searchItem.setVisible(false);
+                favoritesItem.setVisible(false);
+                break;
+            case "5":
+                getSupportActionBar().setTitle("Doggos");
+                navView.setSelectedItemId(R.id.navigation_doggos);
+                searchItem.setVisible(false);
+                favoritesItem.setVisible(false);
+                break;
+            case "6":
+                getSupportActionBar().setTitle("DoggoZones");
+                navView.setSelectedItemId(R.id.navigation_map);
+                searchItem.setVisible(false);
+                favoritesItem.setVisible(false);
+                break;
+
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -412,10 +476,23 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // this takes the user 'back', as if they pressed the left-facing triangle icon on the main android toolbar.
+                // if this doesn't work as desired, another possibility is to call `finish()` here.
+                this.onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     public void updateOtherProfileFragment(Doggo selectedDoggo) {
         otherProfileFragment = new OtherProfileFragment();
         ((OtherProfileFragment) otherProfileFragment).setSelectedDoggo(selectedDoggo);
-        fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).commit();
+        fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).addToBackStack("5").commit();
         ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(selectedDoggo);
         fm.beginTransaction().hide(active).show(otherProfileFragment).commit();
         active = otherProfileFragment;
@@ -428,13 +505,12 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i("yollooo","wanna go to doggooooooo");
         navView.setSelectedItemId(R.id.navigation_doggos);
-
             searchItem.setVisible(false);
             favoritesItem.setVisible(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("Doggos");
             otherProfileFragment = new OtherProfileFragment();
-            fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).commit();
+            fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).addToBackStack("5").commit();
             Log.i("MainActivity", "selected dogs name is" + defaultSearchDoggos.get(position).getName());
             ((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(defaultSearchDoggos.get(position));
             fm.beginTransaction().hide(active).show(otherProfileFragment).commit();
@@ -448,7 +524,7 @@ public class MainActivity extends AppCompatActivity {
         favoritesItem.setVisible(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         doggoZoneFragment = new DoggoZoneFragment();
-        fm.beginTransaction().add(R.id.main_container, doggoZoneFragment, "6").hide(doggoZoneFragment).commit();
+        fm.beginTransaction().add(R.id.main_container, doggoZoneFragment, "6").hide(doggoZoneFragment).addToBackStack("6").commit();
         Log.i(TAG,"Go to Doggo Zone " + selectedDoggoZone.getName());
         ((DoggoZoneFragment)doggoZoneFragment).setSelectedDogoZone(selectedDoggoZone);
         fm.beginTransaction().hide(active).show(doggoZoneFragment).commit();
