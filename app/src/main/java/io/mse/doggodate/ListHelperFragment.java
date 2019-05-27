@@ -1,19 +1,20 @@
 package io.mse.doggodate;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import io.mse.doggodate.Entity.Doggo;
+import io.mse.doggodate.adapters.CustomAdapter;
 
 public class ListHelperFragment extends Fragment {
 

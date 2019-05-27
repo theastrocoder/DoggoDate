@@ -1,15 +1,17 @@
-package io.mse.doggodate;
+package io.mse.doggodate.adapters;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
+
+import io.mse.doggodate.R;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;

@@ -1,30 +1,37 @@
-package io.mse.doggodate;
+package io.mse.doggodate.home;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.time.LocalDateTime;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.mse.doggodate.Entity.DoggoEvent;
-import io.mse.doggodate.Entity.DoggoZone;
+import io.mse.doggodate.adapters.EventAdapter;
+import io.mse.doggodate.MainActivity;
+import io.mse.doggodate.R;
 
 
 /**
@@ -32,7 +39,7 @@ import io.mse.doggodate.Entity.DoggoZone;
  */
 public class HomeFragment extends Fragment {
 
-
+    private HomeViewModel homeViewModel;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -45,11 +52,13 @@ public class HomeFragment extends Fragment {
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("DoggoDate");
         ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        homeViewModel = ViewModelProviders.of(getActivity()).get(HomeViewModel.class);
+
 
         RecyclerView recList = (RecyclerView) view.findViewById(R.id.cardList);
         recList.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        llm.setOrientation(RecyclerView.VERTICAL);
         recList.setLayoutManager(llm);
 
         EventAdapter ca = new EventAdapter(createEventList(15), new EventAdapter.OnItemClickListener() {
@@ -64,9 +73,31 @@ public class HomeFragment extends Fragment {
         TextView weather = (TextView) view.findViewById(R.id.weather);
         weather.setText("Wieden 26°C");
         TextView gowalk = (TextView) view.findViewById(R.id.goforwalk);
-        gowalk.setText(((MainActivity)getActivity()).getActiveDog().getName()+ " wants to go for a walk. ");
+        //gowalk.setText(((MainActivity)getActivity()).getActiveDog().getName()+ " wants to go for a walk. ");
         TextView lastwalk = (TextView) view.findViewById(R.id.lastwalk);
         lastwalk.setText("The last walk was 29 hours ago!");
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        // Create a new user with a first and last name
+        Map<String, Object> user = new HashMap<>();
+        user.put("first", "Ada");
+        user.put("last", "Lovelace");
+        user.put("born", 1815);
+
+    // Add a new document with a generated ID
+        db.collection("users")
+                .add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.i("HOME", "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("HOME", "Error adding document", e);
+                    }
+                });
         return view;
     }
 

@@ -1,25 +1,21 @@
-package io.mse.doggodate;
+package io.mse.doggodate.map;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.ToolbarWidgetWrapper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,6 +30,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import io.mse.doggodate.Entity.DoggoZone;
+import io.mse.doggodate.MainActivity;
+import io.mse.doggodate.R;
 
 
 /**
@@ -117,12 +115,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         LatLng park4Pos = new LatLng(park4.getLatitude(),park4.getLongitude());
         LatLng park5Pos = new LatLng(park5.getLatitude(),park5.getLongitude());
         LatLng park6Pos = new LatLng(park6.getLatitude(),park5.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(park1Pos).title(park1.getName()).icon(bitmapDescriptorFromVector(getContext(),R.drawable.park))).setTag(park1);
-        mMap.addMarker(new MarkerOptions().position(park2Pos).title(park2.getName()).icon(bitmapDescriptorFromVector(getContext(),R.drawable.park))).setTag(park2);
-        mMap.addMarker(new MarkerOptions().position(park3Pos).title(park3.getName()).icon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav))).setTag(park3);
-        mMap.addMarker(new MarkerOptions().position(park4Pos).title(park4.getName()).icon(bitmapDescriptorFromVector(getContext(),R.drawable.park))).setTag(park4);
-        mMap.addMarker(new MarkerOptions().position(park5Pos).title(park5.getName()).icon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav))).setTag(park5);
-        mMap.addMarker(new MarkerOptions().position(park6Pos).title(park6.getName()).icon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav))).setTag(park6);
+        mMap.addMarker(new MarkerOptions().position(park1Pos).icon(bitmapDescriptorFromVector(getContext(),R.drawable.park))).setTag(park1);
+        mMap.addMarker(new MarkerOptions().position(park2Pos).icon(bitmapDescriptorFromVector(getContext(),R.drawable.park))).setTag(park2);
+        mMap.addMarker(new MarkerOptions().position(park3Pos).icon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav))).setTag(park3);
+        mMap.addMarker(new MarkerOptions().position(park4Pos).icon(bitmapDescriptorFromVector(getContext(),R.drawable.park))).setTag(park4);
+        mMap.addMarker(new MarkerOptions().position(park5Pos).icon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav))).setTag(park5);
+        mMap.addMarker(new MarkerOptions().position(park6Pos).icon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav))).setTag(park6);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(park1Pos,12));
 
     }
@@ -130,23 +128,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public boolean onMarkerClick(Marker marker) {
         Log.i("MapFragment", "Marker title is " + marker.getTitle());
-        zoneName.setText(marker.getTitle());
         slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         DoggoZone selectedZone = (DoggoZone) marker.getTag();
         ((MainActivity)getActivity()).setSelectedDoggoZone(selectedZone);
+        zoneName.setText(selectedZone.getName());
         parkArea.setText("Area: " + String.valueOf(selectedZone.getSurface()) + "m2");
         fence.setText("Fence: Yes"  );
         type.setText("Type: Dog Zone");
         doggosJoining.setText("8 others are joining");
-        return true;
+        return false;
     }
 
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int id) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            float dpsLeft = 8;
+            float dpsTop = 5;
+            float dm = getResources().getDisplayMetrics().density;
             Drawable background = ContextCompat.getDrawable(context, id);
             background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
             Drawable vectorDrawable = ContextCompat.getDrawable(context, R.drawable.tree_outline);
-            vectorDrawable.setBounds(15, 10, vectorDrawable.getIntrinsicWidth()+15, vectorDrawable.getIntrinsicHeight()+10);
+            vectorDrawable.setBounds((int)(dpsLeft * dm), (int)(dpsTop * dm), vectorDrawable.getIntrinsicWidth()+(int)(dpsLeft * dm), vectorDrawable.getIntrinsicHeight()+(int)(dpsTop * dm));
 
             Bitmap bitmap = Bitmap.createBitmap(background.getIntrinsicWidth(), background.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(bitmap);

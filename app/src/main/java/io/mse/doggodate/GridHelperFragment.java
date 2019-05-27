@@ -3,16 +3,18 @@ package io.mse.doggodate;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import java.util.ArrayList;
 
 import io.mse.doggodate.Entity.Doggo;
+import io.mse.doggodate.adapters.ImageAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -104,7 +106,7 @@ public class GridHelperFragment extends Fragment {
                 images.add(this.selectedDoggo.getPhotos().get(i));
             }
         }
-        gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(), (AppCompatActivity) getActivity(),images));
+        gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(),(AppCompatActivity)getActivity(),images));
         return view;
     }
 

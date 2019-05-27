@@ -1,16 +1,9 @@
-package io.mse.doggodate;
+package io.mse.doggodate.map;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.icu.util.Calendar;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,10 +17,20 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import io.mse.doggodate.Entity.DoggoZone;
+import io.mse.doggodate.adapters.ImageAdapter;
+import io.mse.doggodate.MainActivity;
+import io.mse.doggodate.R;
 
 public class DoggoZoneFragment extends Fragment {
 
@@ -94,7 +97,7 @@ public class DoggoZoneFragment extends Fragment {
         GridView gridView = (GridView) view.findViewById(R.id.grid_view);
         ArrayList<Integer> images = new ArrayList<>();
         //set which dogs' pics should be shown
-        for (int i=0;i<((MainActivity)getActivity()).getDefaultSearch().size();i++){
+        for (int i = 0; i<((MainActivity)getActivity()).getDefaultSearch().size(); i++){
             images.add(((MainActivity)getActivity()).getDefaultSearch().get(i).getProfilePic());
         }
 
@@ -107,7 +110,7 @@ public class DoggoZoneFragment extends Fragment {
             }
         });
 
-        gridView.setAdapter(new SearchImageAdapter(getActivity().getApplicationContext(), (MainActivity) getActivity()));
+        //gridView.setAdapter(new SearchImageAdapter(getActivity().getApplicationContext(), (MainActivity) getActivity()));
 
 
         return view;

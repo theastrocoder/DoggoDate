@@ -1,7 +1,6 @@
-package io.mse.doggodate;
+package io.mse.doggodate.adapters;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import io.mse.doggodate.R;
 
 
 public class CustomAdapter extends ArrayAdapter {
@@ -29,7 +30,6 @@ public class CustomAdapter extends ArrayAdapter {
 
     }
 
-    @Nullable
     @Override
     public String getItem(int position) {
         return dataSet.get(position);

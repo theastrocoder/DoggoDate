@@ -2,19 +2,22 @@ package io.mse.doggodate;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TabHost;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,6 +25,13 @@ import java.util.ArrayList;
 import io.mse.doggodate.Entity.Doggo;
 import io.mse.doggodate.Entity.DoggoEvent;
 import io.mse.doggodate.Entity.DoggoZone;
+import io.mse.doggodate.home.HomeFragment;
+import io.mse.doggodate.home.HomeViewModel;
+import io.mse.doggodate.map.DoggoZoneFragment;
+import io.mse.doggodate.map.MapFragment;
+import io.mse.doggodate.profile.OtherProfileFragment;
+import io.mse.doggodate.profile.ProfileFragment;
+import io.mse.doggodate.search.SearchFragment;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -45,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<DoggoEvent> activeDoggoEvents = new ArrayList<>();
 
-    final Fragment fragment1 = new HomeFragment();
+    final Fragment homeFragment = new HomeFragment();
     final Fragment fragment2 = new MapFragment();
     Fragment fragment3 = new SearchFragment();
     Fragment fragment4 = new ProfileFragment();
@@ -53,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     Fragment doggoZoneFragment;
 
     final FragmentManager fm = getSupportFragmentManager();
-    Fragment active = fragment1;
+    Fragment active = homeFragment;
 
     public Fragment getActive() {
         return active;
@@ -67,11 +77,12 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     Log.i(TAG,"Active " + active);
-                    if(!active.equals(fragment1)) {
+                    if(!active.equals(homeFragment)) {
                         Log.i(TAG, "NOT DOuble");
-                        fm.beginTransaction().hide(active).show(fragment1).addToBackStack("1").commit();
+                        fm.beginTransaction().replace(R.id.main_container, homeFragment, "1").addToBackStack("1").commit();
+                        //fm.beginTransaction().hide(active).show(homeFragment).addToBackStack("1").commit();
                     }
-                    setActive(fragment1,active);
+                    setActive(homeFragment,active);
                     item.setChecked(true);
                     ActionBar ab = getSupportActionBar();
                     ab.show();
@@ -87,7 +98,11 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG,"Active " + active);
                     if(active!=fragment2) {
                         Log.i(TAG, "NOT DOuble");
-                        fm.beginTransaction().hide(active).show(fragment2).addToBackStack("2").commit();
+
+
+                        fm.beginTransaction().add(R.id.main_container, fragment2, "2").addToBackStack("2").commit();
+
+                        //fm.beginTransaction().hide(active).show(fragment2).addToBackStack("2").commit();
                     }
                     setActive(fragment2,active);
                     getSupportActionBar().setTitle("DoggoZones");
@@ -100,7 +115,8 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG,"Active " + active);
                     if(!active.equals(fragment3)) {
                         Log.i(TAG, "NOT DOuble");
-                        fm.beginTransaction().hide(active).show(fragment3).addToBackStack("3").commit();
+                        fm.beginTransaction().add(R.id.main_container, fragment3, "3").addToBackStack("3").commit();
+                       // fm.beginTransaction().hide(active).show(fragment3).addToBackStack("3").commit();
                     }
                     setActive(fragment3,active);
                     item.setChecked(true);
@@ -121,8 +137,8 @@ public class MainActivity extends AppCompatActivity {
                     ((ProfileFragment) fragment4).setActiveDoggo(activeDog);
                     if(!active.equals(fragment4)){
                         Log.i(TAG, "NOT DOuble");
-                       // fm.beginTransaction().add(R.id.main_container, fragment4, "4").hide(fragment4).addToBackStack("4").commit();
-                        fm.beginTransaction().hide(active).show(fragment4).addToBackStack("4").commit();
+                        fm.beginTransaction().add(R.id.main_container, fragment4, "4").addToBackStack("4").commit();
+                        //fm.beginTransaction().hide(active).show(fragment4).addToBackStack("4").commit();
                     }
 
                     setActive(fragment4,active);
@@ -152,12 +168,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         navView = findViewById(R.id.nav_view);
-        fm.beginTransaction().add(R.id.main_container, otherProfileFragment, "5").hide(otherProfileFragment).commit();
-        fm.beginTransaction().add(R.id.main_container, fragment4, "4").hide(fragment4).addToBackStack("4").commit();
-        fm.beginTransaction().add(R.id.main_container, fragment3, "3").hide(fragment3).addToBackStack("3").commit();
-        fm.beginTransaction().add(R.id.main_container, fragment2, "2").hide(fragment2).addToBackStack("2").commit();
-        fm.beginTransaction().add(R.id.main_container, fragment1, "1").addToBackStack("1").commit();
 
+        fm.beginTransaction().replace(R.id.main_container,homeFragment,"1").commit();
+
+        //fm.beginTransaction().replace(R.id.main_container, homeFragment, "1").commit();
+
+        active = homeFragment;
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         Doggo Bonnie = new Doggo("Bonnie", "Golden retriever", R.drawable.profile_image);
@@ -169,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
         Doggo Nina = new Doggo("Nina", "Labrador", R.drawable.dog3);
         Doggo Bowie = new Doggo("Bowie", "Retriever", R.drawable.dog2);
         Doggo Makawa = new Doggo("Makawa", "Chivuavua", R.drawable.chivava_1);
-
 
         /** SETTING ACTIVE DOG ATTRIBUTES */
         activeDog = Bonnie;
@@ -431,6 +446,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.i(TAG,"OnCreateMENU");
         getMenuInflater().inflate(R.menu.search_menu, menu);
         searchItem = menu.findItem(R.id.search);
         favoritesItem = menu.findItem(R.id.favorites);
@@ -477,7 +493,7 @@ public class MainActivity extends AppCompatActivity {
     public Fragment getFragment(String integer) {
         switch(integer) {
             case "1":
-                return fragment1;
+                return homeFragment;
             case "2":
                 return fragment2;
             case "3":

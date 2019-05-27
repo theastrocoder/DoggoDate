@@ -1,11 +1,16 @@
-package io.mse.doggodate;
+package io.mse.doggodate.adapters;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+
+
 import android.util.Log;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+
 import io.mse.doggodate.Entity.Doggo;
+import io.mse.doggodate.GridHelperFragment;
+import io.mse.doggodate.ListHelperFragment;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 

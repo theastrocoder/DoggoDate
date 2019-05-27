@@ -1,20 +1,19 @@
-package io.mse.doggodate;
+package io.mse.doggodate.search;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageButton;
-import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
+
+import io.mse.doggodate.MainActivity;
+import io.mse.doggodate.R;
+import io.mse.doggodate.adapters.SearchImageAdapter;
 //https://www.androidhive.info/2012/02/android-gridview-layout-tutorial/
 
 /**
@@ -34,7 +33,7 @@ public class SearchFragment extends Fragment {
         gridView = (GridView) view.findViewById(R.id.grid_view);
         // Instance of ImageAdapter Class
         ArrayList<Integer> images = new ArrayList<>();
-        for (int i=0;i<((MainActivity)getActivity()).getDefaultSearch().size();i++){
+        for (int i = 0; i<((MainActivity)getActivity()).getDefaultSearch().size(); i++){
             images.add(((MainActivity)getActivity()).getDefaultSearch().get(i).getProfilePic());
         }
         gridView.setAdapter(new SearchImageAdapter(getActivity().getApplicationContext(), (MainActivity) getActivity()));

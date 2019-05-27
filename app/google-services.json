@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "715614016544",
+    "firebase_url": "https://doggodate-ebbe4.firebaseio.com",
+    "project_id": "doggodate-ebbe4",
+    "storage_bucket": "doggodate-ebbe4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:715614016544:android:7ed78601aa7a9df9",
+        "android_client_info": {
+          "package_name": "io.mse.doggodate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "715614016544-m91vl6ffildmb57s59qan0n4183louqv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.mse.doggodate",
+            "certificate_hash": "bc73bde90dc42637eaa76ce729f6ebfdd28fc9ca"
+          }
+        },
+        {
+          "client_id": "715614016544-bpdgpfgp32vdqu6l20rlo29ucjvmkv4f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArzkWuSg2usXuqPAKUBw2XNedBSzdmKIA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "715614016544-bpdgpfgp32vdqu6l20rlo29ucjvmkv4f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

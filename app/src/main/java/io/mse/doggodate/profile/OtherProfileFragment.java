@@ -1,33 +1,32 @@
-package io.mse.doggodate;
+package io.mse.doggodate.profile;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 
 import io.mse.doggodate.Entity.Doggo;
+import io.mse.doggodate.MainActivity;
+import io.mse.doggodate.R;
+import io.mse.doggodate.adapters.ViewPagerAdapter;
+import io.mse.doggodate.search.SearchFragment;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class OtherProfileFragment extends Fragment implements MainActivity.OnBackPressedListener{
+public class OtherProfileFragment extends Fragment implements MainActivity.OnBackPressedListener {
 
     private Doggo selectedDoggo;
     private ImageView imageView;
