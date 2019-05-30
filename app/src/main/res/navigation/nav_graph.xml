@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/navigation_home">
+    <fragment
+        android:id="@+id/navigation_map"
+        android:name="io.mse.doggodate.map.MapFragment"
+        android:label="maps_fragment"
+        tools:layout="@layout/maps_fragment" >
+        <action
+            android:id="@+id/toDoggoZone"
+            app:destination="@id/doggoZoneFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="io.mse.doggodate.home.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/navigation_doggos"
+        android:name="io.mse.doggodate.search.SearchFragment"
+        android:label="search_fragment"
+        tools:layout="@layout/search_fragment" >
+        <action
+            android:id="@+id/toOtherProfile"
+            app:destination="@id/profileFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="io.mse.doggodate.profile.ProfileFragment"
+        android:label="profile_fragment"
+        tools:layout="@layout/profile_fragment" />
+    <fragment
+        android:id="@+id/doggoZoneFragment"
+        android:name="io.mse.doggodate.map.DoggoZoneFragment"
+        android:label="doggozone_fragment"
+        tools:layout="@layout/doggozone_fragment" />
+    <fragment
+        android:id="@+id/profileFragment2"
+        android:name="io.mse.doggodate.profile.ProfileFragment"
+        android:label="profile_fragment"
+        tools:layout="@layout/profile_fragment" />
+</navigation>

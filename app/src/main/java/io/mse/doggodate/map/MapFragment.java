@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -43,6 +46,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private Context context;
     private TextView zoneName;
     private ImageButton favoritesBtn;
+    private ImageButton goToDoggoZone;
     private DoggoZone park1;
     private DoggoZone park2;
     private DoggoZone park3;
@@ -54,6 +58,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private TextView fence;
     private TextView type;
     private TextView doggosJoining;
+    private DoggoZone selectedDoggoZone;
+    private View view;
+    MainActivity mainActivity;
 
     public MapFragment() {
         // Required empty public constructor
@@ -63,7 +70,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         context = container.getContext();
-        View view = inflater.inflate(R.layout.maps_fragment, container, false);
+        view = inflater.inflate(R.layout.maps_fragment, container, false);
+        mainActivity = (MainActivity)getActivity();
+        mainActivity.getSupportActionBar().setTitle("DoggoZones");
+
+
         park1 = ((MainActivity)getActivity()).getPark1();
         park2  = ((MainActivity)getActivity()).getPark2();
         park3  = ((MainActivity)getActivity()).getPark3();
@@ -82,6 +93,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         fence= (TextView)view.findViewById(R.id.fence);
         type=(TextView)view.findViewById(R.id.type);
         doggosJoining=(TextView)view.findViewById(R.id.doggos_joining);
+        goToDoggoZone = (ImageButton) view.findViewById(R.id.join_zone);
+
         return view;
     }
 
@@ -129,13 +142,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public boolean onMarkerClick(Marker marker) {
         Log.i("MapFragment", "Marker title is " + marker.getTitle());
         slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-        DoggoZone selectedZone = (DoggoZone) marker.getTag();
-        ((MainActivity)getActivity()).setSelectedDoggoZone(selectedZone);
-        zoneName.setText(selectedZone.getName());
-        parkArea.setText("Area: " + String.valueOf(selectedZone.getSurface()) + "m2");
+        selectedDoggoZone = (DoggoZone) marker.getTag();
+        ((MainActivity)getActivity()).setSelectedDoggoZone(selectedDoggoZone);
+        zoneName.setText(selectedDoggoZone.getName());
+        parkArea.setText("Area: " + selectedDoggoZone.getSurface() + "m2");
         fence.setText("Fence: Yes"  );
         type.setText("Type: Dog Zone");
         doggosJoining.setText("8 others are joining");
+        goToDoggoZone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavController navController = Navigation.findNavController(v);
+                navController.navigate(R.id.toDoggoZone);
+            }
+        });
         return false;
     }
 

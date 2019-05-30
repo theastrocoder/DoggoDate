@@ -69,6 +69,8 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$room_version"
     // Test helpers
     testImplementation "androidx.room:room-testing:$room_version"
+    implementation 'android.arch.navigation:navigation-fragment:1.0.0'
+    implementation 'android.arch.navigation:navigation-ui:1.0.0'
 
 
 }

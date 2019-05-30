@@ -69,4 +69,8 @@ public class DummyContent {
             return content;
         }
     }
+
+    public static void createDoggs(){
+
+    }
 }
