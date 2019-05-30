@@ -29,9 +29,9 @@ import java.util.List;
 import java.util.Map;
 
 import io.mse.doggodate.Entity.DoggoEvent;
-import io.mse.doggodate.adapters.EventAdapter;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
+import io.mse.doggodate.adapters.EventAdapter;
 
 
 /**
@@ -39,6 +39,7 @@ import io.mse.doggodate.R;
  */
 public class HomeFragment extends Fragment {
 
+    private MainActivity mainActivity;
     private HomeViewModel homeViewModel;
     public HomeFragment() {
         // Required empty public constructor
@@ -48,10 +49,10 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("DoggoDate");
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        mainActivity = (MainActivity)getActivity();
+        mainActivity.getSupportActionBar().setTitle("DoggoDate");
+
         homeViewModel = ViewModelProviders.of(getActivity()).get(HomeViewModel.class);
 
 
@@ -76,7 +77,7 @@ public class HomeFragment extends Fragment {
         //gowalk.setText(((MainActivity)getActivity()).getActiveDog().getName()+ " wants to go for a walk. ");
         TextView lastwalk = (TextView) view.findViewById(R.id.lastwalk);
         lastwalk.setText("The last walk was 29 hours ago!");
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+       /* FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Create a new user with a first and last name
         Map<String, Object> user = new HashMap<>();
         user.put("first", "Ada");
@@ -97,7 +98,7 @@ public class HomeFragment extends Fragment {
                     public void onFailure(@NonNull Exception e) {
                         Log.w("HOME", "Error adding document", e);
                     }
-                });
+                });*/
         return view;
     }
 
@@ -119,7 +120,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
                 ((MainActivity)getActivity()).getActiveDog().getEvents().add(item);
-                ((MainActivity)getActivity()).updateMyProfile();
                 Toast.makeText(getContext(), "You joined for the walk!", Toast.LENGTH_LONG).show();
 
             }

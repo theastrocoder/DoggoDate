@@ -7,12 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import io.mse.doggodate.Entity.Doggo;
+import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
 import io.mse.doggodate.adapters.ViewPagerAdapter;
 
@@ -28,6 +30,7 @@ public class ProfileFragment extends Fragment {
     private TabLayout tabs;
     ViewPagerAdapter viewPagerAdapter;
     ViewPager viewPager;
+    private MainActivity mainActivity;
 
     public ProfileFragment() {}
 
@@ -39,7 +42,12 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.profile_fragment, container, false);
+        mainActivity = (MainActivity)getActivity();
+        mainActivity.getSupportActionBar().setTitle("My Profile");
+
+
         imageView = (ImageView) view.findViewById(R.id.profile_image);
+        activeDoggo = ((MainActivity)getActivity()).getActiveDog();
         imageView.setImageResource(activeDoggo.getProfilePic());
 
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
