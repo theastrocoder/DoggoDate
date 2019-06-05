@@ -12,11 +12,5 @@
         app:showAsAction="always"
         android:icon="@drawable/heart_white">
     </item>
-    <item
-        android:title="@string/msg"
-        android:id="@+id/messages"
-        app:showAsAction="always|collapseActionView"
-        android:icon="@drawable/ic_message_black_24dp"
-        />
 
 </menu>

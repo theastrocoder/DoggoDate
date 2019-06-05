@@ -23,9 +23,6 @@
         android:name="io.mse.doggodate.search.SearchFragment"
         android:label="search_fragment"
         tools:layout="@layout/search_fragment" >
-        <action
-            android:id="@+id/toOtherProfile"
-            app:destination="@id/profileFragment2" />
     </fragment>
     <fragment
         android:id="@+id/navigation_profile"
@@ -37,9 +34,4 @@
         android:name="io.mse.doggodate.map.DoggoZoneFragment"
         android:label="doggozone_fragment"
         tools:layout="@layout/doggozone_fragment" />
-    <fragment
-        android:id="@+id/profileFragment2"
-        android:name="io.mse.doggodate.profile.ProfileFragment"
-        android:label="profile_fragment"
-        tools:layout="@layout/profile_fragment" />
 </navigation>

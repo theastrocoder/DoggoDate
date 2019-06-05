@@ -28,7 +28,7 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_fragment, container, false);
-
+        ((MainActivity)getActivity()).invalidateOptionsMenu();
         //SET GRIDVIEW WITH DEFAULT IMAGES
         gridView = (GridView) view.findViewById(R.id.grid_view);
         // Instance of ImageAdapter Class

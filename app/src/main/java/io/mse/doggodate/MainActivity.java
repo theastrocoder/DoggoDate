@@ -158,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
         active = homeFragment;
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-
         Doggo Bonnie = new Doggo("Bonnie", "Golden retriever", R.drawable.profile_image);
         Doggo Alex = new Doggo("Alex", "Labrador",  R.drawable.labrador_profile);
         Doggo Chichi = new Doggo("Chichi", "Chivava", R.drawable.chivava_prof);
@@ -393,46 +392,36 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.search_menu, menu);
         searchItem = menu.findItem(R.id.search);
         favoritesItem = menu.findItem(R.id.favorites);
-        getSupportActionBar().setTitle("DoggoDate");
-        searchItem.setVisible(false);
-        favoritesItem.setVisible(false);
 
-        /*switch (active.getTag()){
-            case "1":
-                getSupportActionBar().setTitle("DoggoDate");
-                searchItem.setVisible(false);
-                favoritesItem.setVisible(false);
-                break;
-            case "2":
+        switch (navController.getCurrentDestination().getLabel().toString()){
+            case "maps_fragment":
                 getSupportActionBar().setTitle("DoggoZones");
                 searchItem.setVisible(true);
                 favoritesItem.setVisible(true);
                 break;
-            case "3":
+            case "search_fragment":
                 getSupportActionBar().setTitle("Doggos");
                 searchItem.setVisible(true);
                 favoritesItem.setVisible(false);
                 break;
-            case "4":
+            case "profile_fragment":
                 getSupportActionBar().setTitle("My Profile");
-                navView.setSelectedItemId(R.id.navigation_profile);
                 searchItem.setVisible(false);
                 favoritesItem.setVisible(false);
                 break;
-            case "5":
-                getSupportActionBar().setTitle("Doggos");
-                navView.setSelectedItemId(R.id.navigation_doggos);
-                searchItem.setVisible(false);
-                favoritesItem.setVisible(false);
-                break;
-            case "6":
+            case "doggozone_fragment":
                 getSupportActionBar().setTitle("DoggoZones");
-                navView.setSelectedItemId(R.id.navigation_map);
+                navView.getMenu().getItem(1).setChecked(true);
                 searchItem.setVisible(false);
                 favoritesItem.setVisible(false);
+                break;
+                default:
+                    getSupportActionBar().setTitle("DoggoDate");
+                    searchItem.setVisible(false);
+                    favoritesItem.setVisible(false);
                 break;
 
-        }*/
+        }
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -468,7 +457,6 @@ public class MainActivity extends AppCompatActivity {
     }
     public void toOtherProfile(int position) {
 
-        navController.navigate(R.id.toOtherProfile);
         navView.setSelectedItemId(R.id.navigation_doggos);
             searchItem.setVisible(false);
             favoritesItem.setVisible(false);

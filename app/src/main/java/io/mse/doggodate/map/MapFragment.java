@@ -32,6 +32,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.util.Objects;
+
 import io.mse.doggodate.Entity.DoggoZone;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
@@ -72,9 +74,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         context = container.getContext();
         view = inflater.inflate(R.layout.maps_fragment, container, false);
         mainActivity = (MainActivity)getActivity();
-        mainActivity.getSupportActionBar().setTitle("DoggoZones");
-
-
+        assert mainActivity != null;
+        Objects.requireNonNull(mainActivity.getSupportActionBar()).setTitle("DoggoZones");
+        mainActivity.invalidateOptionsMenu();
         park1 = ((MainActivity)getActivity()).getPark1();
         park2  = ((MainActivity)getActivity()).getPark2();
         park3  = ((MainActivity)getActivity()).getPark3();
@@ -84,6 +86,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
         slider = (SlidingUpPanelLayout) view.findViewById(R.id.slider);
         slider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
