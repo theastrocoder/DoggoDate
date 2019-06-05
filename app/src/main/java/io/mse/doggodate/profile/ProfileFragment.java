@@ -43,7 +43,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.profile_fragment, container, false);
         mainActivity = (MainActivity)getActivity();
-        mainActivity.getSupportActionBar().setTitle("My Profile");
+        mainActivity.invalidateOptionsMenu();
 
 
         imageView = (ImageView) view.findViewById(R.id.profile_image);

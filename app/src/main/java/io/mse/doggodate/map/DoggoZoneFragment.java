@@ -51,6 +51,9 @@ public class DoggoZoneFragment extends Fragment {
         TextView type = (TextView) view.findViewById(R.id.type);
         TextView fence = (TextView) view.findViewById(R.id.fence);
         TextView doggos = (TextView) view.findViewById(R.id.doggos_joining);
+        MainActivity mainActivity;
+        mainActivity=(MainActivity) getActivity();
+        mainActivity.invalidateOptionsMenu();
 
         parkName.setText("HI");
         parkArea.setText("Area: " + "220" + "m2");
