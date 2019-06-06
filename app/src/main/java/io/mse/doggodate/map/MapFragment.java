@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -34,7 +33,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.Objects;
 
-import io.mse.doggodate.Entity.DoggoZone;
+import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
 

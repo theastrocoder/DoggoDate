@@ -2,9 +2,8 @@ package io.mse.doggodate.rest;
 
 import java.util.List;
 
-import io.mse.doggodate.Entity.DoggoZone;
+import io.mse.doggodate.entity.DoggoZone;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.http.GET;
 
 public interface DogZonesAPI  {
