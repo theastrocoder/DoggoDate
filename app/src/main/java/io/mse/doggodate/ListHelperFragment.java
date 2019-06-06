@@ -67,13 +67,13 @@ public class ListHelperFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
-                openProfile(position);
+                openProfile(position, 1);
             }
         });
         return view;
     }
 
-    private void openProfile(int position) {
-        ((MainActivity)getActivity()).toOtherProfile(position);
+    private void openProfile(int position, int type) {
+        ((MainActivity)getActivity()).toOtherProfile(position, type);
     }
 }

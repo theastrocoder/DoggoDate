@@ -5,17 +5,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import io.mse.doggodate.databinding.OtherProfileFragmentBinding;
+import io.mse.doggodate.databinding.ProfileFragmentBinding;
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
@@ -36,6 +43,7 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
     private FloatingActionButton fab;
     ViewPagerAdapter viewPagerAdapter;
     ViewPager viewPager;
+    private ProfileViewModel profileViewModel;
 
     public OtherProfileFragment() {}
 
@@ -50,11 +58,37 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.profile_fragment, container, false);
+        profileViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
+        selectedDoggo = ((MainActivity)getActivity()).getSelectedDog();
+        // View view = inflater.inflate(R.layout.profile_fragment, container, false);
+        ((MainActivity)getActivity()).invalidateOptionsMenu();
+        final OtherProfileFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.other_profile_fragment, container, false);
+        View view =  binding.getRoot();
+        binding.setDoggo(selectedDoggo);
         imageView = (ImageView) view.findViewById(R.id.profile_image);
+        Observer nameObserver = new Observer<Doggo>() {
+            @Override
+            public void onChanged(@Nullable final Doggo activeDoggo) {
+                // Update the UI, in this case,binding.
+                //temp.setName(activeDoggo.getName());
+                binding.setDoggo(activeDoggo);
+            }
+        };
+        profileViewModel.getActiveDoggo().observe(this, nameObserver);
 
         Log.i("OtherProfileDog", "selected dogs name is" + this.selectedDoggo.getName());
         imageView.setImageResource(this.selectedDoggo.getProfilePic());
+        Button button2 = (Button) view.findViewById(R.id.button) ;
+        button2.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                Doggo d = new Doggo();
+                d.setName("tyrdgjfkghjk123123121");
+                profileViewModel.getActiveDoggo().setValue(d);
+
+            }});
 
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
         viewPagerAdapter = new ViewPagerAdapter( getChildFragmentManager(), this.selectedDoggo);

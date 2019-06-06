@@ -20,7 +20,9 @@ import java.util.List;
 import io.mse.doggodate.entity.Doggo;
 
 public class ProfileViewModel extends ViewModel {
+
     private MutableLiveData<List<Doggo>> users;
+
     private MutableLiveData<Doggo> activeFirebaseDoggo;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 

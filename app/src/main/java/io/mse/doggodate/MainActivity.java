@@ -27,6 +27,7 @@ import io.mse.doggodate.entity.DoggoEvent;
 import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.home.HomeFragment;
 import io.mse.doggodate.map.MapFragment;
+import io.mse.doggodate.profile.OtherProfileFragment;
 import io.mse.doggodate.profile.ProfileViewModel;
 
 
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private ProfileViewModel profileViewModel;
 
     Doggo activeDog;
+    Doggo selectedDog;
+
     ArrayList<Doggo> defaultSearchDoggos = new ArrayList<>();
 
     private DoggoZone park1;
@@ -398,24 +401,36 @@ public class MainActivity extends AppCompatActivity {
                 getSupportActionBar().setTitle("DoggoZones");
                 searchItem.setVisible(true);
                 favoritesItem.setVisible(true);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 break;
             case "search_fragment":
                 getSupportActionBar().setTitle("Doggos");
                 searchItem.setVisible(true);
                 favoritesItem.setVisible(false);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 break;
             case "profile_fragment":
                 getSupportActionBar().setTitle("My Profile");
                 searchItem.setVisible(false);
                 favoritesItem.setVisible(false);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 break;
             case "doggozone_fragment":
                 getSupportActionBar().setTitle("DoggoZones");
                 navView.getMenu().getItem(1).setChecked(true);
                 searchItem.setVisible(false);
                 favoritesItem.setVisible(false);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                break;
+            case "other_profile_fragment":
+                getSupportActionBar().setTitle("Doggo");
+                navView.getMenu().getItem(2).setChecked(true);
+                searchItem.setVisible(false);
+                favoritesItem.setVisible(false);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 break;
                 default:
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                     getSupportActionBar().setTitle("DoggoDate");
                     searchItem.setVisible(false);
                     favoritesItem.setVisible(false);
@@ -455,17 +470,25 @@ public class MainActivity extends AppCompatActivity {
         //fm.beginTransaction().add(R.id.main_container, fragment3, "3").hide(fragment3).commit();
 
     }
-    public void toOtherProfile(int position) {
+    public void toOtherProfile(int position, int type) {
+        //navController.getCurrentDestination().getLabel().equals()
+        //((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(defaultSearchDoggos.get(position));
+        selectedDog = defaultSearchDoggos.get(position);
 
-        navView.setSelectedItemId(R.id.navigation_doggos);
-            searchItem.setVisible(false);
-            favoritesItem.setVisible(false);
+        if (type == 0) {
+            navController.navigate(R.id.from_search_toOtherProfile);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Doggos");
+        } else if (type ==1) {
+            navController.navigate(R.id.from_myProfile_to_otherProfile);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        }
 
     }
 
+    public Doggo getSelectedDog(){
+        return selectedDog;
+    }
     /*public void goToDoggoZone(View view){
         navController.navigate(R.id.toDoggoZone);
         searchItem.setVisible(false);

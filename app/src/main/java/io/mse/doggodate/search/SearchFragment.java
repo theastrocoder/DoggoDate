@@ -43,7 +43,7 @@ public class SearchFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
-               openProfile(position);
+               openProfile(position, 0);
             }
         });
 
@@ -67,8 +67,8 @@ public class SearchFragment extends Fragment {
         ((MainActivity)getActivity()).setActive(((MainActivity)getActivity()).getFragment("5"), this);
     }
     */
-    private void openProfile(int position) {
-        ((MainActivity)getActivity()).toOtherProfile(position);
+    private void openProfile(int position, int type) {
+        ((MainActivity)getActivity()).toOtherProfile(position, type);
     }
 
 }

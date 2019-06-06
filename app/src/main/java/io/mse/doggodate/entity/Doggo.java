@@ -1,8 +1,9 @@
 package io.mse.doggodate.entity;
 
+
+
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
-import androidx.databinding.ObservableField;
 
 import java.util.ArrayList;
 

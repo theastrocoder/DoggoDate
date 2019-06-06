@@ -64,7 +64,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         final ProfileFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.profile_fragment, container, false);
-        View view = binding.getRoot();
+        View view =  binding.getRoot();
 
         //profileViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
 
@@ -74,23 +74,12 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onChanged(@Nullable final Doggo activeDoggo) {
                 // Update the UI, in this case,binding.
-                temp.setName(activeDoggo.getName());
+                //temp.setName(activeDoggo.getName());
                 binding.setDoggo(activeDoggo);
             }
         };
         profileViewModel.getActiveDoggo().observe(this, nameObserver);
 
-        Button button2 = (Button) view.findViewById(R.id.button) ;
-        button2.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                Doggo d = new Doggo();
-                d.setName("tyrdgjfkghjk123123121");
-                profileViewModel.getActiveDoggo().setValue(d);
-
-            }});
 
         mainActivity = (MainActivity)getActivity();
         mainActivity.invalidateOptionsMenu();

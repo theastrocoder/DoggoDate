@@ -23,15 +23,27 @@
         android:name="io.mse.doggodate.search.SearchFragment"
         android:label="search_fragment"
         tools:layout="@layout/search_fragment" >
+        <action
+            android:id="@+id/from_search_toOtherProfile"
+            app:destination="@id/otherProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/navigation_profile"
         android:name="io.mse.doggodate.profile.ProfileFragment"
         android:label="profile_fragment"
-        tools:layout="@layout/profile_fragment" />
+        tools:layout="@layout/profile_fragment" >
+        <action
+            android:id="@+id/from_myProfile_to_otherProfile"
+            app:destination="@id/otherProfileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/doggoZoneFragment"
         android:name="io.mse.doggodate.map.DoggoZoneFragment"
         android:label="doggozone_fragment"
         tools:layout="@layout/doggozone_fragment" />
+    <fragment
+        android:id="@+id/otherProfileFragment"
+        android:name="io.mse.doggodate.profile.OtherProfileFragment"
+        android:label="other_profile_fragment"
+        tools:layout="@layout/other_profile_fragment" />
 </navigation>
