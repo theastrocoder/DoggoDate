@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,6 +79,18 @@ public class ProfileFragment extends Fragment {
             }
         };
         profileViewModel.getActiveDoggo().observe(this, nameObserver);
+
+        Button button2 = (Button) view.findViewById(R.id.button) ;
+        button2.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                Doggo d = new Doggo();
+                d.setName("tyrdgjfkghjk123123121");
+                profileViewModel.getActiveDoggo().setValue(d);
+
+            }});
 
         mainActivity = (MainActivity)getActivity();
         mainActivity.getSupportActionBar().setTitle("My Profile");
