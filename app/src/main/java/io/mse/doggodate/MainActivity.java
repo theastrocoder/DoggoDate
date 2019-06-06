@@ -21,6 +21,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import io.mse.doggodate.Entity.Doggo;
 import io.mse.doggodate.Entity.DoggoEvent;
@@ -30,7 +31,13 @@ import io.mse.doggodate.map.DoggoZoneFragment;
 import io.mse.doggodate.map.MapFragment;
 import io.mse.doggodate.profile.OtherProfileFragment;
 import io.mse.doggodate.profile.ProfileFragment;
+import io.mse.doggodate.rest.DogZonesAPI;
 import io.mse.doggodate.search.SearchFragment;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -155,8 +162,26 @@ public class MainActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this,R.id.main_container);
         NavigationUI.setupWithNavController(navView,navController);
 
-        active = homeFragment;
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://data.wien.gv.at")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        DogZonesAPI api = retrofit.create(DogZonesAPI.class);
+        api.getall().enqueue(new Callback<List<DoggoZone>>() {
+
+            @Override
+            public void onResponse(Call<List<DoggoZone>> call, Response<List<DoggoZone>> response) {
+                assert response.body() != null;
+                Log.i(TAG,"Data " + response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<DoggoZone>> call, Throwable t) {
+                Log.i(TAG,"EROR " + t.getMessage());
+            }
+        });
 
         Doggo Bonnie = new Doggo("Bonnie", "Golden retriever", R.drawable.profile_image);
         Doggo Alex = new Doggo("Alex", "Labrador",  R.drawable.labrador_profile);
