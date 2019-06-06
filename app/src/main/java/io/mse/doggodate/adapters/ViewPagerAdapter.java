@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import io.mse.doggodate.Entity.Doggo;
+import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.GridHelperFragment;
 import io.mse.doggodate.ListHelperFragment;
 

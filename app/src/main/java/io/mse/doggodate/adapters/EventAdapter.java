@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import io.mse.doggodate.Entity.DoggoEvent;
+import io.mse.doggodate.entity.DoggoEvent;
 import io.mse.doggodate.R;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {

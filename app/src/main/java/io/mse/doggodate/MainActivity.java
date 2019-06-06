@@ -22,19 +22,17 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import io.mse.doggodate.Entity.Doggo;
-import io.mse.doggodate.Entity.DoggoEvent;
-import io.mse.doggodate.Entity.DoggoZone;
+import io.mse.doggodate.entity.Doggo;
+import io.mse.doggodate.entity.DoggoEvent;
+import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.home.HomeFragment;
-import io.mse.doggodate.map.DoggoZoneFragment;
 import io.mse.doggodate.map.MapFragment;
-import io.mse.doggodate.profile.OtherProfileFragment;
-import io.mse.doggodate.profile.ProfileFragment;
-import io.mse.doggodate.search.SearchFragment;
+import io.mse.doggodate.profile.ProfileViewModel;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    private ProfileViewModel profileViewModel;
 
     Doggo activeDog;
     ArrayList<Doggo> defaultSearchDoggos = new ArrayList<>();
@@ -151,6 +149,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         navView = findViewById(R.id.nav_view);
+        // Create the observer which updates the UI.
+
 
         navController = Navigation.findNavController(this,R.id.main_container);
         NavigationUI.setupWithNavController(navView,navController);
@@ -485,5 +485,31 @@ public class MainActivity extends AppCompatActivity {
 
     public void setActiveDoggoEvents(ArrayList<DoggoEvent> activeDoggoEvents) {
         this.activeDoggoEvents = activeDoggoEvents;
+    }
+
+    public Doggo dbQueryActiveDoggo() {
+      /*  FirebaseFirestore db = FirebaseFirestore.getInstance();
+        // Create a new user with a first and last name
+        Map<String, Object> user = new HashMap<>();
+        user.put("first", "Ada");
+        user.put("last", "Lovelace");
+        user.put("born", 1815);
+
+        // Add a new document with a generated ID
+        db.collection("users")
+                .add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.i("HOME", "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("HOME", "Error adding document", e);
+                    }
+                });*/
+      return null;
     }
 }

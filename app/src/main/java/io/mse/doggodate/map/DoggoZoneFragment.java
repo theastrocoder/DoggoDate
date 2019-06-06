@@ -27,7 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import io.mse.doggodate.Entity.DoggoZone;
+import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.adapters.ImageAdapter;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
