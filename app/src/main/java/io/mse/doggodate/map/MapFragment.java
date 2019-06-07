@@ -34,7 +34,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.Objects;
 
-import io.mse.doggodate.Entity.DoggoZone;
+import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
 

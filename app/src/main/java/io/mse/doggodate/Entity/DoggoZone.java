@@ -1,4 +1,4 @@
-package io.mse.doggodate.Entity;
+package io.mse.doggodate.entity;
 
 public class DoggoZone {
 

@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.mse.doggodate.Entity.DoggoEvent;
+import io.mse.doggodate.entity.DoggoEvent;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
 import io.mse.doggodate.adapters.EventAdapter;

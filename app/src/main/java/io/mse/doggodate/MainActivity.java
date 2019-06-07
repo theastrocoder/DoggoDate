@@ -23,9 +23,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.mse.doggodate.Entity.Doggo;
-import io.mse.doggodate.Entity.DoggoEvent;
-import io.mse.doggodate.Entity.DoggoZone;
+import io.mse.doggodate.entity.Doggo;
+import io.mse.doggodate.entity.DoggoEvent;
+import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.home.HomeFragment;
 import io.mse.doggodate.map.DoggoZoneFragment;
 import io.mse.doggodate.map.MapFragment;

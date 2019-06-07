@@ -1,4 +1,4 @@
-package io.mse.doggodate.Entity;
+package io.mse.doggodate.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
