@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import io.mse.doggodate.entity.Doggo;
+import io.mse.doggodate.Entity.Doggo;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
 

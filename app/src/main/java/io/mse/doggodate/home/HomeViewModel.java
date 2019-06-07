@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import io.mse.doggodate.entity.DoggoEvent;
+import io.mse.doggodate.Entity.DoggoEvent;
 
 public class HomeViewModel extends AndroidViewModel {
 
