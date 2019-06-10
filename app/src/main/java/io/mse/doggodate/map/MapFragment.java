@@ -14,13 +14,19 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.common.api.Api;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -29,13 +35,28 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.JsonObject;
+import com.google.maps.android.data.geojson.GeoJsonFeature;
+import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-import java.util.Objects;
+import org.json.JSONObject;
 
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Optional;
+
+import io.mse.doggodate.databinding.MapsFragmentBinding;
 import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
+import io.mse.doggodate.rest.DogZoneAPI;
+import io.mse.doggodate.viewmodel.MapViewModel;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -62,16 +83,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private DoggoZone selectedDoggoZone;
     private View view;
     MainActivity mainActivity;
+    private MapViewModel mapViewModel;
 
     public MapFragment() {
         // Required empty public constructor
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mapViewModel = ViewModelProviders.of(this).get(MapViewModel.class);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        final MapsFragmentBinding root = DataBindingUtil.inflate(inflater, R.layout.maps_fragment, container, false);
         context = container.getContext();
-        view = inflater.inflate(R.layout.maps_fragment, container, false);
+        view = root.getRoot();
+
         mainActivity = (MainActivity)getActivity();
         assert mainActivity != null;
         Objects.requireNonNull(mainActivity.getSupportActionBar()).setTitle("DoggoZones");
@@ -96,6 +126,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         type=(TextView)view.findViewById(R.id.type);
         doggosJoining=(TextView)view.findViewById(R.id.doggos_joining);
         goToDoggoZone = (ImageButton) view.findViewById(R.id.join_zone);
+
 
         return view;
     }
@@ -123,7 +154,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             Log.e("MapsFragment", "Style parsing failed.");
         }
 
-        mMap.setOnMarkerClickListener(this);
+
+
+        mapViewModel.getFeatures().observe(this, new Observer<JSONObject>() {
+            @Override
+            public void onChanged(JSONObject featuresResponse) {
+                if (featuresResponse != null) {
+                    GeoJsonLayer geoJsonLayer = new GeoJsonLayer(mMap,featuresResponse);
+
+                    //Iterator<GeoJsonFeature> i = geoJsonLayer.getFeatures().iterator();
+                    geoJsonLayer.addLayerToMap();
+                }
+            }
+        });
+
+
+        //mMap.setOnMarkerClickListener(this);
         LatLng park1Pos = new LatLng(park1.getLatitude(),park1.getLongitude());
         LatLng park2Pos = new LatLng(park2.getLatitude(),park2.getLongitude());
         LatLng park3Pos = new LatLng(park3.getLatitude(),park3.getLongitude());
@@ -136,7 +182,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMap.addMarker(new MarkerOptions().position(park4Pos).icon(bitmapDescriptorFromVector(getContext(),R.drawable.park))).setTag(park4);
         mMap.addMarker(new MarkerOptions().position(park5Pos).icon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav))).setTag(park5);
         mMap.addMarker(new MarkerOptions().position(park6Pos).icon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav))).setTag(park6);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(park1Pos,12));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(park1Pos,15));
 
     }
 
