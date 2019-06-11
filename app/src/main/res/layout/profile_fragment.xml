@@ -3,40 +3,52 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+
     <data>
-        <import type="io.mse.doggodate.entity.Doggo" />
+        <import type="android.view.View"/>
 
         <variable
             name="doggo"
             type="io.mse.doggodate.entity.Doggo" />
 
+        <variable
+            name="handler"
+            type="io.mse.doggodate.profile.ProfileFragment" />
+
+        <variable
+            name="manager"
+            type="androidx.fragment.app.FragmentManager" />
+
     </data>
 
 
 
-
-<FrameLayout
+    <FrameLayout
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".profile.ProfileFragment"
     >
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
 
 
         <ImageView
             android:id="@+id/profile_image"
+            imageResource="@{doggo.profilePic}"
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.059"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <TextView
@@ -44,54 +56,63 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:textSize="32sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="32dp"
             android:text="@{doggo.name}"
-            android:translationY="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/breed"
+            android:textSize="25sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_image"
-            app:layout_constraintVertical_bias="0.039" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/profile_image"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/breed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginEnd="8dp"
-            android:text="Golden retriever"
-            android:textSize="25sp"
-            android:translationY="5dp"
+            android:layout_marginLeft="20dp"
+            android:text="@{doggo.breed}"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.515"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/profile_image"
+            app:layout_constraintTop_toBottomOf="@+id/name"
+            app:layout_constraintVertical_bias="0.015" />
 
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="52dp"
             android:translationY="10dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/breed"
-            app:layout_constraintVertical_bias="0.0"
             app:tabGravity="fill"
+            app:pager="@{(pager)}"
             app:tabMode="fixed"></com.google.android.material.tabs.TabLayout>
 
         <androidx.viewpager.widget.ViewPager
-            android:id="@+id/viewPager"
+            android:id="@+id/pager"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:paddingTop="10dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tabLayout"
+            app:handler="@{handler}"
+            app:layout_constraintVertical_bias="0.0" />
+            <!--android:paddingTop="10dp"-->
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+
+
+       <!-- <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/followButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -107,7 +128,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tabLayout"
             app:layout_constraintVertical_bias="0.957" />
-
+-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

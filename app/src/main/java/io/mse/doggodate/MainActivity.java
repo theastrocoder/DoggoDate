@@ -18,12 +18,14 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoEvent;
+import io.mse.doggodate.entity.DoggoPOJO;
 import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.home.HomeFragment;
 import io.mse.doggodate.map.MapFragment;
@@ -172,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
         Doggo Makawa = new Doggo("Makawa", "Chivuavua", R.drawable.chivava_1);
 
         /* SETTING ACTIVE DOG ATTRIBUTES*/
-        activeDog = Bonnie;
         ArrayList<Doggo> followers = new ArrayList<>();
         followers.add(Alex);
         followers.add(Chichi);
@@ -196,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
 
         Bonnie.setPhotos(photos);
         Bonnie.setProfilePic(R.drawable.profile_image);
+        activeDog = Bonnie;
 
         /**-------ALEX---------*/
         ArrayList<Integer> alexPhotos = new ArrayList<>();
@@ -314,8 +316,6 @@ public class MainActivity extends AppCompatActivity {
         defaultSearchDoggos.add(Rex);
         defaultSearchDoggos.add(Chichi);
         defaultSearchDoggos.add(Alex);
-
-
 
 
     }
@@ -465,11 +465,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void updateOtherProfileFragment(Doggo selectedDoggo) {
-
-        //fm.beginTransaction().add(R.id.main_container, fragment3, "3").hide(fragment3).commit();
-
-    }
     public void toOtherProfile(int position, int type) {
         //navController.getCurrentDestination().getLabel().equals()
         //((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(defaultSearchDoggos.get(position));

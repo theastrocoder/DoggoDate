@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
@@ -40,9 +41,10 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
     private TextView name;
     private TextView breed;
     private TabLayout tabs;
-    private FloatingActionButton fab;
+    private Button followButton;
     ViewPagerAdapter viewPagerAdapter;
     ViewPager viewPager;
+    private OtherProfileViewModel otherProfileViewModel;
     private ProfileViewModel profileViewModel;
 
     public OtherProfileFragment() {}
@@ -58,63 +60,51 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         profileViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
+        otherProfileViewModel = ViewModelProviders.of(this).get(OtherProfileViewModel.class);
+
         selectedDoggo = ((MainActivity)getActivity()).getSelectedDog();
-        // View view = inflater.inflate(R.layout.profile_fragment, container, false);
+
         ((MainActivity)getActivity()).invalidateOptionsMenu();
+
         final OtherProfileFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.other_profile_fragment, container, false);
         View view =  binding.getRoot();
         binding.setDoggo(selectedDoggo);
-        imageView = (ImageView) view.findViewById(R.id.profile_image);
-        Observer nameObserver = new Observer<Doggo>() {
+
+        Observer selectedDoggoObserver = new Observer<Doggo>() {
             @Override
-            public void onChanged(@Nullable final Doggo activeDoggo) {
+            public void onChanged(@Nullable final Doggo selectedDoggo) {
                 // Update the UI, in this case,binding.
-                //temp.setName(activeDoggo.getName());
-                binding.setDoggo(activeDoggo);
+                binding.setDoggo(selectedDoggo);
             }
         };
-        profileViewModel.getActiveDoggo().observe(this, nameObserver);
-
-        Log.i("OtherProfileDog", "selected dogs name is" + this.selectedDoggo.getName());
-        imageView.setImageResource(this.selectedDoggo.getProfilePic());
-        Button button2 = (Button) view.findViewById(R.id.button) ;
-        button2.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                Doggo d = new Doggo();
-                d.setName("tyrdgjfkghjk123123121");
-                profileViewModel.getActiveDoggo().setValue(d);
-
-            }});
+        otherProfileViewModel.getSelectedDoggo().observe(this, selectedDoggoObserver);
 
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
         viewPagerAdapter = new ViewPagerAdapter( getChildFragmentManager(), this.selectedDoggo);
         viewPager.setAdapter(viewPagerAdapter);
 
-        name = (TextView) view.findViewById(R.id.name);
-        name.setText(this.selectedDoggo.getName());
-        breed = (TextView) view.findViewById(R.id.breed);
-        breed.setText(this.selectedDoggo.getBreed());
-
         tabs = (TabLayout) view.findViewById(R.id.tabLayout);
         tabs.setupWithViewPager(viewPager);
 
 
-        fab = (FloatingActionButton)view.findViewById(R.id.followButton);
-        fab.setOnClickListener(new View.OnClickListener() {
+        followButton = (Button)view.findViewById(R.id.followButton);
+        followButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                follow(v);
-            }
-        });
+
+                   MutableLiveData<Doggo> d = profileViewModel.getActiveDoggo();
+                    otherProfileViewModel.setSelectedFirebaseDoggo(d.getValue());
+                    //binding.setDoggo(d);
+                    followButton.setText("Followed");
+
+            }});
+
         if (((MainActivity)getActivity()).getActiveDog().getFollowings().contains(this.selectedDoggo)) {
-            fab.hide();
         } else {
-            fab.show();
+            followButton.setText("Follow");
         }
 
         return view;
@@ -124,7 +114,7 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
         ((MainActivity)getActivity()).getActiveDog().getFollowings().add(this.selectedDoggo);
         this.selectedDoggo.getFollowers().add(((MainActivity)getActivity()).getActiveDog());
 
-        ((MainActivity)getActivity()).updateOtherProfileFragment(this.selectedDoggo);
+        //((MainActivity)getActivity()).updateOtherProfileFragment(this.selectedDoggo);
         Toast.makeText(getContext(),"You started following " + this.selectedDoggo.getName(),Toast.LENGTH_SHORT).show();
 
        /* // Setting Alert Dialog Title

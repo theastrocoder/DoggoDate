@@ -2,8 +2,11 @@ package io.mse.doggodate.entity;
 
 
 
+import android.widget.ImageView;
+
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
+import androidx.databinding.BindingAdapter;
 
 import java.util.ArrayList;
 
@@ -14,6 +17,7 @@ public class Doggo extends BaseObservable {
     private ArrayList<Doggo> followers = new ArrayList<>();
     private ArrayList<Doggo> followings = new ArrayList<>();
     private ArrayList<Integer> photos = new ArrayList<>();
+    private ArrayList<Long> photosLong = new ArrayList<>();
     private ArrayList<DoggoEvent> events = new ArrayList<>();
     private int profilePic;
     private boolean active;
@@ -50,6 +54,7 @@ public class Doggo extends BaseObservable {
         this.name = name;
     }
 
+    @Bindable
     public String getBreed() {
         return breed;
     }
@@ -74,18 +79,36 @@ public class Doggo extends BaseObservable {
         this.followings = followings;
     }
 
+    @Bindable
     public ArrayList<Integer> getPhotos() {
         return photos;
     }
 
+    @Bindable
     public int getProfilePic() {
         return profilePic;
     }
 
+    @BindingAdapter("android:src")
+    public void setProfilePic(ImageView imageView, int resource){
+        imageView.setImageResource(resource);
+
+    }
+    @Bindable
+    public ArrayList<Long> getPhotosLong() {
+        return photosLong;
+    }
+    @Bindable
+    public void setPhotosLong(ArrayList<Long> photoLong) {
+        this.photosLong = photoLong;
+    }
+
+    @Bindable
     public void setProfilePic(int profilePic) {
         this.profilePic = profilePic;
     }
 
+    @Bindable
     public void setPhotos(ArrayList<Integer> photos) {
         this.photos = photos;
     }

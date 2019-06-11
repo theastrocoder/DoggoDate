@@ -1,4 +1,4 @@
-package io.mse.doggodate;
+package io.mse.doggodate.helpers;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import io.mse.doggodate.MainActivity;
+import io.mse.doggodate.R;
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.adapters.CustomAdapter;
 
@@ -46,7 +48,7 @@ public class ListHelperFragment extends Fragment {
         list = (ListView) view.findViewById(R.id.list);
         ArrayList<String> stringList = new ArrayList();
 
-        if (followers != null && followers) {
+      /*  if (followers != null && followers) {
             for (int i = 0; i < selectedDoggo.getFollowers().size(); i++) {
                 stringList.add(selectedDoggo.getFollowers().get(i).getName());
             }
@@ -59,7 +61,7 @@ public class ListHelperFragment extends Fragment {
                 stringList.add(selectedDoggo.getEvents().get(i).getZone().getName() + " " + selectedDoggo.getEvents().get(i).getDateTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")) );
             }
         }
-
+*/
         CustomAdapter adapter = new CustomAdapter(stringList,(AppCompatActivity)getActivity());
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -9,8 +9,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import io.mse.doggodate.entity.Doggo;
-import io.mse.doggodate.GridHelperFragment;
-import io.mse.doggodate.ListHelperFragment;
+import io.mse.doggodate.helpers.GridHelperFragment;
+import io.mse.doggodate.helpers.ListHelperFragment;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
@@ -68,19 +68,19 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         String title = null;
         if (position == 0)
         {
-            title = selectedDoggo.getPhotos().size() +" Photos";
+            title = /*selectedDoggo.getPhotos().size() +*/" Photos";
         }
         else if (position == 2)
         {
-            title = selectedDoggo.getFollowings().size() +" Doggos";
+            title = /*selectedDoggo.getFollowings().size()+*/ " Doggos";
         }
         else if (position == 3)
         {
-            title = selectedDoggo.getFollowers().size() +" Flwrz";
+            title = /*selectedDoggo.getFollowers().size() +*/" Flwrz";
         }
         else if (position == 1)
         {
-            title = selectedDoggo.getEvents().size() +" Events";
+            title = /*selectedDoggo.getEvents().size() +*/" Events";
         }
         return title;
     }
