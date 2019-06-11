@@ -1,127 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/slider"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="bottom"
-    android:gravity="bottom"
-    sothree:umanoPanelHeight="68dp"
-    sothree:umanoShadowHeight="4dp"
-    sothree:umanoParallaxOffset="100dp"
-    sothree:umanoDragView="@+id/dragview"
-    android:background="@color/cardview_light_background"
-    sothree:umanoOverlay="false"
-    sothree:umanoScrollableView="@+id/list"
-    tools:context=".map.MapFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!--MAPS-->
-    <FrameLayout
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        xmlns:sothree="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/slider"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        sothree:umanoPanelHeight="68dp"
+        sothree:umanoShadowHeight="4dp"
+        sothree:umanoParallaxOffset="100dp"
+        sothree:umanoDragView="@+id/dragview"
+        android:background="@color/cardview_light_background"
+        sothree:umanoOverlay="false"
+        sothree:umanoScrollableView="@+id/list">
 
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <!--MAPS-->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".map.MapFragment" />
+            >
 
-    </FrameLayout>
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                 />
 
-    <!--Slide up-->
-    <LinearLayout
-        android:id="@+id/dragview"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:clickable="true"
-        android:focusable="false"
-        android:orientation="vertical">
+        </FrameLayout>
 
+        <!--Slide up-->
         <LinearLayout
+            android:id="@+id/dragview"
             android:layout_width="match_parent"
-            android:layout_height="68dp"
-            android:orientation="horizontal">
+            android:layout_height="200dp"
+            android:clickable="true"
+            android:focusable="false"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:gravity="center_vertical"
-                android:layout_weight="1"
-                android:textSize="20sp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:id="@+id/zone_name" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/add_favorites"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:gravity="center_vertical|end"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:onClick="addToFavorites"
-                android:src="@drawable/heart_outline"
-                android:background="@color/cardview_light_background"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:textSize="20sp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/zone_name" />
 
-            <ImageButton
-                android:id="@+id/join_zone"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:gravity="center_vertical|end"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:src="@drawable/dog_service"
-                android:background="@drawable/round_btm"/>
+                <ImageButton
+                    android:id="@+id/add_favorites"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:gravity="center_vertical|end"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:onClick="addToFavorites"
+                    android:src="@drawable/heart_outline"
+                    android:background="@color/cardview_light_background"/>
 
+                <ImageButton
+                    android:id="@+id/join_zone"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:gravity="center_vertical|end"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:src="@drawable/dog_service"
+                    android:background="@drawable/round_btm"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="10dp">
+                <TextView
+                    android:id="@+id/area"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:paddingBottom="5dp"/>
+
+                <TextView
+                    android:id="@+id/type"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:paddingBottom="5dp"/>
+
+                <TextView
+                    android:id="@+id/fence"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:paddingBottom="5dp"/>
+                <TextView
+                    android:id="@+id/doggos_joining"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:paddingBottom="5dp"/>
+            </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingStart="10dp">
-            <TextView
-                android:id="@+id/area"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:paddingBottom="5dp"/>
-
-            <TextView
-                android:id="@+id/type"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:paddingBottom="5dp"/>
-
-            <TextView
-                android:id="@+id/fence"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:paddingBottom="5dp"/>
-            <TextView
-                android:id="@+id/doggos_joining"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:paddingBottom="5dp"/>
-        </LinearLayout>
-
-    </LinearLayout>
 
 
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
-</com.sothree.slidinguppanel.SlidingUpPanelLayout>
-
+</layout>

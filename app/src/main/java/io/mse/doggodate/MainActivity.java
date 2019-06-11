@@ -19,9 +19,11 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.JsonObject;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoEvent;
@@ -31,6 +33,12 @@ import io.mse.doggodate.home.HomeFragment;
 import io.mse.doggodate.map.MapFragment;
 import io.mse.doggodate.profile.OtherProfileFragment;
 import io.mse.doggodate.profile.ProfileViewModel;
+import io.mse.doggodate.rest.DogZoneAPI;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity {

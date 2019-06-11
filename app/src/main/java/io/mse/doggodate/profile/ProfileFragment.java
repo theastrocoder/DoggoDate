@@ -92,17 +92,6 @@ public class ProfileFragment extends Fragment {
         mainActivity.getSupportActionBar().setTitle("My Profile");
 
         activeDoggo = ((MainActivity)getActivity()).getActiveDog();
-       // View view =  binding.getRoot();
-       // viewPager = (ViewPager) view.findViewById(R.id.viewPager);
-       // viewPagerAdapter = new ViewPagerAdapter( getChildFragmentManager(), activeDoggo);
-       // viewPager.setAdapter(viewPagerAdapter);
-
-        //tabs = (TabLayout) view.findViewById(R.id.tabLayout);
-        //tabs.setupWithViewPager(viewPager);
-
-        //FloatingActionButton button =(FloatingActionButton) view.findViewById(R.id.followButton);
-        //button.hide();
-        //addDoggosToDB();
 
         return binding.getRoot();
     }
@@ -125,6 +114,7 @@ public class ProfileFragment extends Fragment {
     private Doggo getFirebaseDoggo() {
         return this.firebaseDoggo;
     }
+
     private ProfileViewModel getProfileViewModel() {
         return this.profileViewModel;
     }
