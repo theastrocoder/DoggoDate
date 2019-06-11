@@ -28,7 +28,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         {
             fragment = new GridHelperFragment();
             ((GridHelperFragment) fragment).setSearch(false);
-            ((GridHelperFragment) fragment).setSelectedDoggo(this.selectedDoggo);
+            //((GridHelperFragment) fragment).setSelectedDoggo(this.selectedDoggo);
 
             Log.i("ViewPagerAdapter", "first tab");
         }

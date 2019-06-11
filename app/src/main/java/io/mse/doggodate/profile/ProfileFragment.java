@@ -118,6 +118,11 @@ public class ProfileFragment extends Fragment {
     private ProfileViewModel getProfileViewModel() {
         return this.profileViewModel;
     }
+
+
+
+
+
     private void addDoggosToDB(){
         final DoggoPOJO Bonnie = new DoggoPOJO("Bonnie", "Golden retriever", R.drawable.profile_image);
         final DoggoPOJO Alex = new DoggoPOJO("Alex", "Labrador",  R.drawable.labrador_profile);

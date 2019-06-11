@@ -10,6 +10,14 @@
             name="doggo"
             type="io.mse.doggodate.entity.Doggo" />
 
+        <variable
+            name="handler"
+            type="io.mse.doggodate.profile.OtherProfileFragment" />
+
+        <variable
+            name="manager"
+            type="androidx.fragment.app.FragmentManager" />
+
     </data>
 
 
@@ -84,6 +92,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/breed"
                 app:tabGravity="fill"
+                app:pager="@{(viewPager)}"
+
                 app:tabMode="fixed"></com.google.android.material.tabs.TabLayout>
 
             <androidx.viewpager.widget.ViewPager
@@ -97,6 +107,7 @@
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tabLayout"
+                app:handler="@{handler}"
                 app:layout_constraintVertical_bias="0.0" />
 
             <Button

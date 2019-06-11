@@ -478,7 +478,7 @@ public class MainActivity extends AppCompatActivity {
     public void toOtherProfile(int position, int type) {
         //navController.getCurrentDestination().getLabel().equals()
         //((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(defaultSearchDoggos.get(position));
-        selectedDog = defaultSearchDoggos.get(position);
+        this.selectedDog = defaultSearchDoggos.get(position);
 
         if (type == 0) {
             navController.navigate(R.id.from_search_toOtherProfile);
@@ -492,7 +492,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public Doggo getSelectedDog(){
-        return selectedDog;
+        return this.selectedDog;
     }
     /*public void goToDoggoZone(View view){
         navController.navigate(R.id.toDoggoZone);

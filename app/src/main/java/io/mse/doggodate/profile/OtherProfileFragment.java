@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -34,44 +35,62 @@ import io.mse.doggodate.search.SearchFragment;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class OtherProfileFragment extends Fragment implements MainActivity.OnBackPressedListener {
+public class OtherProfileFragment extends Fragment {
 
     private Doggo selectedDoggo;
-    private ImageView imageView;
-    private TextView name;
-    private TextView breed;
-    private TabLayout tabs;
+
     private Button followButton;
-    ViewPagerAdapter viewPagerAdapter;
-    ViewPager viewPager;
+
     private OtherProfileViewModel otherProfileViewModel;
     private ProfileViewModel profileViewModel;
 
     public OtherProfileFragment() {}
 
     public Doggo getSelectedDoggo() {
-        return selectedDoggo;
+        return ((MainActivity)getActivity()).getSelectedDog();
     }
 
     public void setSelectedDoggo(Doggo selectedDoggo) {
         this.selectedDoggo = selectedDoggo;
     }
 
+    @BindingAdapter({"bind:pager"})
+    public static void bindViewPagerTabsInOtherProfile(final TabLayout view, final ViewPager pagerView)
+    {
+        view.setupWithViewPager(pagerView, true);
+    }
+
+
+    @BindingAdapter({"bind:handler"})
+    public static void bindViewPagerAdapterInOtherProfile(final ViewPager view, final OtherProfileFragment fragment)
+    {
+        Doggo aDoggo = fragment.getSelectedDoggo();
+        final ViewPagerAdapter adapter = new ViewPagerAdapter( fragment.getFragmentManager(), aDoggo);
+       view.setAdapter(adapter);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        profileViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
-        otherProfileViewModel = ViewModelProviders.of(this).get(OtherProfileViewModel.class);
-
-        selectedDoggo = ((MainActivity)getActivity()).getSelectedDog();
-
         ((MainActivity)getActivity()).invalidateOptionsMenu();
 
-        final OtherProfileFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.other_profile_fragment, container, false);
-        View view =  binding.getRoot();
-        binding.setDoggo(selectedDoggo);
+        //to delete
+        profileViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
 
+        //init view model
+        this.otherProfileViewModel = ViewModelProviders.of(this).get(OtherProfileViewModel.class);
+
+        this.selectedDoggo = ((MainActivity)getActivity()).getSelectedDog();
+
+
+        //setup binding
+        final OtherProfileFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.other_profile_fragment, container, false);
+        //must set selected doggo for name, image, and breed
+        binding.setDoggo(this.selectedDoggo);
+        binding.setHandler(this);
+        binding.setManager(getFragmentManager());
+
+        //observer for view model
         Observer selectedDoggoObserver = new Observer<Doggo>() {
             @Override
             public void onChanged(@Nullable final Doggo selectedDoggo) {
@@ -81,14 +100,8 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
         };
         otherProfileViewModel.getSelectedDoggo().observe(this, selectedDoggoObserver);
 
-        viewPager = (ViewPager) view.findViewById(R.id.viewPager);
-        viewPagerAdapter = new ViewPagerAdapter( getChildFragmentManager(), this.selectedDoggo);
-        viewPager.setAdapter(viewPagerAdapter);
-
-        tabs = (TabLayout) view.findViewById(R.id.tabLayout);
-        tabs.setupWithViewPager(viewPager);
-
-
+        //follow button setup
+        View view =  binding.getRoot();
         followButton = (Button)view.findViewById(R.id.followButton);
         followButton.setOnClickListener(new View.OnClickListener() {
 
@@ -136,17 +149,6 @@ public class OtherProfileFragment extends Fragment implements MainActivity.OnBac
         alertDialog.show();
         Log.i("OtherProfileFragment", "you follow the Doggo" + this.selectedDoggo.getName());*/
     }
-
-
-
- @Override
-    public void doBack() {
-            // I'm viewing Fragment C
-            getFragmentManager().popBackStack();
-            ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
-     ((MainActivity)getActivity()).setActive(new SearchFragment(), this);
-
-        }
 
     }
 

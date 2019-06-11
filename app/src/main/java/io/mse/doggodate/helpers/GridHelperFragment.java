@@ -12,7 +12,12 @@ import android.widget.GridView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.library.baseAdapters.BR;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
@@ -22,6 +27,8 @@ import io.mse.doggodate.adapters.ViewPagerAdapter;
 import io.mse.doggodate.databinding.FragmentGridHelperBinding;
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.adapters.ImageAdapter;
+import io.mse.doggodate.profile.ProfileFragment;
+import io.mse.doggodate.profile.ProfileViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,11 +49,12 @@ public class GridHelperFragment extends Fragment {
     private String mParam2;
     private boolean isSearch;
     private Doggo selectedDoggo;
-
+    private ArrayList<Integer> images = new ArrayList<>();
     public Doggo getSelectedDoggo() {
         return selectedDoggo;
     }
-
+    private FragmentGridHelperBinding binding;
+    private ProfileViewModel profileViewModel;
     public void setSelectedDoggo(Doggo selectedDoggo) {
         this.selectedDoggo = selectedDoggo;
     }
@@ -91,13 +99,18 @@ public class GridHelperFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+
+    private ArrayList<Integer> getImages() {
+        return this.images;
+    }
     @BindingAdapter({"bind:handler"})
     public static void bindGridViewAdapter(final GridView view, final GridHelperFragment fragment)
     {
         MainActivity mainActivity = ((MainActivity)fragment.getActivity());
         Log.i("GridViewAdapter ", "got " + fragment + " as a fragment");
-        Doggo aDoggo = mainActivity.getActiveDog();
-        final ViewPagerAdapter adapter = new ViewPagerAdapter( fragment.getFragmentManager(), aDoggo);
+        Doggo aDoggo = fragment.getSelectedDoggo();
+        //aDoggo.setPhotos(fragment.getImages());
+        //final ViewPagerAdapter adapter = new ViewPagerAdapter( fragment.getFragmentManager(), aDoggo);
         ArrayList<Integer> images = new ArrayList<>();
         for (int i = 0; i < mainActivity.getActiveDog().getPhotos().size(); i++) {
             images.add(mainActivity.getActiveDog().getPhotos().get(i));
@@ -110,28 +123,29 @@ public class GridHelperFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final FragmentGridHelperBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_grid_helper, container, false);
-
+         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_grid_helper, container, false);
+         profileViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
         View view = binding.getRoot();
-       // View view = inflater.inflate(R.layout.fragment_grid_helper, container, false);
-       // GridView gridView = (GridView) view.findViewById(R.id.grid_view);
-        // Instance of ImageAdapter Class
+
         binding.setHandler(this);
         binding.setManager(getFragmentManager());
-        ArrayList<Integer> images = new ArrayList<>();
+        binding.setVariable(BR.photos, images);
 
         //if it is search, then show all dogs
-        if (isSearch) {
+
+       /* ArrayList<Integer> images = new ArrayList<>();
+
+       if (isSearch) {
             for (int i = 0; i < ((MainActivity) getActivity()).getDefaultSearch().size(); i++) {
                 images.add(((MainActivity) getActivity()).getDefaultSearch().get(i).getProfilePic());
             }
             //if its profile, show all images of the dog
         } else {
+
             for (int i = 0; i < ((MainActivity) getActivity()).getActiveDog().getPhotos().size(); i++) {
                 images.add(((MainActivity) getActivity()).getActiveDog().getPhotos().get(i));
             }
-        }
-       // gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(),(AppCompatActivity)getActivity(),images));
+*/
         return binding.getRoot();
     }
 
