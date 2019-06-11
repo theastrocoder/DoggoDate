@@ -205,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
 
         Bonnie.setPhotos(photos);
         Bonnie.setProfilePic(R.drawable.profile_image);
-        activeDog = Bonnie;
 
         /**-------ALEX---------*/
         ArrayList<Integer> alexPhotos = new ArrayList<>();
@@ -224,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
         followersA.add(Makawa);
         Alex.setFollowers(followersA);
         Alex.setFollowings(followingsA);
+
         /**-------CHICHI---------*/
         ArrayList<Integer> ChiChiPhotos = new ArrayList<>();
         ChiChiPhotos.add(R.drawable.chivava_1);
@@ -240,6 +240,8 @@ public class MainActivity extends AppCompatActivity {
         followersC.add(Makawa);
         Chichi.setFollowers(followersC);
         Chichi.setFollowings(followingsC);
+        activeDog = Chichi;
+
         /**-------REX---------*/
         ArrayList<Integer> rexPhotos = new ArrayList<>();
         rexPhotos.add(R.drawable.wd_2);
