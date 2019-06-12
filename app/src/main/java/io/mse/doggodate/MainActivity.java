@@ -13,6 +13,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -34,6 +35,8 @@ import io.mse.doggodate.map.MapFragment;
 import io.mse.doggodate.profile.OtherProfileFragment;
 import io.mse.doggodate.profile.ProfileViewModel;
 import io.mse.doggodate.rest.DogZoneAPI;
+import io.mse.doggodate.search.SearchFirestoreCallback;
+import io.mse.doggodate.search.SearchViewModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -475,19 +478,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void toOtherProfile(int position, int type) {
+    public void toOtherProfile(final int position, final int type) {
         //navController.getCurrentDestination().getLabel().equals()
         //((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(defaultSearchDoggos.get(position));
-        this.selectedDog = defaultSearchDoggos.get(position);
 
-        if (type == 0) {
-            navController.navigate(R.id.from_search_toOtherProfile);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } else if (type ==1) {
-            navController.navigate(R.id.from_myProfile_to_otherProfile);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        final SearchViewModel searchViewModel = ViewModelProviders.of(this).get(SearchViewModel.class);
+        searchViewModel.getAllDoggos(new SearchFirestoreCallback() {
+            @Override
+            public void bindData(ArrayList<Doggo> doggos) {
+                selectedDog = doggos.get(position);
 
-        }
+                if (type == 0) {
+                    navController.navigate(R.id.from_search_toOtherProfile);
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                } else if (type ==1) {
+                    navController.navigate(R.id.from_myProfile_to_otherProfile);
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+                }
+            }
+        });
+
 
     }
 

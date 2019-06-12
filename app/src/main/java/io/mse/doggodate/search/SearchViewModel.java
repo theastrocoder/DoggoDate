@@ -25,6 +25,9 @@ public class SearchViewModel extends ViewModel {
             doggos = new MutableLiveData<ArrayList<Doggo>>();
             loadAllFirebaseDoggos(searchFirestoreCallback);
         }
+       else {
+            searchFirestoreCallback.bindData(doggos.getValue());
+        }
         return doggos;
     }
 
