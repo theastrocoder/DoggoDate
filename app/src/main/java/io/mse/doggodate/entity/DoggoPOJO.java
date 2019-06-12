@@ -13,55 +13,35 @@ public class DoggoPOJO extends BaseObservable {
     private String id;
     private String name;
     private String breed;
-    private int profilePic;
+    private String profilePic;
     private boolean active;
-    private ArrayList<Integer> photos = new ArrayList<>();
-    private ArrayList<DoggoPOJO> followers = new ArrayList<>();
-    private ArrayList<DoggoPOJO> followings = new ArrayList<>();
+    private ArrayList<String> photos;
 
-    public DoggoPOJO(String name, String breed, int profilePic) {
+    public DoggoPOJO(String name, String breed, String profilePic) {
         this.name = name;
         this.breed = breed;
         this.profilePic = profilePic;
-    }
-    public DoggoPOJO(String name, String breed, boolean active) {
-        this.name = name;
-        this.breed = breed;
-        this.active = active;
+        this.active = false;
+        this.photos = new ArrayList<>();
     }
 
-    public DoggoPOJO() {
 
-    }
-
-    public ArrayList<DoggoPOJO> getFollowings() {
-        return followings;
-    }
-
-    public void setFollowings(ArrayList<DoggoPOJO> followings) {
-        this.followings = followings;
-    }
-
-    public ArrayList<DoggoPOJO> getFollowers() {
-        return followers;
-    }
-
-    public void setFollowers(ArrayList<DoggoPOJO> followers) {
-        this.followers = followers;
-    }
-
-    public ArrayList<Integer> getPhotos() {
+    @Bindable
+    public ArrayList<String> getPhotos() {
         return photos;
     }
 
-    public void setPhotos(ArrayList<Integer> photos) {
+    @Bindable
+    public void setPhotos(ArrayList<String> photos) {
         this.photos = photos;
     }
 
+    @Bindable
     public String getId() {
         return id;
     }
 
+    @Bindable
     public void setId(String id) {
         this.id = id;
     }
@@ -71,24 +51,28 @@ public class DoggoPOJO extends BaseObservable {
         return name;
     }
 
+    @Bindable
     public void setName(String name) {
         this.name = name;
     }
 
+    @Bindable
     public String getBreed() {
         return breed;
     }
 
+    @Bindable
     public void setBreed(String breed) {
         this.breed = breed;
     }
 
     @Bindable
-    public int getProfilePic() {
+    public String getProfilePic() {
         return profilePic;
     }
 
-    public void setProfilePic(int profilePic) {
+    @Bindable
+    public void setProfilePic(String profilePic) {
         this.profilePic = profilePic;
     }
 
@@ -97,6 +81,7 @@ public class DoggoPOJO extends BaseObservable {
         return active;
     }
 
+    @Bindable
     public void setActive(boolean active) {
         this.active = active;
     }

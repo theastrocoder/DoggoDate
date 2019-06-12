@@ -1,6 +1,7 @@
 package io.mse.doggodate.adapters;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -33,13 +34,15 @@ public class ImageAdapter extends BaseAdapter {
 
     };
 
-    private ArrayList<Integer> photos;
-
+    private ArrayList<String> photos;
+    private Resources res;
     // Constructor
-    public ImageAdapter(Context c, AppCompatActivity activity, ArrayList<Integer> photos){
+    public ImageAdapter(Context c, AppCompatActivity activity, ArrayList<String> photos){
         mContext = c;
         this.activity = activity;
         this.photos = photos;
+        res = c.getResources();
+
     }
 
     @Override
@@ -60,7 +63,7 @@ public class ImageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView = new ImageView(mContext);
-        imageView.setImageResource(photos.get(position));
+        imageView.setImageResource( res.getIdentifier( photos.get(position), "drawable", "io.mse.doggodate"));
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         imageView.setLayoutParams(new GridView.LayoutParams( activity.getWindowManager().getDefaultDisplay().getWidth()/4,activity.getWindowManager().getDefaultDisplay().getWidth()/4 ));

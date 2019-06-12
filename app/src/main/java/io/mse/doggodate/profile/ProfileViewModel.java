@@ -19,35 +19,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.mse.doggodate.entity.Doggo;
+import io.mse.doggodate.entity.DoggoEvent;
 
 public class ProfileViewModel extends ViewModel {
 
-    private MutableLiveData<List<Doggo>> users;
 
     private MutableLiveData<Doggo> activeFirebaseDoggo;
+    private MutableLiveData<ArrayList<DoggoEvent>> myEvents;
+
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public MutableLiveData<Doggo> getActiveDoggo() {
+    public MutableLiveData<Doggo> getActiveDoggo(ProfileFirestoreCallback profileFirestoreCallback) {
         if (activeFirebaseDoggo == null) {
             activeFirebaseDoggo = new MutableLiveData<Doggo>();
-            loadActiveFirebaseDoggo();
+            loadActiveFirebaseDoggo(profileFirestoreCallback);
+        } else {
+            profileFirestoreCallback.onDataRetrieved(activeFirebaseDoggo.getValue());
         }
         return activeFirebaseDoggo;
     }
 
-    public LiveData<List<Doggo>> getUsers() {
-        if (users == null) {
-            users = new MutableLiveData<List<Doggo>>();
-            loadUsers();
+    public MutableLiveData<Doggo> getAMyEvents(ProfileFirestoreCallback profileFirestoreCallback) {
+        if (activeFirebaseDoggo == null) {
+            activeFirebaseDoggo = new MutableLiveData<Doggo>();
+            loadActiveFirebaseDoggo(profileFirestoreCallback);
+        } else {
+            profileFirestoreCallback.onDataRetrieved(activeFirebaseDoggo.getValue());
         }
-        return users;
+        return activeFirebaseDoggo;
     }
 
-    private void loadUsers() {
-        // Do an asynchronous operation to fetch users.
-    }
 
-    private void loadActiveFirebaseDoggo() {
+    private void loadActiveFirebaseDoggo(final ProfileFirestoreCallback profileFirestoreCallback) {
 
         db.collection("Doggo").whereEqualTo("active", true).get()
                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -56,11 +59,12 @@ public class ProfileViewModel extends ViewModel {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Doggo active = document.toObject(Doggo.class);
-                                    ArrayList<Long> arrayList = (ArrayList<Long>) document.get("photos");
-                                    for (Long s : arrayList) {
-                                        active.getPhotos().add( s.intValue());
+                                    ArrayList<String> arrayList = (ArrayList<String>) document.get("photos");
+                                    for (String s : arrayList) {
+                                        active.getPhotos().add( s);
                                     }
                                 activeFirebaseDoggo.setValue(active);
+                                profileFirestoreCallback.onDataRetrieved(active);
 
                             }
 

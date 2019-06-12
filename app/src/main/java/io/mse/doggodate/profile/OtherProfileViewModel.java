@@ -45,11 +45,11 @@ public class OtherProfileViewModel extends ViewModel {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.i("ProfileViewModel", document.getId() + " => " + document.getData());
                                 Doggo active = document.toObject(Doggo.class);
-                                ArrayList<Long> arrayList = (ArrayList<Long>) document.get("photos");
+                                ArrayList<String> arrayList = (ArrayList<String>) document.get("photos");
                                 //Do what you need to do with your ArrayList
-                                for (Long s : arrayList) {
+                                for (String s : arrayList) {
                                     Log.i("photoooooooooooooooooooooooooos", "photo"+s);
-                                    active.getPhotos().add( s.intValue());
+                                    active.getPhotos().add( s);
                                 }
                                 selectedFirebaseDoggo.setValue(active);
 

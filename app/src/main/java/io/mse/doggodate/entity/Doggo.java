@@ -2,6 +2,7 @@ package io.mse.doggodate.entity;
 
 
 
+import android.content.Context;
 import android.widget.ImageView;
 
 import androidx.databinding.BaseObservable;
@@ -14,35 +15,74 @@ public class Doggo extends BaseObservable {
 
     private String name;
     private String breed;
-    private ArrayList<Doggo> followers = new ArrayList<>();
-    private ArrayList<Doggo> followings = new ArrayList<>();
-    private ArrayList<Integer> photos = new ArrayList<>();
+    private String id;
+    private static Context context;
+    private int profilePicInt;
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    private ArrayList<String> photos = new ArrayList<>();
     private ArrayList<Long> photosLong = new ArrayList<>();
-    private ArrayList<DoggoEvent> events = new ArrayList<>();
-    private int profilePic;
+    private String profilePic;
     private boolean active;
 
-    public Doggo(String name, String breed, int profilePic) {
+    public Doggo(String name, String breed, String profilePic) {
         this.name = name;
         this.breed = breed;
         this.profilePic = profilePic;
+        photos = new ArrayList<>();
     }
     public Doggo(String name, String breed, boolean active) {
         this.name = name;
         this.breed = breed;
         this.active = active;
+        photos = new ArrayList<>();
     }
 
     public Doggo() {
-
+        photos = new ArrayList<>();
     }
 
     public ArrayList<DoggoEvent> getEvents() {
-        return events;
+
+        return new ArrayList<DoggoEvent>();
     }
 
     public void setEvents(ArrayList<DoggoEvent> events) {
-        this.events = events;
+
+        //this.events = events;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public static void setContextStatic(Context c){
+        Doggo.context = c;
+    }
+    @Bindable
+    public int getProfilePicInt() {
+
+        return this.profilePicInt;
+    }
+
+    @BindingAdapter("android:src")
+    public void setProfilePicInt(ImageView imageView, int resource) {
+        this.profilePicInt = resource;
+
+        imageView.setImageResource(resource);
+
+
     }
 
     @Bindable
@@ -64,36 +104,35 @@ public class Doggo extends BaseObservable {
     }
 
     public ArrayList<Doggo> getFollowers() {
-        return followers;
+
+        return new ArrayList<Doggo>();
     }
 
     public void setFollowers(ArrayList<Doggo> followers) {
-        this.followers = followers;
+
+        //this.followers = followers;
     }
 
     public ArrayList<Doggo> getFollowings() {
-        return followings;
+
+        return new ArrayList<Doggo>();
     }
 
     public void setFollowings(ArrayList<Doggo> followings) {
-        this.followings = followings;
+
+        //this.followings = followings;
     }
 
     @Bindable
-    public ArrayList<Integer> getPhotos() {
+    public ArrayList<String> getPhotos() {
         return photos;
     }
 
     @Bindable
-    public int getProfilePic() {
+    public String getProfilePic() {
         return profilePic;
     }
 
-    @BindingAdapter("android:src")
-    public void setProfilePic(ImageView imageView, int resource){
-        imageView.setImageResource(resource);
-
-    }
     @Bindable
     public ArrayList<Long> getPhotosLong() {
         return photosLong;
@@ -104,12 +143,14 @@ public class Doggo extends BaseObservable {
     }
 
     @Bindable
-    public void setProfilePic(int profilePic) {
+    public void setProfilePic(String profilePic) {
         this.profilePic = profilePic;
+        this.profilePicInt = context.getResources().getIdentifier( profilePic, "drawable", "io.mse.doggodate");
+
     }
 
     @Bindable
-    public void setPhotos(ArrayList<Integer> photos) {
+    public void setPhotos(ArrayList<String> photos) {
         this.photos = photos;
     }
 

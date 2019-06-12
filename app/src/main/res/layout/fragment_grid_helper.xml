@@ -33,7 +33,7 @@
         android:verticalSpacing="10dp"
         android:gravity="center"
         android:stretchMode="columnWidth"
-        app:handler="@{handler}">
+        >
 
     </GridView>
 </FrameLayout>

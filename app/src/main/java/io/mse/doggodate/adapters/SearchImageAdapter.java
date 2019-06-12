@@ -80,10 +80,9 @@ public class SearchImageAdapter extends BaseAdapter {
             viewHolder.textViewItem.setText(doggos.get(position).getName() + " " + ((activity.getActiveDog().getFollowings().contains(doggos.get(position))) ? "" : "+"));
             viewHolder.textViewItem.setTag(position);
             viewHolder.textViewItem.setBackgroundColor(((Activity) activity).getResources().getColor((activity.getActiveDog().getFollowings().contains(doggos.get(position))) ? R.color.colorPrimaryLight : R.color.colorPrimaryLighter));
-            viewHolder.imageViewItem.setImageResource(doggos.get(position).getProfilePic());
+            viewHolder.imageViewItem.setImageResource(mContext.getResources().getIdentifier( doggos.get(position).getProfilePic(), "drawable", "io.mse.doggodate"));
 
 
-        viewHolder.imageViewItem.setImageResource(doggos.get(position).getProfilePic());
         return convertView;
 
     }

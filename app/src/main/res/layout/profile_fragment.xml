@@ -40,7 +40,7 @@
 
         <ImageView
             android:id="@+id/profile_image"
-            imageResource="@{doggo.profilePic}"
+            imageResource="@{doggo.profilePicInt}"
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_gravity="center_horizontal"
@@ -106,8 +106,9 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tabLayout"
+            app:layout_constraintVertical_bias="0.0"
             app:handler="@{handler}"
-            app:layout_constraintVertical_bias="0.0" />
+            />
             <!--android:paddingTop="10dp"-->
 
 

@@ -1,6 +1,7 @@
 package io.mse.doggodate;
 
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,30 +19,30 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.gson.JsonObject;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoEvent;
 import io.mse.doggodate.entity.DoggoPOJO;
 import io.mse.doggodate.entity.DoggoZone;
+import io.mse.doggodate.helpers.HelperViewModel;
 import io.mse.doggodate.home.HomeFragment;
 import io.mse.doggodate.map.MapFragment;
-import io.mse.doggodate.profile.OtherProfileFragment;
 import io.mse.doggodate.profile.ProfileViewModel;
-import io.mse.doggodate.rest.DogZoneAPI;
-import io.mse.doggodate.search.SearchFirestoreCallback;
+import io.mse.doggodate.search.FirestoreCallback;
 import io.mse.doggodate.search.SearchViewModel;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -160,29 +161,209 @@ public class MainActivity extends AppCompatActivity {
         active = fragment;
 
     }
+
+    private void addDoggosToDB(){
+        Log.i("adDoggosToDB", "got to the method");
+        DoggoPOJO Bonnie = new DoggoPOJO("Bonnie", "Golden retriever", "profile_image");
+         DoggoPOJO Alex = new DoggoPOJO("Alex", "Labrador",  "labrador_profile");
+        DoggoPOJO Chichi = new DoggoPOJO("Chichi", "Chivava", "chivava_prof");
+        DoggoPOJO Rex = new DoggoPOJO("Rex", "Wolfdog", "wolfdog_profile");
+        DoggoPOJO Akki = new DoggoPOJO("Akki", "Akita Inu", "akita_profile");
+       /* DoggoPOJO Alfonz = new DoggoPOJO("Alfonz", "Buldog", R.drawable.dog4);
+        DoggoPOJO Nina = new DoggoPOJO("Nina", "Labrador", R.drawable.dog3);
+        DoggoPOJO Bowie = new DoggoPOJO("Bowie", "Retriever", R.drawable.dog2);
+        DoggoPOJO Makawa = new DoggoPOJO("Makawa", "Chivuavua", R.drawable.chivava_1);*/
+
+        /* SETTING ACTIVE DOG ATTRIBUTES*/
+        ArrayList<DoggoPOJO> followers = new ArrayList<>();
+        followers.add(Alex);
+        //followers.add(Chichi);
+        // followers.add(Alfonz);
+        // followers.add(Nina);
+        // followers.add(Bowie);
+        // followers.add(Makawa);
+        // Bonnie.setFollowers(followers);
+
+       /* ArrayList<Doggo> followings = new ArrayList<>();
+        followings.add(Rex);
+        //followings.add(Akki);
+        //followers.add(Bowie);
+        Bonnie.setFollowings(followings);
+*/
+        ArrayList<String> photos = new ArrayList<>();
+        String a = "golden2";
+        Resources res = this.getResources();
+        int resID = res.getIdentifier(a, "drawable", "io.mse.doggodate");
+
+        photos.add("golden2");
+        photos.add("golden3");
+        photos.add("golden4");
+        photos.add("golden5");
+
+        Bonnie.setPhotos(photos);
+
+        /**-------ALEX---------*/
+        ArrayList<String> alexPhotos = new ArrayList<>();
+        alexPhotos.add("labrador_1");
+        alexPhotos.add("labrador_2");
+        alexPhotos.add("labrador_3");
+        alexPhotos.add("labrador_profile");
+        Alex.setPhotos(alexPhotos);
+        final ArrayList<DoggoPOJO> followingsA = new ArrayList<>();
+        followingsA.add(Bonnie);
+        //Alex.setFollowings(followingsA);
+        /*ArrayList<Doggo> followersA = new ArrayList<>();
+        followersA.add(Chichi);
+        followersA.add(Alfonz);
+        followersA.add(Nina);
+        followersA.add(Bowie);
+        followersA.add(Makawa);
+        Alex.setFollowers(followersA);
+        /**-------CHICHI---------*/
+        ArrayList<String> ChiChiPhotos = new ArrayList<>();
+        ChiChiPhotos.add("chivava_1");
+        ChiChiPhotos.add("chivava_2");
+        ChiChiPhotos.add("chivava3");
+        Chichi.setPhotos(ChiChiPhotos);/*
+        ArrayList<Doggo> followingsC = new ArrayList<>();
+        followingsC.add(Rex);
+        ArrayList<Doggo> followersC = new ArrayList<>();
+        followersC.add(Chichi);
+        followersC.add(Alfonz);
+        followersC.add(Nina);
+        followersC.add(Bowie);
+        followersC.add(Makawa);
+        Chichi.setFollowers(followersC);
+        Chichi.setFollowings(followingsC);
+        /**-------REX---------*/
+        ArrayList<String> rexPhotos = new ArrayList<>();
+        rexPhotos.add("wd_2");
+        rexPhotos.add("wd_1");
+        rexPhotos.add("wd_3");
+        rexPhotos.add("wd_4");
+        Rex.setPhotos(rexPhotos);/*
+        ArrayList<Doggo> followingsR = new ArrayList<>();
+        followingsR.add(Alfonz);
+        ArrayList<Doggo> followersR = new ArrayList<>();
+        followersR.add(Alex);
+        followersR.add(Chichi);
+        followersR.add(Alfonz);
+        followersR.add(Nina);
+        followersR.add(Bowie);
+        followersR.add(Makawa);
+        Rex.setFollowers(followersR);
+        Rex.setFollowings(followingsR);
+
+        /**-------AKKI---------*/
+        ArrayList<String> akkiPhotos = new ArrayList<>();
+        akkiPhotos.add(".akita_1");
+        akkiPhotos.add("akita_2");
+        akkiPhotos.add("akita_3");
+        akkiPhotos.add("akita_4");
+        akkiPhotos.add("akita_profile");
+        Akki.setPhotos(akkiPhotos);/*
+        Akki.setFollowers(followers);
+        Akki.setFollowings(followers);
+        ArrayList<Doggo> followingsAk = new ArrayList<>();
+        followingsAk.add(Alfonz);
+        followingsAk.add(Nina);
+        followingsAk.add(Makawa);
+        followingsAk.add(Bowie);
+        ArrayList<Doggo> followersAk = new ArrayList<>();
+        followersAk.add(Alex);
+        followersAk.add(Chichi);
+        followersAk.add(Alfonz);
+        followersAk.add(Nina);
+        followersAk.add(Bowie);
+        followersAk.add(Makawa);
+        Rex.setFollowers(followersAk);
+        Rex.setFollowings(followingsAk);
+*/
+       /* Log.i("adDoggosToDB", "got to the firestore cmd");
+        FirebaseFirestore.getInstance().collection("Doggo").add(Bonnie).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.i("Could not save the doggo ", e.getMessage());
+            }
+        }).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                Log.i("Doggo Saved!!!!! ", "congrats");
+
+            }
+        });*/
+        // FirebaseFirestore.getInstance().collection("Doggo").add(Alex);
+       ArrayList<DoggoPOJO> doggos = new ArrayList<DoggoPOJO>(Arrays.asList(Bonnie, Alex, Chichi, Rex, Akki ));
+
+       FirebaseFirestore fb =  FirebaseFirestore.getInstance();
+        for (final DoggoPOJO doggo: doggos) {
+           fb.collection("Doggo").add(doggo).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                @Override
+                public void onSuccess(DocumentReference documentReference) {
+                    Log.d("RERERERERRE", "DocumentSnapshot added with ID: " + documentReference.getId());
+                    doggo.setId(documentReference.getId());
+                }
+            })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("dfgfdhvgh", "Error adding document", e);
+                        }
+                    });
+        }
+
+      /*  FirebaseFirestore.getInstance().collection("Doggo").add(Alex).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                Log.d("RERERERERRE", "DocumentSnapshot added with ID: " + documentReference.getId());
+                Alex.setId(documentReference.getId());
+
+                Map<String, Object> data = new HashMap<>();
+                //data.put("followings", followingsA);
+                for ( DoggoPOJO doggo : followingsA) {
+                    FirebaseFirestore.getInstance().collection("Followings").document(Alex.getId()).collection("followings")
+                            .document(doggo.getId()).set(data);
+                }
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("dfgfdhvgh", "Error adding document", e);
+                    }
+                });
+
+*/
+
+
+        //  }
+
+
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         navView = findViewById(R.id.nav_view);
-        // Create the observer which updates the UI.
-
-
+        //set context so doggo can get ressources
+            Doggo.setContextStatic(getApplicationContext());
+//addDoggosToDB();
         navController = Navigation.findNavController(this,R.id.main_container);
         NavigationUI.setupWithNavController(navView,navController);
 
         active = homeFragment;
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        Doggo Bonnie = new Doggo("Bonnie", "Golden retriever", R.drawable.profile_image);
-        Doggo Alex = new Doggo("Alex", "Labrador",  R.drawable.labrador_profile);
-        Doggo Chichi = new Doggo("Chichi", "Chivava", R.drawable.chivava_prof);
-        Doggo Rex = new Doggo("Rex", "Wolfdog", R.drawable.wolfdog_profile);
-        Doggo Akki = new Doggo("Akki", "Akita Inu", R.drawable.akita_profile);
-        Doggo Alfonz = new Doggo("Alfonz", "Buldog", R.drawable.dog4);
-        Doggo Nina = new Doggo("Nina", "Labrador", R.drawable.dog3);
-        Doggo Bowie = new Doggo("Bowie", "Retriever", R.drawable.dog2);
-        Doggo Makawa = new Doggo("Makawa", "Chivuavua", R.drawable.chivava_1);
+        Doggo Bonnie = new Doggo("Bonnie", "Golden retriever","profile_image");
+        Doggo Alex = new Doggo("Alex", "Labrador",  "labrador_profile");
+        Doggo Chichi = new Doggo("Chichi", "Chivava", "chivava_prof");
+        Doggo Rex = new Doggo("Rex", "Wolfdog", "wolfdog_profile");
+        Doggo Akki = new Doggo("Akki", "Akita Inu", "akita_profile");
+        Doggo Alfonz = new Doggo("Alfonz", "Buldog", "dog4");
+        Doggo Nina = new Doggo("Nina", "Labrador", "dog3");
+        Doggo Bowie = new Doggo("Bowie", "Retriever", "dog2");
+        Doggo Makawa = new Doggo("Makawa", "Chivuavua", "chivava_1");
 
         /* SETTING ACTIVE DOG ATTRIBUTES*/
         ArrayList<Doggo> followers = new ArrayList<>();
@@ -200,21 +381,21 @@ public class MainActivity extends AppCompatActivity {
         //followers.add(Bowie);
         Bonnie.setFollowings(followings);
 
-        ArrayList<Integer> photos = new ArrayList<>();
-        photos.add(R.drawable.golden2);
-        photos.add(R.drawable.golden3);
-        photos.add(R.drawable.golden4);
-        photos.add(R.drawable.golden5);
+        ArrayList<String> photos = new ArrayList<>();
+        photos.add("golden2");
+        photos.add("golden3");
+        photos.add("golden4");
+        photos.add("golden5");
 
         Bonnie.setPhotos(photos);
-        Bonnie.setProfilePic(R.drawable.profile_image);
+        Bonnie.setProfilePic("profile_image");
 
         /**-------ALEX---------*/
-        ArrayList<Integer> alexPhotos = new ArrayList<>();
-        alexPhotos.add(R.drawable.labrador_1);
-        alexPhotos.add(R.drawable.labrador_2);
-        alexPhotos.add(R.drawable.labrador_3);
-        alexPhotos.add(R.drawable.labrador_profile);
+        ArrayList<String> alexPhotos = new ArrayList<>();
+        alexPhotos.add("labrador_1");
+        alexPhotos.add("labrador_2");
+        alexPhotos.add("labrador_3");
+        alexPhotos.add("labrador_profile");
         Alex.setPhotos(alexPhotos);
         ArrayList<Doggo> followingsA = new ArrayList<>();
         followingsA.add(Rex);
@@ -228,10 +409,8 @@ public class MainActivity extends AppCompatActivity {
         Alex.setFollowings(followingsA);
 
         /**-------CHICHI---------*/
-        ArrayList<Integer> ChiChiPhotos = new ArrayList<>();
-        ChiChiPhotos.add(R.drawable.chivava_1);
-        ChiChiPhotos.add(R.drawable.chivava_2);
-        ChiChiPhotos.add(R.drawable.chivava3);
+        ArrayList<String> ChiChiPhotos = new ArrayList<>();
+        ChiChiPhotos.add("chivava_1");
         Chichi.setPhotos(ChiChiPhotos);
         ArrayList<Doggo> followingsC = new ArrayList<>();
         followingsC.add(Rex);
@@ -246,11 +425,9 @@ public class MainActivity extends AppCompatActivity {
         activeDog = Chichi;
 
         /**-------REX---------*/
-        ArrayList<Integer> rexPhotos = new ArrayList<>();
-        rexPhotos.add(R.drawable.wd_2);
-        rexPhotos.add(R.drawable.wd_1);
-        rexPhotos.add(R.drawable.wd_3);
-        rexPhotos.add(R.drawable.wd_4);
+        ArrayList<String> rexPhotos = new ArrayList<>();
+        rexPhotos.add("wd_2");
+        rexPhotos.add("wd_1");
         Rex.setPhotos(rexPhotos);
         ArrayList<Doggo> followingsR = new ArrayList<>();
         followingsR.add(Alfonz);
@@ -265,12 +442,9 @@ public class MainActivity extends AppCompatActivity {
         Rex.setFollowings(followingsR);
 
         /**-------AKKI---------*/
-        ArrayList<Integer> akkiPhotos = new ArrayList<>();
-        akkiPhotos.add(R.drawable.akita_1);
-        akkiPhotos.add(R.drawable.akita_2);
-        akkiPhotos.add(R.drawable.akita_3);
-        akkiPhotos.add(R.drawable.akita_4);
-        akkiPhotos.add(R.drawable.akita_profile);
+        ArrayList<String> akkiPhotos = new ArrayList<>();
+        akkiPhotos.add("akita_1");
+
         Akki.setPhotos(akkiPhotos);
         Akki.setFollowers(followers);
         Akki.setFollowings(followers);
@@ -481,13 +655,14 @@ public class MainActivity extends AppCompatActivity {
     public void toOtherProfile(final int position, final int type) {
         //navController.getCurrentDestination().getLabel().equals()
         //((OtherProfileFragment)otherProfileFragment).setSelectedDoggo(defaultSearchDoggos.get(position));
+        final HelperViewModel hw = ViewModelProviders.of(this).get(HelperViewModel.class);
 
         final SearchViewModel searchViewModel = ViewModelProviders.of(this).get(SearchViewModel.class);
-        searchViewModel.getAllDoggos(new SearchFirestoreCallback() {
+        searchViewModel.getAllDoggos(new FirestoreCallback() {
             @Override
-            public void bindData(ArrayList<Doggo> doggos) {
+            public void onDataRetrieved(ArrayList<Doggo> doggos) {
                 selectedDog = doggos.get(position);
-
+                hw.setCurrentDoggo(selectedDog);
                 if (type == 0) {
                     navController.navigate(R.id.from_search_toOtherProfile);
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);

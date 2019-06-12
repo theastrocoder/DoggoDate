@@ -98,7 +98,7 @@ public class DoggoZoneFragment extends Fragment {
         });
 
         GridView gridView = (GridView) view.findViewById(R.id.grid_view);
-        ArrayList<Integer> images = new ArrayList<>();
+        ArrayList<String> images = new ArrayList<>();
         //set which dogs' pics should be shown
         for (int i = 0; i<((MainActivity)getActivity()).getDefaultSearch().size(); i++){
             images.add(((MainActivity)getActivity()).getDefaultSearch().get(i).getProfilePic());

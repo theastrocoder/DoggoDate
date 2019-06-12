@@ -103,13 +103,14 @@ public class OtherProfileFragment extends Fragment {
         //follow button setup
         View view =  binding.getRoot();
         followButton = (Button)view.findViewById(R.id.followButton);
+
         followButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
-                   MutableLiveData<Doggo> d = profileViewModel.getActiveDoggo();
-                    otherProfileViewModel.setSelectedFirebaseDoggo(d.getValue());
+                 //  MutableLiveData<Doggo> d = profileViewModel.getActiveDoggo(firestoreCallback);
+                   // otherProfileViewModel.setSelectedFirebaseDoggo(d.getValue());
                     //binding.setDoggo(d);
                     followButton.setText("Followed");
 

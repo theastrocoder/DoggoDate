@@ -5,7 +5,8 @@ import java.util.List;
 
 import io.mse.doggodate.entity.Doggo;
 
-public interface SearchFirestoreCallback {
+public interface FirestoreCallback {
 
-    void bindData(ArrayList<Doggo> doggos);
+    void onDataRetrieved(ArrayList<Doggo> doggos);
+
 }

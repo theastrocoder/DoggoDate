@@ -14,11 +14,11 @@ import io.mse.doggodate.helpers.ListHelperFragment;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
-    private Doggo selectedDoggo;
+    private Doggo currentDoggo;
 
-    public ViewPagerAdapter(FragmentManager fm, Doggo selectedDoggo) {
+    public ViewPagerAdapter(FragmentManager fm, Doggo currentDoggo) {
         super(fm);
-        this.selectedDoggo = selectedDoggo;
+        this.currentDoggo = currentDoggo;
     }
 
     @Override
@@ -28,7 +28,6 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         {
             fragment = new GridHelperFragment();
             ((GridHelperFragment) fragment).setSearch(false);
-            //((GridHelperFragment) fragment).setSelectedDoggo(this.selectedDoggo);
 
             Log.i("ViewPagerAdapter", "first tab");
         }
@@ -36,7 +35,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         {
             fragment = new ListHelperFragment();
             ((ListHelperFragment) fragment).setFollowers(false);
-            ((ListHelperFragment) fragment).setSelectedDoggo(this.selectedDoggo);
+            ((ListHelperFragment) fragment).setSelectedDoggo(this.currentDoggo);
             Log.i("ViewPagerAdapter", "third tab");
 
         }
@@ -44,14 +43,14 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         {
             fragment = new ListHelperFragment();
             ((ListHelperFragment) fragment).setFollowers(true);
-            ((ListHelperFragment) fragment).setSelectedDoggo(this.selectedDoggo);
+            ((ListHelperFragment) fragment).setSelectedDoggo(this.currentDoggo);
             Log.i("ViewPagerAdapter", "forth tab");
 
         } else if (position == 1)
         {
             fragment = new ListHelperFragment();
             ((ListHelperFragment) fragment).setFollowers(null);
-            ((ListHelperFragment) fragment).setSelectedDoggo(this.selectedDoggo);
+            ((ListHelperFragment) fragment).setSelectedDoggo(this.currentDoggo);
             Log.i("ViewPagerAdapter", "second tab");
 
         }
@@ -68,7 +67,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         String title = null;
         if (position == 0)
         {
-            title = /*selectedDoggo.getPhotos().size() +*/" Photos";
+            title = currentDoggo.getPhotos().size() +" Photos";
         }
         else if (position == 2)
         {

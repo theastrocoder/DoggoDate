@@ -40,7 +40,7 @@
 
             <ImageView
                 android:id="@+id/profile_image"
-                imageResource="@{doggo.profilePic}"
+                imageResource="@{doggo.profilePicInt}"
                 android:layout_width="140dp"
                 android:layout_height="140dp"
                 android:layout_gravity="center_horizontal"
