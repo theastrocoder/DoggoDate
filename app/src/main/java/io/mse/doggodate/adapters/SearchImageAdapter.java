@@ -25,10 +25,10 @@ public class SearchImageAdapter extends BaseAdapter {
     private Context mContext;
 
     // Constructor
-    public SearchImageAdapter(Context c, MainActivity activity) {
+    public SearchImageAdapter(Context c, MainActivity activity, ArrayList<Doggo> doggos) {
         mContext = c;
         this.activity = activity;
-        doggos.addAll(activity.getDefaultSearch());
+        this.doggos = doggos;
     }
 
     @Override
@@ -49,13 +49,7 @@ public class SearchImageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-
-//        ImageView imageView = new ImageView(mContext);
-//        imageView.setImageResource(mThumbIds[position]);
-//        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//        imageView.setLayoutParams(new GridView.LayoutParams(300, 300));
-        ViewHolderItem viewHolder;
-
+    ViewHolderItem viewHolder;
 
         if (convertView == null) {
 
