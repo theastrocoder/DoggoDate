@@ -36,6 +36,8 @@ public class ProfileViewModel extends ViewModel {
 
     private MutableLiveData<Doggo> activeFirebaseDoggo;
     private MutableLiveData<ArrayList<DoggoEvent>> myEvents;
+    private MutableLiveData<ArrayList<Doggo>> myFollowings;
+
     private static final String TAG = "ProfileViewModel";
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -58,6 +60,16 @@ public class ProfileViewModel extends ViewModel {
             profileFirestoreCallback.onDataRetrieved(myEvents.getValue());
         }
         return myEvents;
+    }
+
+    public MutableLiveData<ArrayList<Doggo>> getMyFollowings(ProfileFirestoreCallback profileFirestoreCallback, String doggoID) {
+        if (myFollowings == null) {
+            myFollowings = new MutableLiveData<ArrayList<Doggo>>();
+            loadMyFollowings(profileFirestoreCallback, doggoID);
+        } else {
+            profileFirestoreCallback.onDataRetrievedFollowings(myFollowings.getValue());
+        }
+        return myFollowings;
     }
 
     private void loadMyEvents(final ProfileFirestoreCallback profileFirestoreCallback, String doggoID) {
@@ -127,6 +139,42 @@ public class ProfileViewModel extends ViewModel {
 
                             myEvents.setValue(eventArrayList);
                             profileFirestoreCallback.onDataRetrieved(eventArrayList);
+                        } else {
+                            Log.w(TAG, "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+
+
+    }
+
+    private void loadMyFollowings(final ProfileFirestoreCallback profileFirestoreCallback, String doggoID) {
+
+        db.collection("Followings").document(doggoID).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            final  ArrayList<Doggo> myFollowingsTemp = new ArrayList<>();
+
+                            DocumentSnapshot document = task.getResult();
+                            ArrayList<DocumentReference> myFollowings2 = (ArrayList<DocumentReference>) document.get("doggos");
+                                //create new empty instance to perform custom mapping
+
+                            for (DocumentReference doggo: myFollowings2) {
+                                doggo.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        DocumentSnapshot document = task.getResult();
+
+                                        Doggo doggo = document.toObject(Doggo.class);
+                                        myFollowingsTemp.add(doggo);
+
+                                    }
+                                });
+                            }
+                            myFollowings.setValue(myFollowingsTemp);
+                            profileFirestoreCallback.onDataRetrievedFollowings(myFollowings.getValue());
                         } else {
                             Log.w(TAG, "Error getting documents.", task.getException());
                         }
