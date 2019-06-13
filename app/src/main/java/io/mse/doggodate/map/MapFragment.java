@@ -1,10 +1,13 @@
 package io.mse.doggodate.map;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
@@ -25,6 +29,8 @@ import androidx.navigation.Navigation;
 
 import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.util.MapUtils;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -36,6 +42,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.gson.JsonObject;
 import com.google.maps.android.data.Feature;
@@ -69,8 +77,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback{
+public class MapFragment extends Fragment implements OnMapReadyCallback {
 
+    private Location currentLocation;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private static final int REQUEST_CODE = 101;
     private GoogleMap mMap;
     private Context context;
     private TextView zoneName;
@@ -98,6 +109,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
         super.onCreate(savedInstanceState);
         mapViewModel = ViewModelProviders.of(this).get(MapViewModel.class);
         thisF = this;
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient((MainActivity) getActivity());
+        getCurrentLocation();
+    }
+
+    private void getCurrentLocation() {
+        if (((MainActivity)getActivity()).checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ((MainActivity)getActivity()).checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ((MainActivity)getActivity()).requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_CODE);
+            return;
+        }
+        Task<Location> task = fusedLocationProviderClient.getLastLocation();
+        task.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if(location != null){
+                    currentLocation = location;
+                    // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+                    SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                            .findFragmentById(R.id.map);
+                    assert mapFragment != null;
+                    mapFragment.getMapAsync(MapFragment.this);
+
+                }
+            }
+        });
     }
 
     @Override
@@ -112,11 +147,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
         Objects.requireNonNull(mainActivity.getSupportActionBar()).setTitle("DoggoZones");
         mainActivity.invalidateOptionsMenu();
         park1 = ((MainActivity)getActivity()).getPark1();
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.map);
-        assert mapFragment != null;
-        mapFragment.getMapAsync(this);
+
         slider = (SlidingUpPanelLayout) view.findViewById(R.id.slider);
         slider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         zoneName = (TextView) view.findViewById(R.id.zone_name);
@@ -137,6 +168,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+
+        LatLng myLocation = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions().position(myLocation).icon(bitmapDescriptorFromVector(getContext(),R.drawable.park,R.drawable.dog_white));
+        mMap.addMarker(markerOptions);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation,15));
 
         try {
             // Customise the styling of the base map using a JSON object defined
@@ -166,7 +203,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
                     while (featureIterator.hasNext()) {
                         GeoJsonFeature geoJsonFeature = featureIterator.next();
                         GeoJsonPointStyle style = new GeoJsonPointStyle();
-                        style.setIcon(bitmapDescriptorFromVector(getContext(), R.drawable.park));
+                        style.setIcon(bitmapDescriptorFromVector(getContext(), R.drawable.park,R.drawable.tree_outline));
                         geoJsonFeature.setPointStyle(style);
 
                     }
@@ -222,21 +259,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
         });
 
 
-
-        LatLng park1Pos = new LatLng(park1.getLocation().getLatitude(),park1.getLocation().getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(park1Pos,15));
-
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case REQUEST_CODE:
+                if(grantResults.length>1 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    getCurrentLocation();
+                }
+                break;
+        }
+    }
 
-    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int id) {
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int pin,int icon) {
         float dpsLeft = 8;
         float dpsTop = 5;
         float dm = getResources().getDisplayMetrics().density;
-        Drawable background = ContextCompat.getDrawable(context, id);
+        Drawable background = ContextCompat.getDrawable(context, pin);
         assert background != null;
         background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
-        Drawable vectorDrawable = ContextCompat.getDrawable(context, R.drawable.tree_outline);
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, icon);
         assert vectorDrawable != null;
         vectorDrawable.setBounds((int)(dpsLeft * dm), (int)(dpsTop * dm), vectorDrawable.getIntrinsicWidth()+(int)(dpsLeft * dm), vectorDrawable.getIntrinsicHeight()+(int)(dpsTop * dm));
 
