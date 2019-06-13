@@ -83,7 +83,7 @@ public class ListHelperFragment extends Fragment {
                 //get string of new list of events
                 for (int i = 0; i < events.size(); i++) {
                     //stringList.add(events.get(i).getZone().getName() + " " + events.get(i).getTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")) );
-               stringList.add(events.get(i).getTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")));
+               stringList.add(events.get(i).getTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) + " " + events.get(i).getZone().getName());
                 }
 
                 //project changes to UI

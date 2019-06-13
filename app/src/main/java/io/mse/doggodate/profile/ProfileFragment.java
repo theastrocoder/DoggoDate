@@ -113,7 +113,7 @@ public class ProfileFragment extends Fragment {
         };
 
        profileViewModel.getMyEvents(afterDoggoRetrieved, "97XuSnfcOmfW8pKF7B8y");
-        profileViewModel.getActiveDoggo(afterDoggoRetrieved).observe(this, doggoObserver);
+       profileViewModel.getActiveDoggo(afterDoggoRetrieved).observe(this, doggoObserver);
 
 
         mainActivity = (MainActivity)getActivity();
