@@ -112,7 +112,7 @@ public class ProfileFragment extends Fragment {
 
         };
 
-       // profileViewModel.getMyEvents(firestoreDoggoCallback, "97XuSnfcOmfW8pKF7B8y");
+       profileViewModel.getMyEvents(afterDoggoRetrieved, "97XuSnfcOmfW8pKF7B8y");
         profileViewModel.getActiveDoggo(afterDoggoRetrieved).observe(this, doggoObserver);
 
 
