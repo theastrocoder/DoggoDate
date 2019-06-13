@@ -60,9 +60,29 @@ public class ListHelperFragment extends Fragment {
                 openProfile(position, 1);
             }
         });
-        if (followers != null && followers) {
-            //for (int i = 0; i < selectedDoggo.getFollowers().size(); i++) {
-            //    stringList.add(selectedDoggo.getFollowers().get(i).getName());
+       if (followers != null && followers) {
+
+            helperViewModel.getCurrentDoggoFollowers().observe(this, new Observer<ArrayList<Doggo>>() {
+                @Override
+                public void onChanged(@Nullable final ArrayList<Doggo> followers) {
+                    // Update the UI, in this case,binding.
+
+                    //get string of new list of events
+                    for (int i = 0; i < followers.size(); i++) {
+                        stringList.add(followers.get(i).getName());}
+
+                    //project changes to UI
+                    binding.list.setAdapter(new CustomAdapter(stringList, (AppCompatActivity) getActivity()));
+                    binding.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View v,
+                                                int position, long id) {
+
+                            openProfile(position, 1);
+                        }
+                    });
+                }
+            });
 
         } else
        if (followers != null && !followers){
@@ -112,6 +132,7 @@ public class ListHelperFragment extends Fragment {
                }
            });
        }
+
         return binding.getRoot();
     }
 

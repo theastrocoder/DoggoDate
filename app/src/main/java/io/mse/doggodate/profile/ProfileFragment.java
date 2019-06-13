@@ -108,10 +108,16 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onDataRetrievedFollowings(ArrayList<Doggo> myFollowings) {
                 hv.setCurrentDoggoFollowings(myFollowings);
-                Log.i("ProfileFragment", "THE LOADED EVENTS ARE OF SIZE " + myFollowings.size());
+                Log.i("ProfileFragment", "THE LOADED FOLLOWINGS ARE OF SIZE " + myFollowings.size());
 
             }
 
+            @Override
+            public void onDataRetrievedFollowers(ArrayList<Doggo> myFollowers) {
+                hv.setCurrentDoggoFollowers(myFollowers);
+                Log.i("ProfileFragment", "THE LOADED FOLLOWERS ARE OF SIZE " + myFollowers.size());
+
+            }
 
 
         };
@@ -119,6 +125,7 @@ public class ProfileFragment extends Fragment {
        profileViewModel.getMyEvents(afterDoggoRetrieved, "97XuSnfcOmfW8pKF7B8y");
        profileViewModel.getActiveDoggo(afterDoggoRetrieved).observe(this, doggoObserver);
         profileViewModel.getMyFollowings(afterDoggoRetrieved, "97XuSnfcOmfW8pKF7B8y");
+        profileViewModel.getMyFollowers(afterDoggoRetrieved, "97XuSnfcOmfW8pKF7B8y");
 
         mainActivity = (MainActivity)getActivity();
         mainActivity.invalidateOptionsMenu();

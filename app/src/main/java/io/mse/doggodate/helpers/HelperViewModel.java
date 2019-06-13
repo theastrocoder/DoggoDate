@@ -15,6 +15,7 @@ public class HelperViewModel extends ViewModel {
     private MutableLiveData<Doggo> currentDoggo = new MutableLiveData<Doggo>();
     private MutableLiveData<ArrayList<Doggo>> currentDoggoFollowings = new MutableLiveData<>();
     private MutableLiveData<ArrayList<DoggoEvent>> currentDoggoEvents = new MutableLiveData<ArrayList<DoggoEvent>>();
+    private MutableLiveData<ArrayList<Doggo>> currentDoggoFollowers = new MutableLiveData<>();
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -33,6 +34,9 @@ public class HelperViewModel extends ViewModel {
         currentDoggoFollowings.setValue(followings);
     }
 
+    public void setCurrentDoggoFollowers(ArrayList<Doggo> followers) {
+        currentDoggoFollowers.setValue(followers);
+    }
     public MutableLiveData<ArrayList<DoggoEvent>> getCurrentDoggoEvents() {
         if (currentDoggoEvents == null) {
             currentDoggoEvents = new MutableLiveData<ArrayList<DoggoEvent>>();
@@ -45,6 +49,13 @@ public class HelperViewModel extends ViewModel {
             currentDoggoFollowings = new MutableLiveData<ArrayList<Doggo>>();
         }
         return currentDoggoFollowings;
+    }
+
+    public MutableLiveData<ArrayList<Doggo>> getCurrentDoggoFollowers() {
+        if (currentDoggoFollowers == null) {
+            currentDoggoFollowers = new MutableLiveData<ArrayList<Doggo>>();
+        }
+        return currentDoggoFollowers;
     }
 
     public void setCurrentDoggo(Doggo doggo) {

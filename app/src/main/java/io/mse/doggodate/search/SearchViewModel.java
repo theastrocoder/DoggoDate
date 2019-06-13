@@ -29,6 +29,7 @@ public class SearchViewModel extends ViewModel {
     private MutableLiveData<ArrayList<Doggo>> allDoggos;
     private MutableLiveData<ArrayList<DoggoEvent>> doggosEvents = new MutableLiveData<>();
     private MutableLiveData<ArrayList<Doggo>> doggosFollowings = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<Doggo>> doggoFollowers = new MutableLiveData<>();
 
 
     private final String TAG = "SearchViewModel";
@@ -193,9 +194,10 @@ public class SearchViewModel extends ViewModel {
                                     });
                                 }
                                 doggosFollowings.setValue(myFollowingsTemp);
-                                profileFirestoreCallback.onDataRetrievedFollowings(doggosFollowings.getValue());
                             }
-                            } else {
+                            profileFirestoreCallback.onDataRetrievedFollowings(myFollowingsTemp);
+
+                        } else {
                                 Log.w(TAG, "Error getting documents.", task.getException());
                             }
 
@@ -275,6 +277,46 @@ public class SearchViewModel extends ViewModel {
                         }
                     }
                 });
+    }
+
+    public void loadMyFollowers(final FirestoreFollowersCallback followersFirestoreCallback, String doggoID) {
+
+        db.collection("Followers").document(doggoID).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            final ArrayList<Doggo> myFollowersTemp = new ArrayList<>();
+
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                ArrayList<DocumentReference> myFollowers2 = (ArrayList<DocumentReference>) document.get("doggos");
+                                //create new empty instance to perform custom mapping
+
+                                for (DocumentReference doggo : myFollowers2) {
+                                    doggo.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            DocumentSnapshot document = task.getResult();
+
+                                            Doggo doggo = document.toObject(Doggo.class);
+                                            myFollowersTemp.add(doggo);
+
+                                        }
+                                    });
+                                }
+                                doggoFollowers.setValue(myFollowersTemp);
+                            }
+                            followersFirestoreCallback.onDataRetrievedFollowers(myFollowersTemp);
+
+                        } else {
+                            Log.w(TAG, "Error getting documents.", task.getException());
+                        }
+
+                    }
+                });
+
+
     }
 
 }
