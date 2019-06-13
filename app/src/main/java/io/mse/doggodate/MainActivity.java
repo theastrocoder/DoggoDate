@@ -29,6 +29,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.gson.JsonObject;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -462,18 +464,18 @@ public class MainActivity extends AppCompatActivity {
 
 
         /** Creating Doggo Zones*/
-        park1 = new DoggoZone(48.239539376028745, 16.333220189004898,
-                "Hugo-Wolf-Park" ,8169, false);
-        park2 = new DoggoZone(48.22027912193935, 16.480529082068596,
-                "GA Aspernstraße",323, true);
-        park3 = new DoggoZone(48.19845005423561, 16.330519111538322,
-                "Reithofferpark" ,671, true);
-        park4 = new DoggoZone(48.212801596627564, 16.339838642282885,
-                "Hernalser Gürtel",672, true);
-        park5 = new DoggoZone(48.16948327975529, 16.428887264076906,
-                "PA Blériotgasse" ,1850, true);
-        park6 = new DoggoZone(48.27240496690655, 16.447774667101427,
-                "PA Gitlbauergasse",1983, true);
+        park1 = new DoggoZone(new GeoPoint(48.239539376028745, 16.333220189004898),
+                "Hugo-Wolf-Park" ,"8169 m2", "Nein", "HundenZone");
+        park2 = new DoggoZone(new GeoPoint(48.22027912193935, 16.480529082068596),
+                "GA Aspernstraße","323 m2", "Ja", "Hundenzone");
+        park3 = new DoggoZone(new GeoPoint(48.19845005423561, 16.330519111538322),
+                "Reithofferpark" ,"671", "true", "HZ");
+        park4 = new DoggoZone(new GeoPoint(48.212801596627564, 16.339838642282885),
+                "Hernalser Gürtel","672", "true", "HZ");
+        park5 = new DoggoZone(new GeoPoint(48.16948327975529, 16.428887264076906),
+                "PA Blériotgasse" ,"1850", "true" ," HZ");
+        park6 = new DoggoZone(new GeoPoint(48.27240496690655, 16.447774667101427),
+                "PA Gitlbauergasse","1983", "true","HZ");
         DoggoEvent e1 = new DoggoEvent(LocalDateTime.of(2019, 6, 15, 14,30),park3, Nina);
         DoggoEvent e2 = new DoggoEvent(LocalDateTime.of(2019, 5, 17, 10,30),park2, Chichi);
         DoggoEvent e3 = new DoggoEvent(LocalDateTime.of(2019, 5, 20, 11,30),park1, Bonnie);

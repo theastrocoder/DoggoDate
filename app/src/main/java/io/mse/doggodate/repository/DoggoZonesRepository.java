@@ -2,10 +2,15 @@ package io.mse.doggodate.repository;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -14,6 +19,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.rest.DogZoneAPI;
 import retrofit2.Call;
@@ -65,6 +71,43 @@ public class DoggoZonesRepository {
 
         return feature;
 
+    }
+
+    public LiveData<DoggoZone> getSelectedDoggoZone(final DoggoZone doggoZone) {
+        Log.i("DoggoZoneRepository","Loading doggo zone from repo");
+        final MutableLiveData<DoggoZone> doggoZoneMutableLiveData=new MutableLiveData<>();
+
+        db.collection("DoggoZone").whereEqualTo("name",doggoZone.getName()).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            Log.i("DoggoZoneRepository","Task successful");
+                            if(task.getResult().isEmpty()){
+
+                                db.collection("DoggoZone").document().set(doggoZone)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Log.i("DoggoZoneRepository","new Zone added");
+                                        }
+                                    }
+                                });
+                            }else {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.i("DoggoZonesRepository", document.getId() + " => " + document.getData());
+                                    DoggoZone active = document.toObject(DoggoZone.class);
+                                    doggoZoneMutableLiveData.setValue(active);
+                                }
+                            }
+                        }else {
+                            Log.i("DoggoZonesRepository", "Failed to query Doggo Zones");
+                        }
+                    }
+                });
+
+        return doggoZoneMutableLiveData;
     }
 
     public LiveData<List<DoggoZone>> getAllDoggoZones() {

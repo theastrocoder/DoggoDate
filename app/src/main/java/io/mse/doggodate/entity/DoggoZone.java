@@ -1,36 +1,27 @@
 package io.mse.doggodate.entity;
 
+import com.google.firebase.firestore.GeoPoint;
+
 public class DoggoZone {
 
-    private double Latitude;
-    private double Longitude;
+    private GeoPoint location;
     private String name;
-    private Integer surface;
-    private boolean fence;
+    private String area;
+    private String fence;
+    private String typ;
 
-    public DoggoZone(double latitude, double longitude, String name, Integer surface, boolean fence) {
-        Latitude = latitude;
-        Longitude = longitude;
+    public DoggoZone(GeoPoint location, String name, String area, String fence, String typ) {
+        this.location = location;
         this.name = name;
-        this.surface = surface;
+        this.area = area;
         this.fence = fence;
+        this.typ = typ;
     }
 
-    public double getLatitude() {
-        return Latitude;
+    public DoggoZone(){
+
     }
 
-    public void setLatitude(double latitude) {
-        Latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return Longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        Longitude = longitude;
-    }
 
     public String getName() {
         return name;
@@ -40,19 +31,35 @@ public class DoggoZone {
         this.name = name;
     }
 
-    public Integer getSurface() {
-        return surface;
+    public String getArea() {
+        return area;
     }
 
-    public void setSurface(Integer surface) {
-        this.surface = surface;
+    public void setArea(String area) {
+        this.area = area;
     }
 
-    public boolean isFence() {
+    public String getFence() {
         return fence;
     }
 
-    public void setFence(boolean fence) {
+    public void setFence(String fence) {
         this.fence = fence;
+    }
+
+    public GeoPoint getLocation() {
+        return location;
+    }
+
+    public void setLocation(GeoPoint location) {
+        this.location = location;
+    }
+
+    public String getTyp() {
+        return typ;
+    }
+
+    public void setTyp(String typ) {
+        this.typ = typ;
     }
 }

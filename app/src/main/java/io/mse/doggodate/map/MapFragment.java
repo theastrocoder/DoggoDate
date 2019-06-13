@@ -24,6 +24,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.google.android.gms.common.api.Api;
+import com.google.android.gms.common.util.MapUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -35,14 +36,20 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.gson.JsonObject;
+import com.google.maps.android.data.Feature;
 import com.google.maps.android.data.geojson.GeoJsonFeature;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
+import com.google.maps.android.data.geojson.GeoJsonPoint;
+import com.google.maps.android.data.geojson.GeoJsonPointStyle;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -62,7 +69,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback{
 
     private GoogleMap mMap;
     private Context context;
@@ -70,20 +77,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private ImageButton favoritesBtn;
     private ImageButton goToDoggoZone;
     private DoggoZone park1;
-    private DoggoZone park2;
-    private DoggoZone park3;
-    private DoggoZone park4;
-    private DoggoZone park5;
-    private DoggoZone park6;
     private SlidingUpPanelLayout slider;
     private TextView parkArea;
     private TextView fence;
     private TextView type;
     private TextView doggosJoining;
+    private Fragment thisF;
     private DoggoZone selectedDoggoZone;
     private View view;
     MainActivity mainActivity;
     private MapViewModel mapViewModel;
+    private GeoJsonLayer geoJsonLayer;
 
     public MapFragment() {
         // Required empty public constructor
@@ -93,6 +97,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mapViewModel = ViewModelProviders.of(this).get(MapViewModel.class);
+        thisF = this;
     }
 
     @Override
@@ -101,17 +106,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         final MapsFragmentBinding root = DataBindingUtil.inflate(inflater, R.layout.maps_fragment, container, false);
         context = container.getContext();
         view = root.getRoot();
-
+       // slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         mainActivity = (MainActivity)getActivity();
         assert mainActivity != null;
         Objects.requireNonNull(mainActivity.getSupportActionBar()).setTitle("DoggoZones");
         mainActivity.invalidateOptionsMenu();
         park1 = ((MainActivity)getActivity()).getPark1();
-        park2  = ((MainActivity)getActivity()).getPark2();
-        park3  = ((MainActivity)getActivity()).getPark3();
-        park4  = ((MainActivity)getActivity()).getPark4();
-        park5  = ((MainActivity)getActivity()).getPark5();
-        park6  = ((MainActivity)getActivity()).getPark6();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
@@ -160,73 +160,93 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onChanged(JSONObject featuresResponse) {
                 if (featuresResponse != null) {
-                    GeoJsonLayer geoJsonLayer = new GeoJsonLayer(mMap,featuresResponse);
+                    Log.i("Map", "Adds Park Layer to Map");
+                    geoJsonLayer = new GeoJsonLayer(mMap,featuresResponse);
+                    Iterator<GeoJsonFeature> featureIterator = geoJsonLayer.getFeatures().iterator();
+                    while (featureIterator.hasNext()) {
+                        GeoJsonFeature geoJsonFeature = featureIterator.next();
+                        GeoJsonPointStyle style = new GeoJsonPointStyle();
+                        style.setIcon(bitmapDescriptorFromVector(getContext(), R.drawable.park));
+                        geoJsonFeature.setPointStyle(style);
 
-                    //Iterator<GeoJsonFeature> i = geoJsonLayer.getFeatures().iterator();
+                    }
+
+                    geoJsonLayer.setOnFeatureClickListener(new GeoJsonLayer.GeoJsonOnFeatureClickListener() {
+                        @Override
+                        public void onFeatureClick(Feature feature) {
+                            slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                            Log.i("MAPFR","COR " + feature);
+                            GeoPoint location = new GeoPoint(48.23426714947363,16.329941187195445);
+                            String name = feature.getProperty("PARK");
+                            String area = feature.getProperty("FLAECHE");
+                            String fenceS = feature.getProperty("EINFRIEDUNG");
+                            String typ = feature.getProperty("TYP");
+                            DoggoZone doggoZone = new DoggoZone(location,
+                                    name,
+                                    area,
+                                    fenceS,
+                                    typ);
+
+                            mapViewModel.getSelectedDoggoZone(doggoZone).observe(thisF, new Observer<DoggoZone>() {
+                                @Override
+                                public void onChanged(DoggoZone doggoZone) {
+                                    Log.i("MAP","SLECETED " + doggoZone.getName());
+                                    selectedDoggoZone = doggoZone;
+                                }
+
+                            });
+
+                            zoneName.setText(name);
+                            parkArea.setText("Fläche : " + area);
+                            fence.setText("Einfriedung : " + fenceS);
+                            type.setText("Typ : " + typ);
+                            doggosJoining.setText("8 others are joining");
+
+
+                            goToDoggoZone.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    NavController navController = Navigation.findNavController(v);
+                                    navController.navigate(R.id.toDoggoZone);
+                                }
+                            });
+
+                        }
+                    });
+
+
+
                     geoJsonLayer.addLayerToMap();
                 }
             }
         });
 
 
-        //mMap.setOnMarkerClickListener(this);
-        LatLng park1Pos = new LatLng(park1.getLatitude(),park1.getLongitude());
-        LatLng park2Pos = new LatLng(park2.getLatitude(),park2.getLongitude());
-        LatLng park3Pos = new LatLng(park3.getLatitude(),park3.getLongitude());
-        LatLng park4Pos = new LatLng(park4.getLatitude(),park4.getLongitude());
-        LatLng park5Pos = new LatLng(park5.getLatitude(),park5.getLongitude());
-        LatLng park6Pos = new LatLng(park6.getLatitude(),park5.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(park1Pos).icon(bitmapDescriptorFromVector(getContext(),R.drawable.park))).setTag(park1);
-        mMap.addMarker(new MarkerOptions().position(park2Pos).icon(bitmapDescriptorFromVector(getContext(),R.drawable.park))).setTag(park2);
-        mMap.addMarker(new MarkerOptions().position(park3Pos).icon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav))).setTag(park3);
-        mMap.addMarker(new MarkerOptions().position(park4Pos).icon(bitmapDescriptorFromVector(getContext(),R.drawable.park))).setTag(park4);
-        mMap.addMarker(new MarkerOptions().position(park5Pos).icon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav))).setTag(park5);
-        mMap.addMarker(new MarkerOptions().position(park6Pos).icon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav))).setTag(park6);
+
+        LatLng park1Pos = new LatLng(park1.getLocation().getLatitude(),park1.getLocation().getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(park1Pos,15));
 
     }
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        Log.i("MapFragment", "Marker title is " + marker.getTitle());
-        slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-        selectedDoggoZone = (DoggoZone) marker.getTag();
-        ((MainActivity)getActivity()).setSelectedDoggoZone(selectedDoggoZone);
-        zoneName.setText(selectedDoggoZone.getName());
-        parkArea.setText("Area: " + selectedDoggoZone.getSurface() + "m2");
-        fence.setText("Fence: Yes"  );
-        type.setText("Type: Dog Zone");
-        doggosJoining.setText("8 others are joining");
-        goToDoggoZone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavController navController = Navigation.findNavController(v);
-                navController.navigate(R.id.toDoggoZone);
-            }
-        });
-        return false;
-    }
 
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int id) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            float dpsLeft = 8;
-            float dpsTop = 5;
-            float dm = getResources().getDisplayMetrics().density;
-            Drawable background = ContextCompat.getDrawable(context, id);
-            background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
-            Drawable vectorDrawable = ContextCompat.getDrawable(context, R.drawable.tree_outline);
-            vectorDrawable.setBounds((int)(dpsLeft * dm), (int)(dpsTop * dm), vectorDrawable.getIntrinsicWidth()+(int)(dpsLeft * dm), vectorDrawable.getIntrinsicHeight()+(int)(dpsTop * dm));
+        float dpsLeft = 8;
+        float dpsTop = 5;
+        float dm = getResources().getDisplayMetrics().density;
+        Drawable background = ContextCompat.getDrawable(context, id);
+        assert background != null;
+        background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, R.drawable.tree_outline);
+        assert vectorDrawable != null;
+        vectorDrawable.setBounds((int)(dpsLeft * dm), (int)(dpsTop * dm), vectorDrawable.getIntrinsicWidth()+(int)(dpsLeft * dm), vectorDrawable.getIntrinsicHeight()+(int)(dpsTop * dm));
 
-            Bitmap bitmap = Bitmap.createBitmap(background.getIntrinsicWidth(), background.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bitmap);
-            background.draw(canvas);
-            vectorDrawable.draw(canvas);
+        Bitmap bitmap = Bitmap.createBitmap(background.getIntrinsicWidth(), background.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        background.draw(canvas);
+        vectorDrawable.draw(canvas);
 
-            return BitmapDescriptorFactory.fromBitmap(bitmap);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
 
-        } else {
-            return BitmapDescriptorFactory.fromResource(id);
-        }
     }
 
 

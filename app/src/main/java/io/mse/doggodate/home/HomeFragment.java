@@ -80,7 +80,7 @@ public class HomeFragment extends Fragment {
          gowalk = (TextView) view.findViewById(R.id.goforwalk);
         TextView lastwalk = (TextView) view.findViewById(R.id.lastwalk);
         lastwalk.setText("The last walk was 29 hours ago!");
-        weatherIcon = (TextView) view.findViewById(R.id.weather_icon);
+        weatherIcon = (TextView) view.findViewById(R.id.weather_icons);
         weatherFont = Typeface.createFromAsset(getContext().getAssets(), "fonts/weathericons-regular-webfont.ttf");
         weatherIcon.setTypeface(weatherFont);
         taskLoadUp("Vienna, AT");
