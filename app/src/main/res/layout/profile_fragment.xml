@@ -107,7 +107,7 @@
             app:layout_constraintStart_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tabLayout"
             app:layout_constraintVertical_bias="0.0"
-            app:handler="@{handler}"
+
             />
             <!--android:paddingTop="10dp"-->
 

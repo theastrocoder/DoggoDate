@@ -1,44 +1,57 @@
 package io.mse.doggodate.entity;
 
+import android.util.Log;
+
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class DoggoEvent {
+public class DoggoEvent extends BaseObservable {
 
-    private LocalDateTime dateTime;
+    private LocalDateTime time;
     private DoggoZone zone;
     private Doggo creator;
 
 
     private ArrayList<Doggo> doggosJoining = new ArrayList<>();
 
-    public DoggoEvent(LocalDateTime dateTime, DoggoZone zone, Doggo creator) {
-        this.dateTime = dateTime;
+    public DoggoEvent(LocalDateTime time, DoggoZone zone, Doggo creator2) {
+        this.time = time;
         this.zone = zone;
-        this.creator=creator;
+        this.creator = creator2;
+    }
+public DoggoEvent() {
+
+}
+    @Bindable
+    public LocalDateTime getTime() {
+        return time;
     }
 
-
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    @Bindable
+    public void setTime(LocalDateTime time) {
+        this.time = time;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
+    @Bindable
     public DoggoZone getZone() {
         return zone;
     }
 
+    @Bindable
     public Doggo getCreator() {
         return creator;
     }
 
-    public void setCreator(Doggo creator) {
-        this.creator = creator;
+    @Bindable("doggoID")
+    public void setCreator(Doggo creator3) {
+        Log.i("sfds", "sdgsgdfghdhgdhghfgdhfgfcghzbedfhzbdhgv dxfdcxjcdfgx");
+        this.creator = creator3;
     }
 
+    @Bindable
     public void setZone(DoggoZone zone) {
         this.zone = zone;
     }

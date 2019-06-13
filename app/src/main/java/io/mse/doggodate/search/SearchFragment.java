@@ -1,15 +1,21 @@
 package io.mse.doggodate.search;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import androidx.appcompat.app.ActionBar;
+import android.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import java.util.ArrayList;
@@ -26,7 +32,10 @@ import io.mse.doggodate.entity.Doggo;
  */
 public class SearchFragment extends Fragment {
 
-    GridView gridView;
+    private GridView gridView;
+    private ActionBar toolbar;
+    private MenuItem   mSearch;
+    private SearchView mSearchView;
     public SearchFragment() {}
 
     @BindingAdapter({"bind:handler"})
@@ -52,10 +61,11 @@ public class SearchFragment extends Fragment {
         ((MainActivity)getActivity()).invalidateOptionsMenu();
 
         final SearchFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.search_fragment, container, false);
-        final SearchViewModel searchViewModel = ViewModelProviders.of(this).get(SearchViewModel.class);
+        final SearchViewModel searchViewModel = ViewModelProviders.of(getActivity()).get(SearchViewModel.class);
         binding.setHandler(this);
         binding.setManager(getFragmentManager());
         View view = binding.getRoot();
+
         FirestoreCallback searchFirestoreCallback = new FirestoreCallback() {
             @Override
             public void onDataRetrieved(ArrayList<Doggo> doggos) {
@@ -70,8 +80,14 @@ public class SearchFragment extends Fragment {
                 });
             }
         };
-        searchViewModel.getAllDoggos(searchFirestoreCallback);
+        searchViewModel.getAllDoggos(searchFirestoreCallback).observe(this, new Observer<ArrayList<Doggo>>() {
+            @Override
+            public void onChanged(ArrayList<Doggo> doggos) {
+                //binding.gridView.refreshDrawableState();
 
+                binding.gridView.setAdapter(new SearchImageAdapter(((MainActivity) getActivity()).getApplicationContext(), ((MainActivity) getActivity()), doggos));
+
+        }});
 
         return view;
     }

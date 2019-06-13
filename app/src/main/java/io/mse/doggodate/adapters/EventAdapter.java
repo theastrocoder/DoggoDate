@@ -42,7 +42,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         eventViewHolder.zone.setText(event.getZone().getName());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
 
-        String formatDateTime = event.getDateTime().format(formatter);
+        String formatDateTime = event.getTime().format(formatter);
         eventViewHolder.creator.setText(event.getCreator().getName() + " is going for a walk at " + formatDateTime);
         eventViewHolder.others.setText(event.getDoggosJoining().size() + " others are joining.");
 

@@ -136,7 +136,7 @@ public class DoggoZoneFragment extends Fragment {
         mTimePicker = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                Toast.makeText(getContext(),"Scheduled walk in " + selectedHour + ":" + selectedMinute,Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),"Scheduled walk at " + selectedHour + ":" +  (selectedMinute < 10? "0"+selectedMinute:selectedMinute),Toast.LENGTH_LONG).show();
             }
         }, hour, minute, true);//Yes 24 hour time
         mTimePicker.setTitle("Select Time");

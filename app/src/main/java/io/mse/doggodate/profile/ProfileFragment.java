@@ -42,6 +42,7 @@ import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
 import io.mse.doggodate.adapters.ViewPagerAdapter;
 import io.mse.doggodate.databinding.ProfileFragmentBinding;
+import io.mse.doggodate.entity.DoggoEvent;
 import io.mse.doggodate.entity.DoggoPOJO;
 import io.mse.doggodate.helpers.HelperViewModel;
 import io.mse.doggodate.search.FirestoreCallback;
@@ -57,7 +58,7 @@ public class ProfileFragment extends Fragment {
     ViewPager viewPager;
     private MainActivity mainActivity;
     private ProfileViewModel profileViewModel;
-    private Observer<Doggo> nameObserver;
+    private Observer<Doggo> doggoObserver;
     public ProfileFragment() {}
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,59 +73,63 @@ public class ProfileFragment extends Fragment {
         final ProfileFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.profile_fragment, container, false);
 
         //set handler and fragment manager for view pager in tab layout
-        binding.setHandler(this);
-        binding.setManager(getFragmentManager());
+        //binding.setHandler(this);
+        //binding.setManager(getFragmentManager());
         final Doggo temp = new Doggo();
-        temp.setName("opopo");
         binding.setDoggo(temp);
         final HelperViewModel hv = ViewModelProviders.of(getActivity()).get(HelperViewModel.class);
 
-        nameObserver = new Observer<Doggo>() {
+        doggoObserver = new Observer<Doggo>() {
             @Override
             public void onChanged(@Nullable final Doggo activeDoggo) {
                 // Update the UI, in this case,binding.
                 binding.setDoggo(activeDoggo);
+                hv.setCurrentDoggo(activeDoggo);
+                final ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager(), activeDoggo);
+                binding.pager.setAdapter(adapter);
+
+
             }
         };
-        ProfileFirestoreCallback firestoreCallback = new ProfileFirestoreCallback() {
+        ProfileFirestoreCallback afterDoggoRetrieved = new ProfileFirestoreCallback() {
             @Override
             public void onDataRetrieved(Doggo doggo) {
                 firebaseDoggo = doggo;
+                Log.i("ProfileFragment", "sizeeeeeeeeee"+firebaseDoggo.getPhotos().size());
                 hv.setCurrentDoggo(doggo);
-                final ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager(), firebaseDoggo);
+                final ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager(), doggo);
                 binding.pager.setAdapter(adapter);
 
             }
-        };
-        profileViewModel.getActiveDoggo(firestoreCallback).observe(this, nameObserver);
 
-//addDoggosToDB();
+            @Override
+            public void onDataRetrieved(ArrayList<DoggoEvent> events) {
+                hv.setCurrentDoggoEvents(events);
+                Log.i("ProfileFragment", "THE LOADED EVENTS ARE OF SIZE " + events.size());
+
+            }
+
+
+        };
+
+       // profileViewModel.getMyEvents(firestoreDoggoCallback, "97XuSnfcOmfW8pKF7B8y");
+        profileViewModel.getActiveDoggo(afterDoggoRetrieved).observe(this, doggoObserver);
+
 
         mainActivity = (MainActivity)getActivity();
         mainActivity.invalidateOptionsMenu();
         mainActivity.getSupportActionBar().setTitle("My Profile");
-
-
-
-
         return binding.getRoot();
     }
+
+
+
     @BindingAdapter({"bind:pager"})
     public static void bindViewPagerTabs(final TabLayout view, final ViewPager pagerView)
     {
         view.setupWithViewPager(pagerView, true);
     }
 
-
-    @BindingAdapter({"bind:handler"})
-    public static void bindViewPagerAdapter(final ViewPager view, final ProfileFragment fragment)
-    {
-      /*  HelperViewModel hv = ViewModelProviders.of(this).get(HelperViewModel.class);
-        Doggo aDoggo = fragment.getFirebaseDoggo();
-        hv.setCurrentDoggo(aDoggo);
-        final ViewPagerAdapter adapter = new ViewPagerAdapter( fragment.getFragmentManager(), aDoggo);
-        view.setAdapter(adapter);*/
-    }
 
     private Doggo getFirebaseDoggo() {
         return this.firebaseDoggo;

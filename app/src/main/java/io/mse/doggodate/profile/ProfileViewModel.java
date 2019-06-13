@@ -11,10 +11,18 @@ import androidx.lifecycle.ViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.w3c.dom.Document;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,17 +47,62 @@ public class ProfileViewModel extends ViewModel {
         return activeFirebaseDoggo;
     }
 
-    public MutableLiveData<Doggo> getAMyEvents(ProfileFirestoreCallback profileFirestoreCallback) {
-        if (activeFirebaseDoggo == null) {
-            activeFirebaseDoggo = new MutableLiveData<Doggo>();
-            loadActiveFirebaseDoggo(profileFirestoreCallback);
+    public MutableLiveData<ArrayList<DoggoEvent>> getMyEvents(ProfileFirestoreCallback profileFirestoreCallback, String doggoID) {
+        if (myEvents == null) {
+            myEvents = new MutableLiveData<ArrayList<DoggoEvent>>();
+            loadMyEvents(profileFirestoreCallback, doggoID);
         } else {
-            profileFirestoreCallback.onDataRetrieved(activeFirebaseDoggo.getValue());
+            profileFirestoreCallback.onDataRetrieved(myEvents.getValue());
         }
-        return activeFirebaseDoggo;
+        return myEvents;
     }
 
+    private void loadMyEvents(final ProfileFirestoreCallback profileFirestoreCallback, String doggoID) {
+        Log.i("ProfileViewModel", "ulazio je u loadMyEvents!");
 
+        db.collection("Event").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            ArrayList<DoggoEvent> eventArrayList = new ArrayList<>();
+                            Log.i("ProfileViewModel", "Task successful");
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                final DoggoEvent event = new DoggoEvent();
+                                Timestamp time = document.getTimestamp("time");
+                                LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(time.getSeconds() * 1000 + time.getNanoseconds() / 1000000), ZoneId.systemDefault());
+                                event.setTime(localDateTime);
+                                 Log.i("ProfilViewModel", "time of event is: " + localDateTime.toString());
+                                DocumentReference zoneID =  document.getDocumentReference("zoneID");
+                                //DocumentReference doggoID =  document.getDocumentReference("doggoID");
+
+                                document.getDocumentReference("doggoID").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            Log.i("ProfileViewModel", "Task successful");
+                                            DocumentSnapshot document = task.getResult();
+
+                                            Doggo doggo = document.toObject(Doggo.class);
+                                            event.setCreator(doggo);
+
+                                            }
+                                    }
+                                });
+                                Log.i("ProfileViewModel", "Loaded event from FS: " +event.toString());
+                                eventArrayList.add(event);
+                            }
+
+                            myEvents.setValue(eventArrayList);
+                            profileFirestoreCallback.onDataRetrieved(eventArrayList);
+                        } else {
+                            Log.w("ProfileViewModel", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+
+
+    }
     private void loadActiveFirebaseDoggo(final ProfileFirestoreCallback profileFirestoreCallback) {
 
         db.collection("Doggo").whereEqualTo("active", true).get()
@@ -59,10 +112,14 @@ public class ProfileViewModel extends ViewModel {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Doggo active = document.toObject(Doggo.class);
-                                    ArrayList<String> arrayList = (ArrayList<String>) document.get("photos");
-                                    for (String s : arrayList) {
-                                        active.getPhotos().add( s);
-                                    }
+                                active.setId(document.getId());
+
+                               // ArrayList<String> arrayList = (ArrayList<String>) document.get("photos");
+                                 //   for (String s : arrayList) {
+                                 //       active.getPhotos().add( s);
+                                    //}
+                                   // loadMyEvents(profileFirestoreCallback, document.getId());
+                                   // active.setEvents(myEvents.getValue());
                                 activeFirebaseDoggo.setValue(active);
                                 profileFirestoreCallback.onDataRetrieved(active);
 

@@ -35,7 +35,6 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         {
             fragment = new ListHelperFragment();
             ((ListHelperFragment) fragment).setFollowers(false);
-            ((ListHelperFragment) fragment).setSelectedDoggo(this.currentDoggo);
             Log.i("ViewPagerAdapter", "third tab");
 
         }
@@ -43,14 +42,12 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         {
             fragment = new ListHelperFragment();
             ((ListHelperFragment) fragment).setFollowers(true);
-            ((ListHelperFragment) fragment).setSelectedDoggo(this.currentDoggo);
             Log.i("ViewPagerAdapter", "forth tab");
 
         } else if (position == 1)
         {
             fragment = new ListHelperFragment();
             ((ListHelperFragment) fragment).setFollowers(null);
-            ((ListHelperFragment) fragment).setSelectedDoggo(this.currentDoggo);
             Log.i("ViewPagerAdapter", "second tab");
 
         }
@@ -79,7 +76,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         }
         else if (position == 1)
         {
-            title = /*selectedDoggo.getEvents().size() +*/" Events";
+            title = /*currentDoggo.getEvents().size() +*/" Events";
         }
         return title;
     }

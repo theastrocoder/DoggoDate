@@ -1,23 +1,32 @@
 package io.mse.doggodate.home;
 
-import android.content.DialogInterface;
+import android.app.TimePickerDialog;
+import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import io.mse.doggodate.OpenWeatherAPI;
 import io.mse.doggodate.entity.DoggoEvent;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
@@ -31,6 +40,12 @@ public class HomeFragment extends Fragment {
 
     private MainActivity mainActivity;
     private HomeViewModel homeViewModel;
+    private TextView weather;
+    private  TextView gowalk;
+    private TextView weatherIcon;
+    private Typeface weatherFont;
+
+    String OPEN_WEATHER_MAP_API ="b9c1970e210e7c88afeb6b9afc432480";
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -56,17 +71,20 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onItemClick(DoggoEvent item) {
-                areYouReallyWannaJoin(item);
+                selectTimeOfJoining(item);
             }});
 
         recList.setAdapter(ca);
 
-        TextView weather = (TextView) view.findViewById(R.id.weather);
-        weather.setText("Wieden 26°C");
-        TextView gowalk = (TextView) view.findViewById(R.id.goforwalk);
-        //gowalk.setText(((MainActivity)getActivity()).getActiveDog().getName()+ " wants to go for a walk. ");
+         weather = (TextView) view.findViewById(R.id.weather);
+         gowalk = (TextView) view.findViewById(R.id.goforwalk);
         TextView lastwalk = (TextView) view.findViewById(R.id.lastwalk);
         lastwalk.setText("The last walk was 29 hours ago!");
+        weatherIcon = (TextView) view.findViewById(R.id.weather_icon);
+        weatherFont = Typeface.createFromAsset(getContext().getAssets(), "fonts/weathericons-regular-webfont.ttf");
+        weatherIcon.setTypeface(weatherFont);
+        taskLoadUp("Vienna, AT");
+
        /* FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Create a new user with a first and last name
         Map<String, Object> user = new HashMap<>();
@@ -92,10 +110,95 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    private void areYouReallyWannaJoin(final DoggoEvent item) {
+    public void taskLoadUp(String query) {
+        if (OpenWeatherAPI.isNetworkAvailable(getContext())) {
+            DownloadWeather task = new DownloadWeather();
+            task.execute(query);
+        } else {
+            Toast.makeText(getContext(), "No Internet Connection", Toast.LENGTH_LONG).show();
+        }
+    }
+    private void selectTimeOfJoining(final DoggoEvent item) {
+        //areYouSure(item);
+        pickTime(item);
+    }
+
+    private void pickTime(DoggoEvent item) {
+
+        final int minute0 = item.getTime().getMinute();
+        final int hour0 = item.getTime().getHour();
+
+        TimePickerDialog mTimePicker;
+        mTimePicker = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                //Call Firestore to save event
+
+                Toast.makeText(getContext(),"Scheduled walk at " + selectedHour + ":" + (selectedMinute < 10? "0"+selectedMinute:selectedMinute),Toast.LENGTH_LONG).show();
+            }
+        }, hour0, minute0, true);//Yes 24 hour time
+        mTimePicker.setMessage("When are you joining " + item.getCreator().getName() +"?");
+        mTimePicker.show();
+    }
+
+    private List<DoggoEvent> createEventList(int size) {
+
+        List<DoggoEvent> result = new ArrayList<DoggoEvent>();
+        for (int i=0; i < ((MainActivity)getActivity()).getActiveDoggoEvents().size(); i++) {
+
+            DoggoEvent event = ((MainActivity)getActivity()).getActiveDoggoEvents().get(i);
+            event.setDoggosJoining(((MainActivity)getActivity()).getDefaultSearch());
+            result.add(event);
+
+        }
+
+        return result;
+    }
+    class DownloadWeather extends AsyncTask< String, Void, String > {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+           // loader.setVisibility(View.VISIBLE);
+
+        }
+        protected String doInBackground(String...args) {
+            String xml = OpenWeatherAPI.excuteGet("http://api.openweathermap.org/data/2.5/weather?q=" + args[0] +
+                    "&units=metric&appid=" + OPEN_WEATHER_MAP_API);
+            return xml;
+        }
+        @Override
+        protected void onPostExecute(String xml) {
+
+            try {
+                JSONObject json = new JSONObject(xml);
+                if (json != null) {
+                    JSONObject details = json.getJSONArray("weather").getJSONObject(0);
+                    JSONObject main = json.getJSONObject("main");
+                    DateFormat df = DateFormat.getDateTimeInstance();
+
+                    gowalk.setText(json.getString("name").toUpperCase(Locale.US) + ", " + json.getJSONObject("sys").getString("country"));
+                    weather.setText(String.format("%.2f", main.getDouble("temp")) + "°");
+                    weatherIcon.setText(Html.fromHtml(OpenWeatherAPI.setWeatherIcon(details.getInt("id"),
+                            json.getJSONObject("sys").getLong("sunrise") * 1000,
+                            json.getJSONObject("sys").getLong("sunset") * 1000)));
+
+
+                }
+            } catch (JSONException e) {
+                Toast.makeText(getContext(), "Error, Check City", Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+
+
+
+    }
+
+    private void areYouSure(DoggoEvent item) {
         // Setting Alert Dialog Title
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-        alertDialogBuilder.setMessage("Your Doggo " + item.getCreator().getName() +" scheduled the walk for " + item.getDateTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")) +". " +
+      /*  AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder.setMessage("Your Doggo " + item.getCreator().getName() +" scheduled the walk for " + item.getTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")) +". " +
                 "\nOthers are joining: \n" +item.joiningDoggosToString());
         alertDialogBuilder.setTitle("Wanna go for a walk? ");
 
@@ -125,19 +228,7 @@ public class HomeFragment extends Fragment {
         });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+        alertDialog.show();*/
     }
-    private List<DoggoEvent> createEventList(int size) {
 
-        List<DoggoEvent> result = new ArrayList<DoggoEvent>();
-        for (int i=0; i < ((MainActivity)getActivity()).getActiveDoggoEvents().size(); i++) {
-
-            DoggoEvent event = ((MainActivity)getActivity()).getActiveDoggoEvents().get(i);
-            event.setDoggosJoining(((MainActivity)getActivity()).getDefaultSearch());
-            result.add(event);
-
-        }
-
-        return result;
-    }
 }

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -92,8 +93,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG,"Active " + active);
                     if(!active.equals(homeFragment)) {
                         Log.i(TAG, "NOT DOuble");
-                        //fm.beginTransaction().replace(R.id.main_container, homeFragment, "1").commit();
-                        //fm.beginTransaction().hide(active).show(homeFragment).addToBackStack("1").commit();
                     }
                     item.setChecked(true);
                     ActionBar ab = getSupportActionBar();
@@ -108,13 +107,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.navigation_map:
                     item.setChecked(true);
+                    getSupportActionBar().show();
                     if(active!=fragment2) {
                         Log.i(TAG, "NOT DOuble");
-
-
-                        //fm.beginTransaction().add(R.id.main_container, fragment2, "2").commit();
-
-                        //fm.beginTransaction().hide(active).show(fragment2).addToBackStack("2").commit();
                     }
                     setActive(fragment2,active);
                     getSupportActionBar().setTitle("DoggoZones");
@@ -128,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     item.setChecked(true);
                     getSupportActionBar().setTitle("Doggos");
                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                    getSupportActionBar().show();
                     searchItem.setVisible(true);
                     favoritesItem.setVisible(false);
                     navController.navigate(R.id.navigation_doggos);
@@ -135,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.navigation_profile:
                     Log.i(TAG, "profile opened");
+                    getSupportActionBar().show();
                     item.setChecked(true);
                     getSupportActionBar().setTitle("My Profile");
                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -585,24 +582,62 @@ public class MainActivity extends AppCompatActivity {
 
         switch (navController.getCurrentDestination().getLabel().toString()){
             case "maps_fragment":
+                getSupportActionBar().show();
                 getSupportActionBar().setTitle("DoggoZones");
                 searchItem.setVisible(true);
                 favoritesItem.setVisible(true);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 break;
             case "search_fragment":
+                getSupportActionBar().show();
                 getSupportActionBar().setTitle("Doggos");
                 searchItem.setVisible(true);
                 favoritesItem.setVisible(false);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                final SearchView mSearchView = (SearchView) searchItem.getActionView();
+
+                mSearchView.setQueryHint("Search");
+                final SearchViewModel searchViewModel = ViewModelProviders.of(this).get(SearchViewModel.class);
+
+                mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                    @Override
+                    public boolean onClose() {
+                        Log.i(TAG, "reseting search");
+                        searchViewModel.resetShownDoggos();
+                        return false;
+                    }
+                });
+
+                mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        Log.i(TAG, "submitting search");
+
+                        FirestoreCallback whenSearchDone = new FirestoreCallback() {
+                            @Override
+                            public void onDataRetrieved(ArrayList<Doggo> doggos) {
+                                searchViewModel.setShownDoggos(doggos);
+                            }
+                        };
+                        searchViewModel.searchDoggos(whenSearchDone, mSearchView.getQuery().toString());
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        return false;
+                    }
+                });
                 break;
             case "profile_fragment":
+                getSupportActionBar().show();
                 getSupportActionBar().setTitle("My Profile");
                 searchItem.setVisible(false);
                 favoritesItem.setVisible(false);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 break;
             case "doggozone_fragment":
+                getSupportActionBar().show();
                 getSupportActionBar().setTitle("DoggoZones");
                 navView.getMenu().getItem(1).setChecked(true);
                 searchItem.setVisible(false);
@@ -610,6 +645,7 @@ public class MainActivity extends AppCompatActivity {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 break;
             case "other_profile_fragment":
+                getSupportActionBar().show();
                 getSupportActionBar().setTitle("Doggo");
                 navView.getMenu().getItem(2).setChecked(true);
                 searchItem.setVisible(false);
@@ -617,6 +653,7 @@ public class MainActivity extends AppCompatActivity {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 break;
                 default:
+                    getSupportActionBar().show();
                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                     getSupportActionBar().setTitle("DoggoDate");
                     searchItem.setVisible(false);
@@ -629,7 +666,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public MenuItem getSearchItem(){
-        return searchItem;
+        return this.searchItem;
     }
     public MenuItem getFavoritesItem(){
         return favoritesItem;

@@ -9,6 +9,8 @@ import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.databinding.BindingAdapter;
 
+import com.google.firebase.firestore.Exclude;
+
 import java.util.ArrayList;
 
 public class Doggo extends BaseObservable {
@@ -18,6 +20,11 @@ public class Doggo extends BaseObservable {
     private String id;
     private static Context context;
     private int profilePicInt;
+    private ArrayList<DoggoEvent> events;
+
+    private ArrayList<String> photos = new ArrayList<>();
+    private String profilePic;
+    private boolean active;
 
     public Context getContext() {
         return context;
@@ -26,11 +33,6 @@ public class Doggo extends BaseObservable {
     public void setContext(Context context) {
         this.context = context;
     }
-
-    private ArrayList<String> photos = new ArrayList<>();
-    private ArrayList<Long> photosLong = new ArrayList<>();
-    private String profilePic;
-    private boolean active;
 
     public Doggo(String name, String breed, String profilePic) {
         this.name = name;
@@ -49,15 +51,18 @@ public class Doggo extends BaseObservable {
         photos = new ArrayList<>();
     }
 
+    @Exclude
     public ArrayList<DoggoEvent> getEvents() {
 
-        return new ArrayList<DoggoEvent>();
+        return events;
     }
 
+    @Exclude
     public void setEvents(ArrayList<DoggoEvent> events) {
 
-        //this.events = events;
+        this.events = events;
     }
+
 
     public String getId() {
         return id;
@@ -113,11 +118,13 @@ public class Doggo extends BaseObservable {
         //this.followers = followers;
     }
 
+    @Exclude
     public ArrayList<Doggo> getFollowings() {
 
         return new ArrayList<Doggo>();
     }
 
+    @Exclude
     public void setFollowings(ArrayList<Doggo> followings) {
 
         //this.followings = followings;
@@ -131,15 +138,6 @@ public class Doggo extends BaseObservable {
     @Bindable
     public String getProfilePic() {
         return profilePic;
-    }
-
-    @Bindable
-    public ArrayList<Long> getPhotosLong() {
-        return photosLong;
-    }
-    @Bindable
-    public void setPhotosLong(ArrayList<Long> photoLong) {
-        this.photosLong = photoLong;
     }
 
     @Bindable

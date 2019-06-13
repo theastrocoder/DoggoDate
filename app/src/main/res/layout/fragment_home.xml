@@ -60,14 +60,18 @@
                     android:layout_marginLeft="12dp"
                     android:layout_marginBottom="15dp"
                     />
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="65dp"
+
+                <TextView
+                    android:id="@+id/weather_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignBottom="@id/lastwalk"
-                    android:layout_marginRight="20dp"
                     android:layout_alignParentRight="true"
-                    android:src="@drawable/weather_sunny"
-                    />
+                    android:layout_marginTop="10dp"
+
+                    android:layout_marginRight="28dp"
+
+                    android:textSize="55sp" />
             </RelativeLayout>
 
         </androidx.cardview.widget.CardView>

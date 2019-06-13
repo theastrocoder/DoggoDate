@@ -27,12 +27,6 @@
         android:layout_height="match_parent">
 
 
-        <SearchView
-            android:layout_width="405dp"
-            android:layout_height="45dp"
-            tools:layout_editor_absoluteX="3dp"
-            tools:layout_editor_absoluteY="0dp" />
-
             <GridView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/grid_view"
                 android:layout_width="fill_parent"
