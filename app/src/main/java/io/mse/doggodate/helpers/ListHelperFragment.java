@@ -47,7 +47,7 @@ public class ListHelperFragment extends Fragment {
 
         //create and bind empty list
         final ArrayList<String> stringList = new ArrayList();
-        stringList.add("tryyyyyy");
+        //stringList.add("tryyyyyy");
         CustomAdapter adapter = new CustomAdapter(stringList,(AppCompatActivity)getActivity());
         binding.list.setAdapter(adapter);
 

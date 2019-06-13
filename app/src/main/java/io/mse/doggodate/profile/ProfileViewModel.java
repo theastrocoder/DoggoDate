@@ -28,6 +28,7 @@ import java.util.List;
 
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoEvent;
+import io.mse.doggodate.entity.DoggoZone;
 
 public class ProfileViewModel extends ViewModel {
 
@@ -68,15 +69,16 @@ public class ProfileViewModel extends ViewModel {
                             ArrayList<DoggoEvent> eventArrayList = new ArrayList<>();
                             Log.i("ProfileViewModel", "Task successful");
                             for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.i("vhfhfhfhfhfhfhfh","doooooooooooooooooooooooooooooooc" +document.toString());
                                 final DoggoEvent event = new DoggoEvent();
                                 Timestamp time = document.getTimestamp("time");
                                 LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(time.getSeconds() * 1000 + time.getNanoseconds() / 1000000), ZoneId.systemDefault());
                                 event.setTime(localDateTime);
                                  Log.i("ProfilViewModel", "time of event is: " + localDateTime.toString());
-                                DocumentReference zoneID =  document.getDocumentReference("zoneID");
-                                //DocumentReference doggoID =  document.getDocumentReference("doggoID");
+                                final DocumentReference doggoID =  document.getDocumentReference("creator");
+                                final DocumentReference zoneID =  document.getDocumentReference("zone");
 
-                                document.getDocumentReference("doggoID").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                doggoID.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         if (task.isSuccessful()) {
@@ -85,12 +87,30 @@ public class ProfileViewModel extends ViewModel {
 
                                             Doggo doggo = document.toObject(Doggo.class);
                                             event.setCreator(doggo);
+                                            Log.i("dfgdfhgdfh", "doggoooooooo "+event.getCreator().getName());
 
                                             }
+
+                                        zoneID.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    Log.i("ProfileViewModel", "Task successful");
+                                                    DocumentSnapshot document = task.getResult();
+
+                                                    DoggoZone zone = document.toObject(DoggoZone.class);
+
+                                                    event.setZone(zone);
+                                                    Log.i("dfgdfhgdfh", "zoneeeee "+event.getZone().getName());
+
+                                                }
+                                            }
+                                        });
                                     }
                                 });
-                                Log.i("ProfileViewModel", "Loaded event from FS: " +event.toString());
-                                eventArrayList.add(event);
+
+
+                                   eventArrayList.add(event);
                             }
 
                             myEvents.setValue(eventArrayList);
