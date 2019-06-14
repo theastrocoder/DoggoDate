@@ -12,8 +12,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -24,8 +26,12 @@ import org.w3c.dom.Document;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoEvent;
@@ -117,6 +123,7 @@ public class ProfileViewModel extends ViewModel {
                                             DocumentSnapshot document = task.getResult();
 
                                             Doggo doggo = document.toObject(Doggo.class);
+                                            doggo.setId(document.getId());
                                             event.setCreator(doggo);
                                             Log.i(TAG, "name of creator is "+event.getCreator().getName());
 
@@ -133,7 +140,7 @@ public class ProfileViewModel extends ViewModel {
                                                     DocumentSnapshot document = task.getResult();
 
                                                     DoggoZone zone = document.toObject(DoggoZone.class);
-
+                                                    zone.setId(document.getId());
                                                     event.setZone(zone);
                                                     Log.i(TAG, "zone name is "+event.getZone().getName());
                                                     eventArrayList.add(event);
@@ -181,6 +188,7 @@ public class ProfileViewModel extends ViewModel {
                                             DocumentSnapshot document = task.getResult();
 
                                             Doggo doggo = document.toObject(Doggo.class);
+                                            doggo.setId(document.getId());
                                             myFollowingsTemp.add(doggo);
 
                                         }
@@ -219,6 +227,7 @@ public class ProfileViewModel extends ViewModel {
                                         DocumentSnapshot document = task.getResult();
 
                                         Doggo doggo = document.toObject(Doggo.class);
+                                        doggo.setId(document.getId());
                                         myFollowersTemp.add(doggo);
 
                                     }
@@ -255,6 +264,57 @@ public class ProfileViewModel extends ViewModel {
                         }
                     }
                 });
+
+    }
+
+    public void addEvent(final DoggoEvent doggoEvent) {
+        ProfileFirestoreCallback profileFirestoreCallback = new ProfileFirestoreCallback() {
+            @Override
+            public void onDataRetrieved(Doggo doggo) {
+
+            }
+
+            @Override
+            public void onDataRetrieved(ArrayList<DoggoEvent> events) {
+                final ArrayList<DoggoEvent> eventsTemp = myEvents.getValue();
+
+                //long nanos = ( Instant.getEpochSecond * 1_000_000_000L ) + instant.getNano
+                long s = doggoEvent.getTime().atZone( ZoneId.systemDefault()).toEpochSecond();
+
+                Timestamp timestamp = new Timestamp( s,  0);
+                Log.i("ProfileViewModel", "time that actually came to db of new event " + doggoEvent.getTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")));
+                Map<String, Object> eventFS = new HashMap<>();
+                eventFS.put("time",timestamp);
+
+                eventFS.put("creator", db.collection("Doggo").document(doggoEvent.getCreator().getId()));
+                eventFS.put("zone", db.collection("DoggoZone").document(doggoEvent.getZone().getId()));
+
+                db.collection("Event").add(eventFS).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        eventsTemp.add(doggoEvent);
+                        myEvents.setValue(eventsTemp);
+                    }
+                });
+            }
+
+            @Override
+            public void onDataRetrievedFollowings(ArrayList<Doggo> myFollowings) {
+
+            }
+
+            @Override
+            public void onDataRetrievedFollowers(ArrayList<Doggo> myFollowers) {
+
+            }
+        };
+        if (myEvents == null) {
+            getMyEvents(profileFirestoreCallback, doggoEvent.getCreator().getId());
+
+        } else {
+            profileFirestoreCallback.onDataRetrieved(myEvents.getValue());
+
+        }
 
     }
 }

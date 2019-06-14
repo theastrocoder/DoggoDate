@@ -5,6 +5,8 @@ import android.util.Log;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
+import com.google.firebase.firestore.ServerTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 

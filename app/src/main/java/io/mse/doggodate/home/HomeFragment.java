@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,16 +22,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import io.mse.doggodate.OpenWeatherAPI;
+import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoEvent;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
 import io.mse.doggodate.adapters.EventAdapter;
+import io.mse.doggodate.profile.ProfileFirestoreCallback;
+import io.mse.doggodate.profile.ProfileViewModel;
+import io.mse.doggodate.search.FirestoreCallback;
 
 
 /**
@@ -44,7 +52,7 @@ public class HomeFragment extends Fragment {
     private  TextView gowalk;
     private TextView weatherIcon;
     private Typeface weatherFont;
-
+    private ProfileViewModel profileViewModel;
     String OPEN_WEATHER_MAP_API ="b9c1970e210e7c88afeb6b9afc432480";
     public HomeFragment() {
         // Required empty public constructor
@@ -59,7 +67,7 @@ public class HomeFragment extends Fragment {
         mainActivity.getSupportActionBar().setTitle("DoggoDate");
 
         homeViewModel = ViewModelProviders.of(getActivity()).get(HomeViewModel.class);
-
+        profileViewModel = ViewModelProviders.of(getActivity()).get(ProfileViewModel.class);
 
         RecyclerView recList = (RecyclerView) view.findViewById(R.id.cardList);
         recList.setHasFixedSize(true);
@@ -123,7 +131,7 @@ public class HomeFragment extends Fragment {
         pickTime(item);
     }
 
-    private void pickTime(DoggoEvent item) {
+    private void pickTime(final DoggoEvent item) {
 
         final int minute0 = item.getTime().getMinute();
         final int hour0 = item.getTime().getHour();
@@ -133,12 +141,46 @@ public class HomeFragment extends Fragment {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 //Call Firestore to save event
-
+                createEvent(item, selectedHour, selectedMinute);
                 Toast.makeText(getContext(),"Scheduled walk at " + selectedHour + ":" + (selectedMinute < 10? "0"+selectedMinute:selectedMinute),Toast.LENGTH_LONG).show();
             }
         }, hour0, minute0, true);//Yes 24 hour time
         mTimePicker.setMessage("When are you joining " + item.getCreator().getName() +"?");
         mTimePicker.show();
+    }
+
+    private void createEvent(DoggoEvent item, int selectedHour, int selectedMinute) {
+        item.getZone().setId("h8xuuF7wRpHSxnCFAftQ");
+        final DoggoEvent event = new DoggoEvent();
+        LocalDateTime originalEventTime = item.getTime();
+        event.setTime(LocalDateTime.of(originalEventTime.getYear(), originalEventTime.getMonth(), originalEventTime.getDayOfMonth(), selectedHour,selectedMinute));
+        event.setZone(item.getZone());
+        ProfileFirestoreCallback profileFirestoreCallback = new ProfileFirestoreCallback() {
+            @Override
+            public void onDataRetrieved(Doggo doggo) {
+                event.setCreator(doggo);
+                //TODO
+                //create event in FS
+                Log.i("HomeFragment", "the new event to be created: " + event.getTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")));
+                profileViewModel.addEvent(event);
+            }
+
+            @Override
+            public void onDataRetrieved(ArrayList<DoggoEvent> events) {
+
+            }
+
+            @Override
+            public void onDataRetrievedFollowings(ArrayList<Doggo> myFollowings) {
+
+            }
+
+            @Override
+            public void onDataRetrievedFollowers(ArrayList<Doggo> myFollowers) {
+
+            }
+        };
+        profileViewModel.getActiveDoggo(profileFirestoreCallback);
     }
 
     private List<DoggoEvent> createEventList(int size) {

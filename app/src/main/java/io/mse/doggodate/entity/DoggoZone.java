@@ -9,6 +9,7 @@ public class DoggoZone {
     private String area;
     private String fence;
     private String typ;
+    private String id;
 
     public DoggoZone(GeoPoint location, String name, String area, String fence, String typ) {
         this.location = location;
@@ -22,6 +23,13 @@ public class DoggoZone {
 
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
