@@ -126,6 +126,7 @@ public class SearchViewModel extends ViewModel {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Doggo doggo = document.toObject(Doggo.class);
+                                doggo.setId(document.getId());
                                 d.add(doggo);
                             }
                             allDoggos.setValue(d);
@@ -153,6 +154,7 @@ public class SearchViewModel extends ViewModel {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Doggo doggo = document.toObject(Doggo.class);
+                                doggo.setId(document.getId());
                                 d.add(doggo);
                             }
                             allDoggos.setValue(d);
@@ -188,6 +190,7 @@ public class SearchViewModel extends ViewModel {
                                             DocumentSnapshot document = task.getResult();
 
                                             Doggo doggo = document.toObject(Doggo.class);
+                                            doggo.setId(document.getId());
                                             myFollowingsTemp.add(doggo);
 
                                         }
@@ -238,6 +241,7 @@ public class SearchViewModel extends ViewModel {
                                             DocumentSnapshot document = task.getResult();
 
                                             Doggo doggo = document.toObject(Doggo.class);
+                                            doggo.setId(document.getId());
                                             event.setCreator(doggo);
                                             Log.i(TAG, "name of creator is "+event.getCreator().getName());
 
@@ -254,6 +258,7 @@ public class SearchViewModel extends ViewModel {
                                                     DocumentSnapshot document = task.getResult();
 
                                                     DoggoZone zone = document.toObject(DoggoZone.class);
+                                                    zone.setId(document.getId());
 
                                                     event.setZone(zone);
                                                     Log.i(TAG, "zone name is "+event.getZone().getName());
@@ -300,14 +305,15 @@ public class SearchViewModel extends ViewModel {
                                             DocumentSnapshot document = task.getResult();
 
                                             Doggo doggo = document.toObject(Doggo.class);
+                                            doggo.setId(document.getId());
                                             myFollowersTemp.add(doggo);
 
                                         }
                                     });
                                 }
-                                doggoFollowers.setValue(myFollowersTemp);
                             }
-                            followersFirestoreCallback.onDataRetrievedFollowers(myFollowersTemp);
+                            doggoFollowers.setValue(myFollowersTemp);
+                            followersFirestoreCallback.onDataRetrievedFollowers(doggoFollowers.getValue());
 
                         } else {
                             Log.w(TAG, "Error getting documents.", task.getException());

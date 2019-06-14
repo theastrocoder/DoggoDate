@@ -17,6 +17,7 @@ public class DoggoZone extends BaseObservable {
     private String fence;
     private String typ;
     private boolean isFavorite;
+    private String id;
 
     public DoggoZone(String name, String area, String fence, String typ, boolean isFavorite) {
         this.name = name;
@@ -30,7 +31,16 @@ public class DoggoZone extends BaseObservable {
 
     }
 
+
     @Bindable
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }

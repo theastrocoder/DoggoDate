@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
     private void addDoggosToDB(){
         Log.i("adDoggosToDB", "got to the method");
         DoggoPOJO Bonnie = new DoggoPOJO("Bonnie", "Golden retriever", "profile_image");
-         DoggoPOJO Alex = new DoggoPOJO("Alex", "Labrador",  "labrador_profile");
+        DoggoPOJO Alex = new DoggoPOJO("Alex", "Labrador",  "labrador_profile");
         DoggoPOJO Chichi = new DoggoPOJO("Chichi", "Chivava", "chivava_prof");
         DoggoPOJO Rex = new DoggoPOJO("Rex", "Wolfdog", "wolfdog_profile");
         DoggoPOJO Akki = new DoggoPOJO("Akki", "Akita Inu", "akita_profile");
@@ -291,11 +291,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
         // FirebaseFirestore.getInstance().collection("Doggo").add(Alex);
-       ArrayList<DoggoPOJO> doggos = new ArrayList<DoggoPOJO>(Arrays.asList(Bonnie, Alex, Chichi, Rex, Akki ));
+        ArrayList<DoggoPOJO> doggos = new ArrayList<DoggoPOJO>(Arrays.asList(Bonnie, Alex, Chichi, Rex, Akki ));
 
-       FirebaseFirestore fb =  FirebaseFirestore.getInstance();
+        FirebaseFirestore fb =  FirebaseFirestore.getInstance();
         for (final DoggoPOJO doggo: doggos) {
-           fb.collection("Doggo").add(doggo).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            fb.collection("Doggo").add(doggo).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
                     Log.d("RERERERERRE", "DocumentSnapshot added with ID: " + documentReference.getId());
@@ -345,7 +345,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         navView = findViewById(R.id.nav_view);
         //set context so doggo can get ressources
-            Doggo.setContextStatic(getApplicationContext());
+        Doggo.setContextStatic(getApplicationContext());
 //addDoggosToDB();
         navController = Navigation.findNavController(this,R.id.main_container);
         NavigationUI.setupWithNavController(navView,navController);
@@ -647,12 +647,12 @@ public class MainActivity extends AppCompatActivity {
                 favoritesItem.setVisible(false);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 break;
-                default:
-                    getSupportActionBar().show();
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                    getSupportActionBar().setTitle("DoggoDate");
-                    searchItem.setVisible(false);
-                    favoritesItem.setVisible(false);
+            default:
+                getSupportActionBar().show();
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                getSupportActionBar().setTitle("DoggoDate");
+                searchItem.setVisible(false);
+                favoritesItem.setVisible(false);
                 break;
 
         }
@@ -690,68 +690,61 @@ public class MainActivity extends AppCompatActivity {
 
         final SearchViewModel searchViewModel = ViewModelProviders.of(this).get(SearchViewModel.class);
         searchViewModel.getAllDoggos(new FirestoreCallback() {
-                                         //retrieve current doggo
-                                         @Override
-                                         public void onDataRetrieved(ArrayList<Doggo> doggos) {
-                                             selectedDog = doggos.get(position);
-                                             hw.setCurrentDoggo(selectedDog);
-                                             Log.i(TAG, "current doggo id " + selectedDog.getId());
+            //retrieve current doggo
+            @Override
+            public void onDataRetrieved(ArrayList<Doggo> doggos) {
+                selectedDog = doggos.get(position);
+                hw.setCurrentDoggo(selectedDog);
+                Log.i(TAG, "current doggo id " + selectedDog.getId());
 
-                                             //get events
-                                             searchViewModel.getEventForDoggo(selectedDog.getId(), new FirestoreEventCallback() {
-                                                 //retrieve current doggos events
-                                                 @Override
-                                                 public void onDataRetrieved(ArrayList<DoggoEvent> events) {
-                                                     hw.setCurrentDoggoEvents(events);
-                                                     Log.i(TAG, "current doggo events " + events.size());
+                //get events
+                searchViewModel.getEventForDoggo(selectedDog.getId(), new FirestoreEventCallback() {
+                    //retrieve current doggos events
+                    @Override
+                    public void onDataRetrieved(ArrayList<DoggoEvent> events) {
+                        hw.setCurrentDoggoEvents(events);
+                        Log.i(TAG, "current doggo events " + events.size());
 
-                                                     //when events done, get followings
-                                                     searchViewModel.loadMyFollowings(new FirestoreFollowingsCallback() {
-                                                                 @Override
-                                                                 public void onDataRetrievedFollowings(ArrayList<Doggo> myFollowings) {
-                                                                     Log.i(TAG, "current doggo followings " + myFollowings.size());
-                                                                     hw.setCurrentDoggoFollowings(myFollowings);
-
-                                                                   /*  if (type == 0) {
-                                                                         navController.navigate(R.id.from_search_toOtherProfile);
-                                                                         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                                                                     } else if (type == 1) {
-                                                                         navController.navigate(R.id.from_myProfile_to_otherProfile);
-                                                                         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-                                                                     }*/
-                                                                     //when followings donne, get followers
-                                                                    searchViewModel.loadMyFollowers(new FirestoreFollowersCallback() {
-                                                                         @Override
-                                                                         public void onDataRetrievedFollowers(ArrayList<Doggo> followers) {
-                                                                             hw.setCurrentDoggoFollowers(followers);
-                                                                             if (type == 0) {
-                                                                                 navController.navigate(R.id.from_search_toOtherProfile);
-                                                                                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                                                                             } else if (type == 1) {
-                                                                                 navController.navigate(R.id.from_myProfile_to_otherProfile);
-                                                                                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-                                                                             }else if(type == 2){
-                                                                                 navController.navigate(R.id.from_doggoZoneFragment_to_otherProfileFragment);
-                                                                                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                                                                             }
-                                                                         }
-                                                                     }, selectedDog.getId());
+                        //when events done, get followings
+                        searchViewModel.loadMyFollowings(new FirestoreFollowingsCallback() {
+                            @Override
+                            public void onDataRetrievedFollowings(ArrayList<Doggo> myFollowings) {
+                                Log.i(TAG, "current doggo followings " + myFollowings.size());
+                                hw.setCurrentDoggoFollowings(myFollowings);
 
 
-                                                                         }
-                                                                     }, selectedDog.getId());
+                                //when followings donne, get followers
+                                searchViewModel.loadMyFollowers(new FirestoreFollowersCallback() {
+                                    @Override
+                                    public void onDataRetrievedFollowers(ArrayList<Doggo> followers) {
+                                        hw.setCurrentDoggoFollowers(followers);
+                                        if (type == 0) {
+                                            navController.navigate(R.id.from_search_toOtherProfile);
+                                            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                                        } else if (type == 1) {
+                                            navController.navigate(R.id.from_myProfile_to_otherProfile);
+                                            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-                                                                 };
+                                        }else if(type == 2){
+                                            navController.navigate(R.id.from_doggoZoneFragment_to_otherProfileFragment);
+                                            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                                        }
+                                    }
+                                }, selectedDog.getId());
 
-                                                         });
 
-                                                     }});
-                                                 }
+                            }
+                        }, selectedDog.getId());
 
-      public Doggo getSelectedDog(){
-            return this.selectedDog; }
+                    };
+
+                });
+
+            }});
+    }
+
+    public Doggo getSelectedDog(){
+        return this.selectedDog; }
 
     public ArrayList<DoggoEvent> getActiveDoggoEvents() {
         return activeDoggoEvents;
@@ -796,6 +789,6 @@ public class MainActivity extends AppCompatActivity {
                         Log.w("HOME", "Error adding document", e);
                     }
                 });*/
-      return null;
+        return null;
     }
 }

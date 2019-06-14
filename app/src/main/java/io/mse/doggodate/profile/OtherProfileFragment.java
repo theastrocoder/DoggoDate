@@ -23,13 +23,18 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.ArrayList;
+
 import io.mse.doggodate.databinding.OtherProfileFragmentBinding;
 import io.mse.doggodate.databinding.ProfileFragmentBinding;
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
 import io.mse.doggodate.adapters.ViewPagerAdapter;
+import io.mse.doggodate.entity.DoggoEvent;
+import io.mse.doggodate.helpers.HelperViewModel;
 import io.mse.doggodate.search.SearchFragment;
+import io.mse.doggodate.search.SearchViewModel;
 
 
 /**
@@ -82,7 +87,6 @@ public class OtherProfileFragment extends Fragment {
 
         this.selectedDoggo = ((MainActivity)getActivity()).getSelectedDog();
 
-
         //setup binding
         final OtherProfileFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.other_profile_fragment, container, false);
         //must set selected doggo for name, image, and breed
@@ -93,9 +97,10 @@ public class OtherProfileFragment extends Fragment {
         //observer for view model
         Observer selectedDoggoObserver = new Observer<Doggo>() {
             @Override
-            public void onChanged(@Nullable final Doggo selectedDoggo) {
+            public void onChanged(@Nullable final Doggo selectedDoggoTemp) {
                 // Update the UI, in this case,binding.
-                binding.setDoggo(selectedDoggo);
+                binding.setDoggo(selectedDoggoTemp);
+                selectedDoggo = selectedDoggoTemp;
             }
         };
         otherProfileViewModel.getSelectedDoggo().observe(this, selectedDoggoObserver);
@@ -103,18 +108,59 @@ public class OtherProfileFragment extends Fragment {
         //follow button setup
         View view =  binding.getRoot();
         followButton = (Button)view.findViewById(R.id.followButton);
+        final HelperViewModel helperViewModel = ViewModelProviders.of(getActivity()).get(HelperViewModel.class);
 
-        followButton.setOnClickListener(new View.OnClickListener() {
-
+        profileViewModel.getActiveDoggo(new ProfileFirestoreCallback() {
             @Override
-            public void onClick(View v) {
+            public void onDataRetrieved(Doggo doggo) {
+                //if follow true, the follow button will be disabled
+                boolean follow = false;
+                Log.i("OtherProfileFragment", "current doggo " + helperViewModel.getCurrentDoggo().toString());
 
-                 //  MutableLiveData<Doggo> d = profileViewModel.getActiveDoggo(firestoreCallback);
-                   // otherProfileViewModel.setSelectedFirebaseDoggo(d.getValue());
-                    //binding.setDoggo(d);
+                for (Doggo follower :  helperViewModel.getCurrentDoggoFollowers().getValue()) {
+                    Log.i("OtherProfileFragment", "figuring out if this dog " + follower.toString() + "follows me");
+                   if ( follower.getId().equals(doggo.getId())) {
+                       follow = true;
+                   }
+                }
+                Log.i("OtherProfileFragment", "active doggo " + doggo.toString());
+
+                if (follow) {
+                    followButton.setEnabled(false);
                     followButton.setText("Followed");
 
-            }});
+                } else {
+                    followButton.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(final View v) {
+                            followButton.setText("Followed");
+                            followButton.setEnabled(false);
+
+                            follow(v);
+
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public void onDataRetrieved(ArrayList<DoggoEvent> events) {
+
+            }
+
+            @Override
+            public void onDataRetrievedFollowings(ArrayList<Doggo> myFollowings) {
+
+            }
+
+            @Override
+            public void onDataRetrievedFollowers(ArrayList<Doggo> myFollowers) {
+
+            }
+        });
+
 
         if (((MainActivity)getActivity()).getActiveDog().getFollowings().contains(this.selectedDoggo)) {
         } else {
@@ -124,32 +170,35 @@ public class OtherProfileFragment extends Fragment {
         return view;
     }
 
-    public void follow(View view){
-        ((MainActivity)getActivity()).getActiveDog().getFollowings().add(this.selectedDoggo);
-        this.selectedDoggo.getFollowers().add(((MainActivity)getActivity()).getActiveDog());
+    public void follow(final View view){
+        final HelperViewModel helperViewModel = ViewModelProviders.of(getActivity()).get(HelperViewModel.class);
 
-        //((MainActivity)getActivity()).updateOtherProfileFragment(this.selectedDoggo);
-        Toast.makeText(getContext(),"You started following " + this.selectedDoggo.getName(),Toast.LENGTH_SHORT).show();
+        profileViewModel.getActiveDoggo(new ProfileFirestoreCallback() {
+            @Override
+            public void onDataRetrieved(Doggo doggo) {
+                profileViewModel.addFollowing(helperViewModel.getCurrentDoggo().getValue(),doggo.getId() );
+                helperViewModel.addFollower(doggo);
+                Toast.makeText(getContext(),"You started following " + helperViewModel.getCurrentDoggo().getValue().getName(),Toast.LENGTH_SHORT).show();
 
-       /* // Setting Alert Dialog Title
-        alertDialogBuilder.setTitle("You started following " + this.selectedDoggo.getName());
-        // Icon Of Alert Dialog
-        //alertDialogBuilder.setIcon(R.drawable.question);
-        // Setting Alert Dialog Message
-        //alertDialogBuilder.setMessage("Are you sure,You want to exit");
-        alertDialogBuilder.setCancelable(true);
-
-        alertDialogBuilder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            }
 
             @Override
-            public void onClick(DialogInterface arg0, int arg1) {
+            public void onDataRetrieved(ArrayList<DoggoEvent> events) {
+
+            }
+
+            @Override
+            public void onDataRetrievedFollowings(ArrayList<Doggo> myFollowings) {
+
+            }
+
+            @Override
+            public void onDataRetrievedFollowers(ArrayList<Doggo> myFollowers) {
+
             }
         });
 
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-        Log.i("OtherProfileFragment", "you follow the Doggo" + this.selectedDoggo.getName());*/
-    }
+        }
 
     }
 

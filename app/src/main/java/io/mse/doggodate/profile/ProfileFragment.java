@@ -124,7 +124,14 @@ public class ProfileFragment extends Fragment {
 
        profileViewModel.getMyEvents(afterDoggoRetrieved, "97XuSnfcOmfW8pKF7B8y");
        profileViewModel.getActiveDoggo(afterDoggoRetrieved).observe(this, doggoObserver);
-        profileViewModel.getMyFollowings(afterDoggoRetrieved, "97XuSnfcOmfW8pKF7B8y");
+        profileViewModel.getMyFollowings(afterDoggoRetrieved, "97XuSnfcOmfW8pKF7B8y").observe(this, new Observer<ArrayList<Doggo>>() {
+            @Override
+            public void onChanged(ArrayList<Doggo> doggos) {
+                hv.setCurrentDoggoFollowings(doggos);
+                final ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager(), null);
+                binding.pager.setAdapter(adapter);
+            }
+        });
         profileViewModel.getMyFollowers(afterDoggoRetrieved, "97XuSnfcOmfW8pKF7B8y");
 
         mainActivity = (MainActivity)getActivity();
