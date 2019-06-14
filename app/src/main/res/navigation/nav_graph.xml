@@ -35,9 +35,6 @@
         <action
             android:id="@+id/from_myProfile_to_otherProfile"
             app:destination="@id/otherProfileFragment">
-            <argument
-                android:name="doggoZone"
-                app:argType="DoggoZone"/>
         </action>
     </fragment>
     <fragment
