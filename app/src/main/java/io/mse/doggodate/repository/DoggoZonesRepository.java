@@ -21,6 +21,7 @@ import java.util.List;
 
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoZone;
+import io.mse.doggodate.map.MapFirestoreCallback;
 import io.mse.doggodate.rest.DogZoneAPI;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -73,7 +74,7 @@ public class DoggoZonesRepository {
 
     }
 
-    public LiveData<DoggoZone> getSelectedDoggoZone(final DoggoZone doggoZone) {
+    public LiveData<DoggoZone> getSelectedDoggoZone(final DoggoZone doggoZone, final MapFirestoreCallback mapFirestoreCallback) {
         Log.i("DoggoZoneRepository","Loading doggo zone from repo");
         final MutableLiveData<DoggoZone> doggoZoneMutableLiveData=new MutableLiveData<>();
 
@@ -99,6 +100,7 @@ public class DoggoZonesRepository {
                                     Log.i("DoggoZonesRepository", document.getId() + " => " + document.getData());
                                     DoggoZone active = document.toObject(DoggoZone.class);
                                     doggoZoneMutableLiveData.setValue(active);
+                                    mapFirestoreCallback.onDataRetrieved(active);
                                 }
                             }
                         }else {

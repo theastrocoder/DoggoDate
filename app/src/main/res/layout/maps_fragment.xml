@@ -2,6 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="selectedDoggoZone"
+            type="io.mse.doggodate.entity.DoggoZone" />
+    </data>
 
     <com.sothree.slidinguppanel.SlidingUpPanelLayout
         xmlns:sothree="http://schemas.android.com/apk/res-auto"
@@ -10,7 +15,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
         android:gravity="bottom"
-        sothree:umanoPanelHeight="68dp"
         sothree:umanoShadowHeight="4dp"
         sothree:umanoParallaxOffset="100dp"
         sothree:umanoDragView="@+id/dragview"
@@ -56,6 +60,7 @@
                     android:textSize="20sp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
+                    android:text="@={selectedDoggoZone.name}"
                     android:id="@+id/zone_name" />
 
                 <ImageButton
@@ -93,13 +98,16 @@
                 android:paddingStart="10dp">
                 <TextView
                     android:id="@+id/area"
+                    android:text="@={selectedDoggoZone.area}"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
                     android:paddingBottom="5dp"/>
 
+
                 <TextView
                     android:id="@+id/type"
+                    android:text="@={selectedDoggoZone.typ}"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
@@ -107,6 +115,7 @@
 
                 <TextView
                     android:id="@+id/fence"
+                    android:text="@={selectedDoggoZone.fence}"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"

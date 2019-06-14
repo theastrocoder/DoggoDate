@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,56 +21,41 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.google.android.gms.common.api.Api;
-import com.google.android.gms.common.util.MapUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.GeoPoint;
-import com.google.gson.JsonObject;
 import com.google.maps.android.data.Feature;
 import com.google.maps.android.data.geojson.GeoJsonFeature;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
-import com.google.maps.android.data.geojson.GeoJsonPoint;
 import com.google.maps.android.data.geojson.GeoJsonPointStyle;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import io.mse.doggodate.databinding.MapsFragmentBinding;
 import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
-import io.mse.doggodate.rest.DogZoneAPI;
 import io.mse.doggodate.viewmodel.MapViewModel;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -94,7 +78,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private TextView type;
     private TextView doggosJoining;
     private Fragment thisF;
-    private DoggoZone selectedDoggoZone;
+    private Observer<DoggoZone> selectedDoggoZone;
     private View view;
     MainActivity mainActivity;
     private MapViewModel mapViewModel;
@@ -138,10 +122,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final MapsFragmentBinding root = DataBindingUtil.inflate(inflater, R.layout.maps_fragment, container, false);
+        Log.i("MAP","on create map view");
+        final MapsFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.maps_fragment, container, false);
         context = container.getContext();
-        view = root.getRoot();
-       // slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        view = binding.getRoot();
+        selectedDoggoZone = new Observer<DoggoZone>() {
+            @Override
+            public void onChanged(DoggoZone doggoZone) {
+                binding.setSelectedDoggoZone(doggoZone);
+            }
+        };
+
         mainActivity = (MainActivity)getActivity();
         assert mainActivity != null;
         Objects.requireNonNull(mainActivity.getSupportActionBar()).setTitle("DoggoZones");
@@ -149,7 +140,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         park1 = ((MainActivity)getActivity()).getPark1();
 
         slider = (SlidingUpPanelLayout) view.findViewById(R.id.slider);
-        slider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+        //slider.onRestoreInstanceState(null);
+        slider.setPanelHeight(0);
+        //slider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+        Log.i("MAP","PAN Steate " + slider.getPanelState());
         zoneName = (TextView) view.findViewById(R.id.zone_name);
         favoritesBtn = (ImageButton) view.findViewById(R.id.add_favorites);
         parkArea = (TextView)view.findViewById(R.id.area);
@@ -171,7 +165,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
 
         LatLng myLocation = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions().position(myLocation).icon(bitmapDescriptorFromVector(getContext(),R.drawable.park,R.drawable.dog_white));
+        MarkerOptions markerOptions = new MarkerOptions().position(myLocation).icon(bitmapDescriptorFromVector(getContext(),R.drawable.park_fav,R.drawable.dog_white));
         mMap.addMarker(markerOptions);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation,15));
 
@@ -211,32 +205,35 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     geoJsonLayer.setOnFeatureClickListener(new GeoJsonLayer.GeoJsonOnFeatureClickListener() {
                         @Override
                         public void onFeatureClick(Feature feature) {
-                            slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-                            Log.i("MAPFR","COR " + feature);
-                            GeoPoint location = new GeoPoint(48.23426714947363,16.329941187195445);
+                            slider.setPanelHeight(180);
                             String name = feature.getProperty("PARK");
                             String area = feature.getProperty("FLAECHE");
                             String fenceS = feature.getProperty("EINFRIEDUNG");
                             String typ = feature.getProperty("TYP");
-                            DoggoZone doggoZone = new DoggoZone(location,
+                            DoggoZone doggoZone = new DoggoZone(
                                     name,
                                     area,
                                     fenceS,
-                                    typ);
+                                    typ,
+                                    false);
 
-                            mapViewModel.getSelectedDoggoZone(doggoZone).observe(thisF, new Observer<DoggoZone>() {
+                            selectedDoggoZone.onChanged(doggoZone);
+
+                            MapFirestoreCallback mapFirestoreCallback = new MapFirestoreCallback() {
+                                @Override
+                                public void onDataRetrieved(@Nullable DoggoZone doggoZone) {
+                                    selectedDoggoZone.onChanged(doggoZone);
+                                }
+                            };
+                            mapViewModel.getSelectedDoggoZone(doggoZone,mapFirestoreCallback).observe(thisF, new Observer<DoggoZone>() {
                                 @Override
                                 public void onChanged(DoggoZone doggoZone) {
                                     Log.i("MAP","SLECETED " + doggoZone.getName());
-                                    selectedDoggoZone = doggoZone;
+                                    selectedDoggoZone.onChanged(doggoZone);
                                 }
 
                             });
 
-                            zoneName.setText(name);
-                            parkArea.setText("Fläche : " + area);
-                            fence.setText("Einfriedung : " + fenceS);
-                            type.setText("Typ : " + typ);
                             doggosJoining.setText("8 others are joining");
 
 

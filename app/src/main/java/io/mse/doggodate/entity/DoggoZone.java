@@ -1,28 +1,34 @@
 package io.mse.doggodate.entity;
 
-import com.google.firebase.firestore.GeoPoint;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.InverseBindingMethod;
+import androidx.databinding.InverseMethod;
 
-public class DoggoZone {
+import io.mse.doggodate.R;
 
-    private GeoPoint location;
+public class DoggoZone extends BaseObservable {
+
     private String name;
     private String area;
     private String fence;
     private String typ;
+    private boolean isFavorite;
 
-    public DoggoZone(GeoPoint location, String name, String area, String fence, String typ) {
-        this.location = location;
+    public DoggoZone(String name, String area, String fence, String typ, boolean isFavorite) {
         this.name = name;
         this.area = area;
         this.fence = fence;
         this.typ = typ;
+        this.isFavorite = isFavorite;
     }
 
     public DoggoZone(){
 
     }
 
-
+    @Bindable
     public String getName() {
         return name;
     }
@@ -31,6 +37,7 @@ public class DoggoZone {
         this.name = name;
     }
 
+    @Bindable
     public String getArea() {
         return area;
     }
@@ -39,6 +46,7 @@ public class DoggoZone {
         this.area = area;
     }
 
+    @Bindable
     public String getFence() {
         return fence;
     }
@@ -47,19 +55,20 @@ public class DoggoZone {
         this.fence = fence;
     }
 
-    public GeoPoint getLocation() {
-        return location;
-    }
-
-    public void setLocation(GeoPoint location) {
-        this.location = location;
-    }
-
+    @Bindable
     public String getTyp() {
         return typ;
     }
 
     public void setTyp(String typ) {
         this.typ = typ;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 }

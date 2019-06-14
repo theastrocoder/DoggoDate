@@ -10,6 +10,8 @@
     <string name="title_activity_maps">Map</string>
     <string name="search">Search</string>
     <string name="msg">Messages</string>
+    <string name="area">Fläche : </string>
+    <string name="typ">Typ : </string>
     <string-array name="days">
         <item>Today</item>
         <item>Tomorrow</item>

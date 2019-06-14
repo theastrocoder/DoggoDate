@@ -34,13 +34,17 @@
         tools:layout="@layout/profile_fragment" >
         <action
             android:id="@+id/from_myProfile_to_otherProfile"
-            app:destination="@id/otherProfileFragment" />
+            app:destination="@id/otherProfileFragment">
+            <argument
+                android:name="doggoZone"
+                app:argType="DoggoZone"/>
+        </action>
     </fragment>
     <fragment
         android:id="@+id/doggoZoneFragment"
         android:name="io.mse.doggodate.map.DoggoZoneFragment"
         android:label="doggozone_fragment"
-        tools:layout="@layout/doggozone_fragment" />
+        tools:layout="@layout/doggozone_fragment"/>
     <fragment
         android:id="@+id/otherProfileFragment"
         android:name="io.mse.doggodate.profile.OtherProfileFragment"
