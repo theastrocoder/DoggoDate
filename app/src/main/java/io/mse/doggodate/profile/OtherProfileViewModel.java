@@ -20,9 +20,9 @@ import io.mse.doggodate.entity.Doggo;
 
 public class OtherProfileViewModel extends ViewModel {
 
-    private MutableLiveData<List<Doggo>> users;
 
     private MutableLiveData<Doggo> selectedFirebaseDoggo;
+    private MutableLiveData<ArrayList<Doggo>> selectedDoggosFollowers = new MutableLiveData<>();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public MutableLiveData<Doggo> getSelectedDoggo() {
@@ -35,31 +35,7 @@ public class OtherProfileViewModel extends ViewModel {
     public void setSelectedFirebaseDoggo(Doggo selectedFirebaseDoggo) {
         this.selectedFirebaseDoggo.setValue(selectedFirebaseDoggo);
     }
-    private void loadActiveFirebaseDoggo() {
+   public void getSelectedDoggosFollowers(){
 
-        db.collection("Doggo").whereEqualTo("active", true).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.i("ProfileViewModel", document.getId() + " => " + document.getData());
-                                Doggo active = document.toObject(Doggo.class);
-                                ArrayList<String> arrayList = (ArrayList<String>) document.get("photos");
-                                //Do what you need to do with your ArrayList
-                                for (String s : arrayList) {
-                                    Log.i("photoooooooooooooooooooooooooos", "photo"+s);
-                                    active.getPhotos().add( s);
-                                }
-                                selectedFirebaseDoggo.setValue(active);
-
-                            }
-
-                        } else {
-                            Log.w("ProfileViewModel", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-
-    }
+   }
 }

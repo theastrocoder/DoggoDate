@@ -105,20 +105,7 @@ public class GridHelperFragment extends Fragment {
     private ArrayList<Integer> getImages() {
         return this.images;
     }
-    /*@BindingAdapter({"bind:handler"})
-    public static void bindGridViewAdapter(final GridView view, final GridHelperFragment fragment)
-    {
-        MainActivity mainActivity = ((MainActivity)fragment.getActivity());
-        Log.i("GridViewAdapter ", "got " + fragment + " as a fragment");
-        Doggo aDoggo = fragment.getSelectedDoggo();
-        ArrayList<Integer> images = new ArrayList<>();
-        for (int i = 0; i < mainActivity.getDefaultSearch().get(1).getPhotos().size(); i++) {
-            images.add(mainActivity.getDefaultSearch().get(1).getPhotos().get(i));
-            Log.i("GDFHGFGHGFGHJGFGhgfgh", "breed: "+ mainActivity.getDefaultSearch().get(1).getBreed());
-        }
-        view.setAdapter(new ImageAdapter( ((MainActivity)fragment.getActivity()).getApplicationContext(),(AppCompatActivity) ((MainActivity)fragment.getActivity()),images));
 
-    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -126,12 +113,6 @@ public class GridHelperFragment extends Fragment {
         // Inflate the layout for this fragment
          binding = DataBindingUtil.inflate(inflater, R.layout.fragment_grid_helper, container, false);
         helperViewModel = ViewModelProviders.of(getActivity()).get(HelperViewModel.class);
-
-       // binding.setHandler(this);
-        //binding.setManager(getFragmentManager());
-
-        final MainActivity mainActivity = ((MainActivity)getActivity());
-       // Doggo aDoggo = getSelectedDoggo();
 
         final Doggo d = new Doggo();
         final ArrayList<String> images = new ArrayList<>();
@@ -143,36 +124,9 @@ public class GridHelperFragment extends Fragment {
             public void onChanged(@Nullable final Doggo activeDoggo) {
                 // Update the UI, in this case,binding.
 
-        if (activeDoggo.isActive()) {
-            for (int i = 0; i < mainActivity.getDefaultSearch().get(4).getPhotos().size(); i++) {
-                images.add(mainActivity.getDefaultSearch().get(4).getPhotos().get(i));
-                Log.i("GDFHGFGHGFGHJGFGhgfgh", "breed: " + mainActivity.getDefaultSearch().get(4).getBreed());
-            }
-        }else {
-            for (int i = 0; i < mainActivity.getDefaultSearch().get(5).getPhotos().size(); i++) {
-                images.add(mainActivity.getDefaultSearch().get(5).getPhotos().get(i));
-                Log.i("GDFHGFGHGFGHJGFGhgfgh", "breed: " + mainActivity.getDefaultSearch().get(4).getBreed());
-            }
-        }
         binding.gridView.setAdapter(new ImageAdapter( ((MainActivity)getActivity()).getApplicationContext(),(AppCompatActivity) ((MainActivity)getActivity()),activeDoggo.getPhotos()));
             }
         });
-        //if it is search, then show all dogs
-
-       /* ArrayList<Integer> images = new ArrayList<>();
-
-       if (isSearch) {
-            for (int i = 0; i < ((MainActivity) getActivity()).getDefaultSearch().size(); i++) {
-                images.add(((MainActivity) getActivity()).getDefaultSearch().get(i).getProfilePic());
-            }
-            //if its profile, show all images of the dog
-        } else {
-
-            for (int i = 0; i < ((MainActivity) getActivity()).getActiveDog().getPhotos().size(); i++) {
-                images.add(((MainActivity) getActivity()).getActiveDog().getPhotos().get(i));
-            }
-*/
-
 
         return binding.getRoot();
     }

@@ -13,6 +13,8 @@ import io.mse.doggodate.entity.DoggoEvent;
 public class HomeViewModel extends AndroidViewModel {
 
     LiveData<List<DoggoEvent>> doggoEventLiveData;
+    LiveData<List<DoggoEvent>> eventsOfDoggosInFollowings;
+
     public HomeViewModel(@NonNull Application application) {
         super(application);
     }

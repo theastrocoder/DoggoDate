@@ -724,14 +724,7 @@ public class MainActivity extends AppCompatActivity {
                                                                      Log.i(TAG, "current doggo followings " + myFollowings.size());
                                                                      hw.setCurrentDoggoFollowings(myFollowings);
 
-                                                                   /*  if (type == 0) {
-                                                                         navController.navigate(R.id.from_search_toOtherProfile);
-                                                                         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                                                                     } else if (type == 1) {
-                                                                         navController.navigate(R.id.from_myProfile_to_otherProfile);
-                                                                         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-                                                                     }*/
                                                                      //when followings donne, get followers
                                                                     searchViewModel.loadMyFollowers(new FirestoreFollowersCallback() {
                                                                          @Override

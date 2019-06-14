@@ -160,4 +160,15 @@ public class Doggo extends BaseObservable {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    @Override
+    public String toString() {
+        return "Doggo{" +
+                "name='" + name + '\'' +
+                ", breed='" + breed + '\'' +
+                ", id='" + id + '\'' +
+                ", profilePic='" + profilePic + '\'' +
+                ", active=" + active +
+                '}';
+    }
 }

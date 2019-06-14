@@ -266,6 +266,50 @@ public class ProfileViewModel extends ViewModel {
                 });
 
     }
+    public void addFollowing (final Doggo following, final String owner) {
+        ProfileFirestoreCallback profileFirestoreCallback = new ProfileFirestoreCallback() {
+            @Override
+            public void onDataRetrieved(Doggo doggo) {
+
+            }
+
+            @Override
+            public void onDataRetrieved(ArrayList<DoggoEvent> events) {
+
+            }
+
+            @Override
+            public void onDataRetrievedFollowings(ArrayList<Doggo> followings) {
+                final ArrayList<Doggo> followingsTemp = myFollowings.getValue();
+
+
+                   Map<String, Object> followingsFS = new HashMap<>();
+                followingsFS.put("doggos", db.collection("Doggo").document(following.getId()));
+
+
+                db.collection("Followings").document(owner).update("doggos", FieldValue.arrayUnion(db.collection("Doggo").document(following.getId())))
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        followingsTemp.add(following);
+                        myFollowings.setValue(followingsTemp);
+                    }
+                });
+            }
+
+            @Override
+            public void onDataRetrievedFollowers(ArrayList<Doggo> myFollowers) {
+
+            }
+        };
+        if (myFollowings == null) {
+            getMyFollowings(profileFirestoreCallback, owner);
+
+        } else {
+            profileFirestoreCallback.onDataRetrieved(myEvents.getValue());
+
+        }
+    }
 
     public void addEvent(final DoggoEvent doggoEvent) {
         ProfileFirestoreCallback profileFirestoreCallback = new ProfileFirestoreCallback() {

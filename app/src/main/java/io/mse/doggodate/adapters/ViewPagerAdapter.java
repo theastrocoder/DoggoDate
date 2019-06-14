@@ -64,7 +64,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         String title = null;
         if (position == 0)
         {
-            title = currentDoggo.getPhotos().size() +" Photos";
+            title = /*currentDoggo.getPhotos().size() +*/" Photos";
         }
         else if (position == 2)
         {

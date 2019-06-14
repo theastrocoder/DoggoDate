@@ -52,14 +52,14 @@ public class ListHelperFragment extends Fragment {
         binding.list.setAdapter(adapter);
 
         //bind listener
-        binding.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*binding.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
                 openProfile(position, 1);
             }
-        });
+        });*/
        if (followers != null && followers) {
 
             helperViewModel.getCurrentDoggoFollowers().observe(this, new Observer<ArrayList<Doggo>>() {
@@ -73,14 +73,7 @@ public class ListHelperFragment extends Fragment {
 
                     //project changes to UI
                     binding.list.setAdapter(new CustomAdapter(stringList, (AppCompatActivity) getActivity()));
-                    binding.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View v,
-                                                int position, long id) {
 
-                            openProfile(position, 1);
-                        }
-                    });
                 }
             });
 
@@ -97,14 +90,7 @@ public class ListHelperFragment extends Fragment {
 
                    //project changes to UI
                    binding.list.setAdapter(new CustomAdapter(stringList, (AppCompatActivity) getActivity()));
-                   binding.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                       @Override
-                       public void onItemClick(AdapterView<?> parent, View v,
-                                               int position, long id) {
 
-                           openProfile(position, 1);
-                       }
-                   });
                }
            });
         }else if (followers == null) {
@@ -121,14 +107,7 @@ public class ListHelperFragment extends Fragment {
 
                    //project changes to UI
                    binding.list.setAdapter(new CustomAdapter(stringList, (AppCompatActivity) getActivity()));
-                   binding.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                       @Override
-                       public void onItemClick(AdapterView<?> parent, View v,
-                                               int position, long id) {
 
-                           openProfile(position, 1);
-                       }
-                   });
                }
            });
        }
@@ -136,7 +115,5 @@ public class ListHelperFragment extends Fragment {
         return binding.getRoot();
     }
 
-    private void openProfile(int position, int type) {
-        ((MainActivity)getActivity()).toOtherProfile(position, type);
-    }
+
 }
