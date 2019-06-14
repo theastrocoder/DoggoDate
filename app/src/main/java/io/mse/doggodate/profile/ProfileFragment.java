@@ -72,9 +72,6 @@ public class ProfileFragment extends Fragment {
 
         final ProfileFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.profile_fragment, container, false);
 
-        //set handler and fragment manager for view pager in tab layout
-        //binding.setHandler(this);
-        //binding.setManager(getFragmentManager());
         final Doggo temp = new Doggo();
         binding.setDoggo(temp);
         final HelperViewModel hv = ViewModelProviders.of(getActivity()).get(HelperViewModel.class);
@@ -108,13 +105,27 @@ public class ProfileFragment extends Fragment {
                 Log.i("ProfileFragment", "THE LOADED EVENTS ARE OF SIZE " + events.size());
 
             }
+            @Override
+            public void onDataRetrievedFollowings(ArrayList<Doggo> myFollowings) {
+                hv.setCurrentDoggoFollowings(myFollowings);
+                Log.i("ProfileFragment", "THE LOADED FOLLOWINGS ARE OF SIZE " + myFollowings.size());
+
+            }
+
+            @Override
+            public void onDataRetrievedFollowers(ArrayList<Doggo> myFollowers) {
+                hv.setCurrentDoggoFollowers(myFollowers);
+                Log.i("ProfileFragment", "THE LOADED FOLLOWERS ARE OF SIZE " + myFollowers.size());
+
+            }
 
 
         };
 
        profileViewModel.getMyEvents(afterDoggoRetrieved, "97XuSnfcOmfW8pKF7B8y");
-        profileViewModel.getActiveDoggo(afterDoggoRetrieved).observe(this, doggoObserver);
-
+       profileViewModel.getActiveDoggo(afterDoggoRetrieved).observe(this, doggoObserver);
+        profileViewModel.getMyFollowings(afterDoggoRetrieved, "97XuSnfcOmfW8pKF7B8y");
+        profileViewModel.getMyFollowers(afterDoggoRetrieved, "97XuSnfcOmfW8pKF7B8y");
 
         mainActivity = (MainActivity)getActivity();
         mainActivity.invalidateOptionsMenu();

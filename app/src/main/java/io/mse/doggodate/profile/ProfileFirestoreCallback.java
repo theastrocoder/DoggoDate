@@ -9,4 +9,7 @@ public interface ProfileFirestoreCallback {
 
     void onDataRetrieved(Doggo doggo);
     void onDataRetrieved(ArrayList<DoggoEvent> events);
+    void onDataRetrievedFollowings(ArrayList<Doggo> myFollowings);
+    void onDataRetrievedFollowers(ArrayList<Doggo> myFollowers);
+
 }

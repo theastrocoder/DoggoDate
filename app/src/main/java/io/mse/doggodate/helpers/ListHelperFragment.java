@@ -20,6 +20,7 @@ import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
 import io.mse.doggodate.databinding.FragmentListBinding;
 import io.mse.doggodate.adapters.CustomAdapter;
+import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoEvent;
 
 public class ListHelperFragment extends Fragment {
@@ -47,7 +48,6 @@ public class ListHelperFragment extends Fragment {
 
         //create and bind empty list
         final ArrayList<String> stringList = new ArrayList();
-        //stringList.add("tryyyyyy");
         CustomAdapter adapter = new CustomAdapter(stringList,(AppCompatActivity)getActivity());
         binding.list.setAdapter(adapter);
 
@@ -60,43 +60,79 @@ public class ListHelperFragment extends Fragment {
                 openProfile(position, 1);
             }
         });
-       /* if (followers != null && followers) {
-            for (int i = 0; i < selectedDoggo.getFollowers().size(); i++) {
-                stringList.add(selectedDoggo.getFollowers().get(i).getName());
-            }
-        } else if (followers != null && !followers){
-            for (int i = 0; i < selectedDoggo.getFollowings().size(); i++) {
-                stringList.add(selectedDoggo.getFollowings().get(i).getName());
-            }
-        }else if (followers == null){
-            for (int i = 0; i < selectedDoggo.getEvents().size(); i++) {
-                stringList.add(selectedDoggo.getEvents().get(i).getZone().getName() + " " + selectedDoggo.getEvents().get(i).getTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")) );
-            }
-        }*/
+       if (followers != null && followers) {
 
-       //setup observer on list of events of current doggo
-        helperViewModel.getCurrentDoggoEvents().observe(this,  new Observer<ArrayList<DoggoEvent>>() {
-            @Override
-            public void onChanged(@Nullable final ArrayList<DoggoEvent> events) {
-                // Update the UI, in this case,binding.
+            helperViewModel.getCurrentDoggoFollowers().observe(this, new Observer<ArrayList<Doggo>>() {
+                @Override
+                public void onChanged(@Nullable final ArrayList<Doggo> followers) {
+                    // Update the UI, in this case,binding.
 
-                //get string of new list of events
-                for (int i = 0; i < events.size(); i++) {
-                    //stringList.add(events.get(i).getZone().getName() + " " + events.get(i).getTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")) );
-               stringList.add(events.get(i).getTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")));
+                    //get string of new list of events
+                    for (int i = 0; i < followers.size(); i++) {
+                        stringList.add(followers.get(i).getName());}
+
+                    //project changes to UI
+                    binding.list.setAdapter(new CustomAdapter(stringList, (AppCompatActivity) getActivity()));
+                    binding.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View v,
+                                                int position, long id) {
+
+                            openProfile(position, 1);
+                        }
+                    });
                 }
+            });
 
-                //project changes to UI
-                binding.list.setAdapter(new CustomAdapter(stringList,(AppCompatActivity)getActivity()));
-                binding.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View v,
-                                            int position, long id) {
+        } else
+       if (followers != null && !followers){
+           helperViewModel.getCurrentDoggoFollowings().observe(this, new Observer<ArrayList<Doggo>>() {
+               @Override
+               public void onChanged(@Nullable final ArrayList<Doggo> followings) {
+                   // Update the UI, in this case,binding.
 
-                        openProfile(position, 1);
-                    }
-                });            }
-        });
+                   //get string of new list of events
+                   for (int i = 0; i < followings.size(); i++) {
+                       stringList.add(followings.get(i).getName());}
+
+                   //project changes to UI
+                   binding.list.setAdapter(new CustomAdapter(stringList, (AppCompatActivity) getActivity()));
+                   binding.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                       @Override
+                       public void onItemClick(AdapterView<?> parent, View v,
+                                               int position, long id) {
+
+                           openProfile(position, 1);
+                       }
+                   });
+               }
+           });
+        }else if (followers == null) {
+           //setup observer on list of events of current doggo
+           helperViewModel.getCurrentDoggoEvents().observe(this, new Observer<ArrayList<DoggoEvent>>() {
+               @Override
+               public void onChanged(@Nullable final ArrayList<DoggoEvent> events) {
+                   // Update the UI, in this case,binding.
+
+                   //get string of new list of events
+                   for (int i = 0; i < events.size(); i++) {
+                       stringList.add(events.get(i).getTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) + " " + events.get(i).getZone().getName());
+                   }
+
+                   //project changes to UI
+                   binding.list.setAdapter(new CustomAdapter(stringList, (AppCompatActivity) getActivity()));
+                   binding.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                       @Override
+                       public void onItemClick(AdapterView<?> parent, View v,
+                                               int position, long id) {
+
+                           openProfile(position, 1);
+                       }
+                   });
+               }
+           });
+       }
+
         return binding.getRoot();
     }
 

@@ -65,6 +65,14 @@ public class SearchFragment extends Fragment {
         binding.setHandler(this);
         binding.setManager(getFragmentManager());
         View view = binding.getRoot();
+        binding.gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+
+                ((MainActivity)getActivity()).toOtherProfile(position, 0);
+            };
+        });
 
         FirestoreCallback searchFirestoreCallback = new FirestoreCallback() {
             @Override
@@ -86,8 +94,17 @@ public class SearchFragment extends Fragment {
                 //binding.gridView.refreshDrawableState();
 
                 binding.gridView.setAdapter(new SearchImageAdapter(((MainActivity) getActivity()).getApplicationContext(), ((MainActivity) getActivity()), doggos));
+                binding.gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View v,
+                                            int position, long id) {
+
+                        ((MainActivity)getActivity()).toOtherProfile(position, 0);
+                    };
+                });
 
         }});
+
 
         return view;
     }
