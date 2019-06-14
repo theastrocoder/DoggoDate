@@ -20,6 +20,7 @@ public class SearchImageAdapter extends BaseAdapter {
     // Keep all Images in array
     public ArrayList<Doggo> doggos = new ArrayList<>();
     private boolean isZone;
+    private String comesIn;
     private MainActivity activity;
 
     private Context mContext;
@@ -77,7 +78,7 @@ public class SearchImageAdapter extends BaseAdapter {
 
         // get the TextView from the ViewHolder and then set the text (item name) and tag (item ID) values
 
-            viewHolder.textViewItem.setText((isZone ? "hi":doggos.get(position).getName()) + " " +
+            viewHolder.textViewItem.setText((isZone ? comesIn:doggos.get(position).getName()) + " " +
                     ((activity.getActiveDog().getFollowings().contains(doggos.get(position))) ? "" : "+"));
             viewHolder.textViewItem.setTag(position);
             viewHolder.textViewItem.setBackgroundColor(((Activity) activity).getResources().getColor((activity.getActiveDog().getFollowings().contains(doggos.get(position))) ? R.color.colorPrimaryLight : R.color.colorPrimaryLighter));
@@ -90,6 +91,10 @@ public class SearchImageAdapter extends BaseAdapter {
 
     public void setZone(boolean zone) {
         isZone = zone;
+    }
+
+    public void setComesIn(String comesIn) {
+        this.comesIn = comesIn;
     }
 
     // our ViewHolder.

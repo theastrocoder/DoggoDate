@@ -221,12 +221,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     false);
 
                             selectedDoggoZone.onChanged(doggoZone);
-                            helperViewModel.setSelectedDoggoZone(doggoZone);
 
                             MapFirestoreCallback mapFirestoreCallback = new MapFirestoreCallback() {
                                 @Override
                                 public void onDataRetrieved(@Nullable DoggoZone doggoZone) {
                                     selectedDoggoZone.onChanged(doggoZone);
+                                    helperViewModel.setSelectedDoggoZone(doggoZone);
+
 
                                 }
                             };
