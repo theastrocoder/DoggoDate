@@ -1,5 +1,6 @@
 package io.mse.doggodate.helpers;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoEvent;
+import io.mse.doggodate.entity.DoggoZone;
 
 public class HelperViewModel extends ViewModel {
 
@@ -16,6 +18,7 @@ public class HelperViewModel extends ViewModel {
     private MutableLiveData<ArrayList<Doggo>> currentDoggoFollowings = new MutableLiveData<>();
     private MutableLiveData<ArrayList<DoggoEvent>> currentDoggoEvents = new MutableLiveData<ArrayList<DoggoEvent>>();
     private MutableLiveData<ArrayList<Doggo>> currentDoggoFollowers = new MutableLiveData<>();
+    private MutableLiveData<DoggoZone> selectedDoggoZone = new MutableLiveData<>();
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -62,4 +65,11 @@ public class HelperViewModel extends ViewModel {
         currentDoggo.setValue(doggo);
     }
 
+    public LiveData<DoggoZone> getSelectedDoggoZone() {
+        return selectedDoggoZone;
+    }
+
+    public void setSelectedDoggoZone(DoggoZone selectedDoggoZone) {
+        this.selectedDoggoZone.setValue(selectedDoggoZone);
+    }
 }

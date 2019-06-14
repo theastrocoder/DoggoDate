@@ -19,7 +19,7 @@ import io.mse.doggodate.R;
 public class SearchImageAdapter extends BaseAdapter {
     // Keep all Images in array
     public ArrayList<Doggo> doggos = new ArrayList<>();
-
+    private boolean isZone;
     private MainActivity activity;
 
     private Context mContext;
@@ -77,7 +77,8 @@ public class SearchImageAdapter extends BaseAdapter {
 
         // get the TextView from the ViewHolder and then set the text (item name) and tag (item ID) values
 
-            viewHolder.textViewItem.setText(doggos.get(position).getName() + " " + ((activity.getActiveDog().getFollowings().contains(doggos.get(position))) ? "" : "+"));
+            viewHolder.textViewItem.setText((isZone ? "hi":doggos.get(position).getName()) + " " +
+                    ((activity.getActiveDog().getFollowings().contains(doggos.get(position))) ? "" : "+"));
             viewHolder.textViewItem.setTag(position);
             viewHolder.textViewItem.setBackgroundColor(((Activity) activity).getResources().getColor((activity.getActiveDog().getFollowings().contains(doggos.get(position))) ? R.color.colorPrimaryLight : R.color.colorPrimaryLighter));
             viewHolder.imageViewItem.setImageResource(mContext.getResources().getIdentifier( doggos.get(position).getProfilePic(), "drawable", "io.mse.doggodate"));
@@ -85,6 +86,10 @@ public class SearchImageAdapter extends BaseAdapter {
 
         return convertView;
 
+    }
+
+    public void setZone(boolean zone) {
+        isZone = zone;
     }
 
     // our ViewHolder.

@@ -6,6 +6,8 @@ import androidx.databinding.BindingAdapter;
 import androidx.databinding.InverseBindingMethod;
 import androidx.databinding.InverseMethod;
 
+import java.io.Serializable;
+
 import io.mse.doggodate.R;
 
 public class DoggoZone extends BaseObservable {

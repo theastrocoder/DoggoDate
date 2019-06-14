@@ -21,7 +21,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
@@ -51,10 +50,11 @@ import org.json.JSONObject;
 import java.util.Iterator;
 import java.util.Objects;
 
-import io.mse.doggodate.databinding.MapsFragmentBinding;
-import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
+import io.mse.doggodate.databinding.MapsFragmentBinding;
+import io.mse.doggodate.entity.DoggoZone;
+import io.mse.doggodate.helpers.HelperViewModel;
 import io.mse.doggodate.viewmodel.MapViewModel;
 
 
@@ -80,9 +80,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private Fragment thisF;
     private Observer<DoggoZone> selectedDoggoZone;
     private View view;
-    MainActivity mainActivity;
+    private MainActivity mainActivity;
     private MapViewModel mapViewModel;
     private GeoJsonLayer geoJsonLayer;
+    private HelperViewModel helperViewModel;
 
     public MapFragment() {
         // Required empty public constructor
@@ -92,6 +93,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mapViewModel = ViewModelProviders.of(this).get(MapViewModel.class);
+        helperViewModel = ViewModelProviders.of(getActivity()).get(HelperViewModel.class);
         thisF = this;
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient((MainActivity) getActivity());
         getCurrentLocation();
@@ -130,6 +132,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onChanged(DoggoZone doggoZone) {
                 binding.setSelectedDoggoZone(doggoZone);
+                helperViewModel.setSelectedDoggoZone(doggoZone);
             }
         };
 
@@ -210,7 +213,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             String area = feature.getProperty("FLAECHE");
                             String fenceS = feature.getProperty("EINFRIEDUNG");
                             String typ = feature.getProperty("TYP");
-                            DoggoZone doggoZone = new DoggoZone(
+                            final DoggoZone doggoZone = new DoggoZone(
                                     name,
                                     area,
                                     fenceS,
@@ -218,21 +221,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     false);
 
                             selectedDoggoZone.onChanged(doggoZone);
+                            helperViewModel.setSelectedDoggoZone(doggoZone);
 
                             MapFirestoreCallback mapFirestoreCallback = new MapFirestoreCallback() {
                                 @Override
                                 public void onDataRetrieved(@Nullable DoggoZone doggoZone) {
                                     selectedDoggoZone.onChanged(doggoZone);
+
                                 }
                             };
-                            mapViewModel.getSelectedDoggoZone(doggoZone,mapFirestoreCallback).observe(thisF, new Observer<DoggoZone>() {
-                                @Override
-                                public void onChanged(DoggoZone doggoZone) {
-                                    Log.i("MAP","SLECETED " + doggoZone.getName());
-                                    selectedDoggoZone.onChanged(doggoZone);
-                                }
-
-                            });
+                            mapViewModel.getSelectedDoggoZone(doggoZone,mapFirestoreCallback).observe(thisF, selectedDoggoZone);
 
                             doggosJoining.setText("8 others are joining");
 
@@ -240,8 +238,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             goToDoggoZone.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    NavController navController = Navigation.findNavController(v);
-                                    navController.navigate(R.id.toDoggoZone);
+                                    navigateToDoggoZone(v);
                                 }
                             });
 
@@ -286,6 +283,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         vectorDrawable.draw(canvas);
 
         return BitmapDescriptorFactory.fromBitmap(bitmap);
+
+    }
+
+    private void navigateToDoggoZone(View v){
+        NavController navController = Navigation.findNavController(v);
+        navController.navigate(R.id.toDoggoZone);
+
 
     }
 

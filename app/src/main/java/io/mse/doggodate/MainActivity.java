@@ -732,6 +732,9 @@ public class MainActivity extends AppCompatActivity {
                                                                                  navController.navigate(R.id.from_myProfile_to_otherProfile);
                                                                                  getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+                                                                             }else if(type == 2){
+                                                                                 navController.navigate(R.id.from_doggoZoneFragment_to_otherProfileFragment);
+                                                                                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                                                                              }
                                                                          }
                                                                      }, selectedDog.getId());
@@ -764,8 +767,8 @@ public class MainActivity extends AppCompatActivity {
         favoritesItem.setVisible(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Log.i(TAG,"Go to Doggo Zone " + selectedDoggoZone.getName());
-        doggoZoneFragment = new DoggoZoneFragment();
-        ((DoggoZoneFragment)doggoZoneFragment).setSelectedDogoZone(selectedDoggoZone);
+        doggoZoneFragment = new DoggozoneFragment();
+        ((DoggozoneFragment)doggoZoneFragment).setSelectedDogoZone(selectedDoggoZone);
         active=doggoZoneFragment;
 
     }*/

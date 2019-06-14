@@ -39,9 +39,13 @@
     </fragment>
     <fragment
         android:id="@+id/doggoZoneFragment"
-        android:name="io.mse.doggodate.map.DoggoZoneFragment"
+        android:name="io.mse.doggodate.map.DoggozoneFragment"
         android:label="doggozone_fragment"
-        tools:layout="@layout/doggozone_fragment"/>
+        tools:layout="@layout/doggozone_fragment">
+        <action
+            android:id="@+id/from_doggoZoneFragment_to_otherProfileFragment"
+            app:destination="@id/otherProfileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/otherProfileFragment"
         android:name="io.mse.doggodate.profile.OtherProfileFragment"

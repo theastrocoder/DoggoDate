@@ -8,6 +8,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -17,12 +19,14 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.map.MapFirestoreCallback;
 import io.mse.doggodate.rest.DogZoneAPI;
+import io.mse.doggodate.search.FirestoreCallback;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -110,6 +114,47 @@ public class DoggoZonesRepository {
                 });
 
         return doggoZoneMutableLiveData;
+    }
+
+    public LiveData<ArrayList<Doggo>> getDoggosJoining(final FirestoreCallback firestoreCallback, DoggoZone doggoZone){
+        Log.i("DZRepository","Retrieving doggos joining park");
+        final MutableLiveData<ArrayList<Doggo>> doggosJoining=new MutableLiveData<>();
+        db.collection("Event").document("zone").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if(documentSnapshot.exists()){
+                        DoggoZone zone = documentSnapshot.toObject(DoggoZone.class);
+                        Log.i("DZREPO","DATA " +zone);
+
+                    }
+                } else {
+                    Log.w("DZRepository", "Error getting doggos.", task.getException());
+                }
+            }
+        });
+        db.collection("Events").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            ArrayList<Doggo> doggoList = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Doggo doggo = document.toObject(Doggo.class);
+                                Log.i("DZRepository","doggos " + doggo.getName());
+                                doggoList.add(doggo);
+                            }
+                            doggosJoining.setValue(doggoList);
+                            firestoreCallback.onDataRetrieved(doggoList);
+                        } else {
+                            Log.w("DZRepository", "Error getting doggos.", task.getException());
+                        }
+                    }
+                });
+
+        return doggosJoining;
     }
 
     public LiveData<List<DoggoZone>> getAllDoggoZones() {

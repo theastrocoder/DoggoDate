@@ -19,26 +19,49 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import io.mse.doggodate.entity.DoggoZone;
-import io.mse.doggodate.adapters.ImageAdapter;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
+import io.mse.doggodate.adapters.SearchImageAdapter;
+import io.mse.doggodate.databinding.DoggozoneFragmentBinding;
+import io.mse.doggodate.entity.Doggo;
+import io.mse.doggodate.entity.DoggoZone;
+import io.mse.doggodate.helpers.HelperViewModel;
+import io.mse.doggodate.search.FirestoreCallback;
+import io.mse.doggodate.viewmodel.DoggoZoneViewModel;
 
-public class DoggoZoneFragment extends Fragment {
+public class DoggozoneFragment extends Fragment {
 
     private DoggoZone selectedDogoZone;
     private ArrayList<String> date = new ArrayList<>(Arrays.asList("Today", "Tomorrow", "Pick a date"));
     Spinner spinner;
     ArrayAdapter<String> arrayAdapter;
-    public DoggoZoneFragment() {
+    private Observer<DoggoZone> doggoZoneObserver;
+    TextView parkName;
+    TextView parkArea;
+    TextView type;
+    TextView fence;
+    GridView gridView;
+    ArrayList<String> images;
+
+    public DoggozoneFragment() {
+
+    }
+
+    @BindingAdapter({"bind:handler"})
+    public static void bindGridViewAdapterSearch(final GridView view, final DoggozoneFragment fragment)
+    {
+        MainActivity mainActivity = ((MainActivity)fragment.getActivity());
 
     }
 
@@ -46,19 +69,34 @@ public class DoggoZoneFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.doggozone_fragment,container,false);
-        TextView parkName = (TextView) view.findViewById(R.id.park_name);
-        TextView parkArea = (TextView) view.findViewById(R.id.area);
-        TextView type = (TextView) view.findViewById(R.id.type);
-        TextView fence = (TextView) view.findViewById(R.id.fence);
+        final DoggozoneFragmentBinding binding = DataBindingUtil.inflate(inflater,R.layout.doggozone_fragment,container,false);
+        final DoggoZoneViewModel doggoZoneViewModel = ViewModelProviders.of(getActivity()).get(DoggoZoneViewModel.class);
+        final HelperViewModel helper = ViewModelProviders.of(getActivity()).get(HelperViewModel.class);
+        binding.setHandler(this);
+        binding.setManager(getFragmentManager());
+        parkName = (TextView) view.findViewById(R.id.park_name);
+        parkArea = (TextView) view.findViewById(R.id.area);
+        type = (TextView) view.findViewById(R.id.type);
+        fence = (TextView) view.findViewById(R.id.fence);
+
+        doggoZoneObserver = new Observer<DoggoZone>() {
+            @Override
+            public void onChanged(DoggoZone doggoZone) {
+                Log.i("Map","ZONEEEEE " + doggoZone.getName());
+                parkName.setText(doggoZone.getName());
+                parkArea.setText("Fläche: " + doggoZone.getArea() );
+                type.setText("Typ: " + doggoZone.getTyp());
+                fence.setText("Einfriedung: " + doggoZone.getFence());
+                selectedDogoZone = doggoZone;
+            }
+        };
+        helper.getSelectedDoggoZone().observe(this,doggoZoneObserver);
+
         TextView doggos = (TextView) view.findViewById(R.id.doggos_joining);
         MainActivity mainActivity;
         mainActivity=(MainActivity) getActivity();
         mainActivity.invalidateOptionsMenu();
 
-        parkName.setText("HI");
-        parkArea.setText("Area: " + "220" + "m2");
-        type.setText("Type: Dog Zone");
-        fence.setText("Fence: Yes");
         doggos.setText("8 other are joining");
 
         spinner = (Spinner) view.findViewById(R.id.spinner);
@@ -97,14 +135,51 @@ public class DoggoZoneFragment extends Fragment {
             }
         });
 
-        GridView gridView = (GridView) view.findViewById(R.id.grid_view);
-        ArrayList<String> images = new ArrayList<>();
+        gridView = (GridView) view.findViewById(R.id.grid_view);
+        /*images = new ArrayList<>();
         //set which dogs' pics should be shown
         for (int i = 0; i<((MainActivity)getActivity()).getDefaultSearch().size(); i++){
             images.add(((MainActivity)getActivity()).getDefaultSearch().get(i).getProfilePic());
-        }
+        }*/
 
-        gridView.setAdapter(new ImageAdapter(getActivity().getApplicationContext(), (AppCompatActivity) getActivity(),images));
+        //gridView.setAdapter(new SearchImageAdapter(getActivity().getApplicationContext(), (MainActivity) getActivity()));
+
+        FirestoreCallback firestoreCallback = new FirestoreCallback() {
+            @Override
+            public void onDataRetrieved(ArrayList<Doggo> doggos) {
+                Log.i("DZF","Doggos joining retrieved" + doggos);
+                SearchImageAdapter sa = new SearchImageAdapter(((MainActivity) getActivity()).getApplicationContext(), ((MainActivity) getActivity()), doggos);
+                sa.setZone(true);
+                gridView.setAdapter(new SearchImageAdapter(((MainActivity)getActivity()).getApplicationContext(), ((MainActivity)getActivity()), doggos));
+                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View v,
+                                            int position, long id) {
+
+                        ((MainActivity)getActivity()).toOtherProfile(position, 2);
+                    };
+                });
+            }
+        };
+
+        doggoZoneViewModel.getListDoggosJoining(firestoreCallback,selectedDogoZone).observe(this, new Observer<ArrayList<Doggo>>() {
+            @Override
+            public void onChanged(ArrayList<Doggo> doggos) {
+                Log.i("DZF","On changed called " + doggos );
+                SearchImageAdapter sa = new SearchImageAdapter(((MainActivity) getActivity()).getApplicationContext(), ((MainActivity) getActivity()), doggos);
+                sa.setZone(true);
+                gridView.setAdapter(sa);
+                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View v,
+                                            int position, long id) {
+
+                        ((MainActivity)getActivity()).toOtherProfile(position, 0);
+                    };
+                });
+            }
+        });
+
         FloatingActionButton scheduleWalk = (FloatingActionButton) view.findViewById(R.id.schedule_walk);
         scheduleWalk.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,9 +187,6 @@ public class DoggoZoneFragment extends Fragment {
                 pickTime();
             }
         });
-
-        //gridView.setAdapter(new SearchImageAdapter(getActivity().getApplicationContext(), (MainActivity) getActivity()));
-
 
         return view;
     }
