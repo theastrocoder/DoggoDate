@@ -39,7 +39,7 @@
     </fragment>
     <fragment
         android:id="@+id/doggoZoneFragment"
-        android:name="io.mse.doggodate.map.DoggozoneFragment"
+        android:name="io.mse.doggodate.doggozone.DoggoZoneFragment"
         android:label="doggozone_fragment"
         tools:layout="@layout/doggozone_fragment">
         <action

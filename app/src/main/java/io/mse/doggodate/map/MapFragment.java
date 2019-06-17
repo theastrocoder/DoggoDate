@@ -53,19 +53,20 @@ import java.util.Objects;
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
 import io.mse.doggodate.databinding.MapsFragmentBinding;
+import io.mse.doggodate.doggozone.DoggoZoneViewModel;
 import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.helpers.HelperViewModel;
-import io.mse.doggodate.viewmodel.MapViewModel;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback,MapFirestoreCallback {
 
     private Location currentLocation;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private static final int REQUEST_CODE = 101;
+    private static final String TAG = "MapFragment";
     private GoogleMap mMap;
     private Context context;
     private TextView zoneName;
@@ -83,7 +84,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private MainActivity mainActivity;
     private MapViewModel mapViewModel;
     private GeoJsonLayer geoJsonLayer;
-    private HelperViewModel helperViewModel;
+    private DoggoZoneViewModel doggoZoneViewModel;
 
     public MapFragment() {
         // Required empty public constructor
@@ -92,8 +93,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mapViewModel = ViewModelProviders.of(this).get(MapViewModel.class);
-        helperViewModel = ViewModelProviders.of(getActivity()).get(HelperViewModel.class);
         thisF = this;
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient((MainActivity) getActivity());
         getCurrentLocation();
@@ -125,16 +124,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.i("MAP","on create map view");
+        mapViewModel = ViewModelProviders.of(this).get(MapViewModel.class);
+        doggoZoneViewModel = ViewModelProviders.of(getActivity()).get(DoggoZoneViewModel.class);
         final MapsFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.maps_fragment, container, false);
         context = container.getContext();
         view = binding.getRoot();
         selectedDoggoZone = new Observer<DoggoZone>() {
             @Override
             public void onChanged(DoggoZone doggoZone) {
+                Log.i(TAG,"On doggoZone changed " + doggoZone);
                 binding.setSelectedDoggoZone(doggoZone);
-                helperViewModel.setSelectedDoggoZone(doggoZone);
             }
         };
+        doggoZoneViewModel.getSelectedDoggoZone().observe(this,selectedDoggoZone);
+        doggoZoneViewModel.setMapFirestoreCallback(this);
 
         mainActivity = (MainActivity)getActivity();
         assert mainActivity != null;
@@ -143,9 +146,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         park1 = ((MainActivity)getActivity()).getPark1();
 
         slider = (SlidingUpPanelLayout) view.findViewById(R.id.slider);
-        //slider.onRestoreInstanceState(null);
-        slider.setPanelHeight(0);
-        //slider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+        slider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         Log.i("MAP","PAN Steate " + slider.getPanelState());
         zoneName = (TextView) view.findViewById(R.id.zone_name);
         favoritesBtn = (ImageButton) view.findViewById(R.id.add_favorites);
@@ -208,7 +209,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     geoJsonLayer.setOnFeatureClickListener(new GeoJsonLayer.GeoJsonOnFeatureClickListener() {
                         @Override
                         public void onFeatureClick(Feature feature) {
-                            slider.setPanelHeight(180);
                             String name = feature.getProperty("PARK");
                             String area = feature.getProperty("FLAECHE");
                             String fenceS = feature.getProperty("EINFRIEDUNG");
@@ -219,22 +219,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     fenceS,
                                     typ,
                                     false);
+                            doggoZone.setId(doggoZone.getName()+doggoZone.getArea());
 
-                            selectedDoggoZone.onChanged(doggoZone);
-
-                            MapFirestoreCallback mapFirestoreCallback = new MapFirestoreCallback() {
-                                @Override
-                                public void onDataRetrieved(@Nullable DoggoZone doggoZone) {
-                                    selectedDoggoZone.onChanged(doggoZone);
-                                    helperViewModel.setSelectedDoggoZone(doggoZone);
-
-
-                                }
-                            };
-                            mapViewModel.getSelectedDoggoZone(doggoZone,mapFirestoreCallback).observe(thisF, selectedDoggoZone);
-
+                            doggoZoneViewModel.setSelectedDoggoZone(doggoZone);
+                            slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                            doggoZoneViewModel.createNewDoggoZone(doggoZone);
                             doggosJoining.setText("8 others are joining");
-
 
                             goToDoggoZone.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -245,8 +235,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                         }
                     });
-
-
 
                     geoJsonLayer.addLayerToMap();
                 }
@@ -294,5 +282,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
+    @Override
+    public void onDoggoZoneCreated(DoggoZone doggoZone) {
+        Log.i(TAG,"DoggoZone created callback");
+        doggoZoneViewModel.loadDoggoZoneFromFirestore(doggoZone);
 
+    }
 }

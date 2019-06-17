@@ -31,8 +31,6 @@ public class DoggoZone extends BaseObservable {
 
     }
 
-
-    @Bindable
     public String getId() {
         return id;
     }
@@ -41,6 +39,7 @@ public class DoggoZone extends BaseObservable {
         this.id = id;
     }
 
+    @Bindable
     public String getName() {
         return name;
     }

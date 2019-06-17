@@ -1,4 +1,4 @@
-package io.mse.doggodate.map;
+package io.mse.doggodate.doggozone;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
-import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -19,96 +18,71 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.Timestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.security.auth.callback.Callback;
-
 import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
 import io.mse.doggodate.adapters.SearchImageAdapter;
-import io.mse.doggodate.adapters.ViewPagerAdapter;
 import io.mse.doggodate.databinding.DoggozoneFragmentBinding;
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoEvent;
 import io.mse.doggodate.entity.DoggoZone;
-import io.mse.doggodate.helpers.HelperViewModel;
 import io.mse.doggodate.profile.ProfileFirestoreCallback;
 import io.mse.doggodate.profile.ProfileViewModel;
-import io.mse.doggodate.search.FirestoreCallback;
-import io.mse.doggodate.search.FirestoreEventCallback;
-import io.mse.doggodate.viewmodel.DoggoZoneViewModel;
 
-public class DoggozoneFragment extends Fragment {
+public class DoggoZoneFragment extends Fragment{
 
-    private DoggoZone selectedDogoZone;
+    private DoggoZone selectedDoggoZone;
     private ArrayList<String> date = new ArrayList<>(Arrays.asList("Today", "Tomorrow", "Pick a date"));
-    Spinner spinner;
-    ArrayAdapter<String> arrayAdapter;
-    private Observer<DoggoZone> doggoZoneObserver;
-    TextView parkName;
-    TextView parkArea;
-    TextView type;
-    TextView fence;
-    GridView gridView;
-    ArrayList<String> images;
+    private Spinner spinner;
+    private ArrayAdapter<String> arrayAdapter;
     private DoggoZoneViewModel doggoZoneViewModel;
     private LocalDate selectedDate;
     private Doggo activeDoggo;
-    MapFirestoreCallback mapFirestoreCallback;
-    public DoggozoneFragment() {
+    private DoggozoneFragmentBinding binding;
 
-    }
-
-    @BindingAdapter({"bind:handler"})
-    public static void bindGridViewAdapterSearch(final GridView view, final DoggozoneFragment fragment)
-    {
-        MainActivity mainActivity = ((MainActivity)fragment.getActivity());
+    public DoggoZoneFragment() {
 
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.doggozone_fragment,container,false);
-        final DoggozoneFragmentBinding binding = DataBindingUtil.inflate(inflater,R.layout.doggozone_fragment,container,false);
-        doggoZoneViewModel = ViewModelProviders.of(getActivity()).get(DoggoZoneViewModel.class);
-        final HelperViewModel helper = ViewModelProviders.of(getActivity()).get(HelperViewModel.class);
+        binding = DataBindingUtil.inflate(inflater,R.layout.doggozone_fragment,container,false);
+        doggoZoneViewModel = ViewModelProviders.of(
+                getActivity()).
+                get(DoggoZoneViewModel.class);
         final ProfileViewModel prfile = ViewModelProviders.of(getActivity()).get(ProfileViewModel.class);
+        View view = binding.getRoot();
         binding.setHandler(this);
-        binding.setManager(getFragmentManager());
-        parkName = (TextView) view.findViewById(R.id.park_name);
-        parkArea = (TextView) view.findViewById(R.id.area);
-        type = (TextView) view.findViewById(R.id.type);
-        fence = (TextView) view.findViewById(R.id.fence);
-
-        helper.getSelectedDoggoZone().observe(this, new Observer<DoggoZone>() {
+        doggoZoneViewModel.getSelectedDoggoZone().observe(this, new Observer<DoggoZone>() {
             @Override
             public void onChanged(DoggoZone doggoZone) {
-                selectedDogoZone=doggoZone;
-                Log.i("IDDDIDIIID","hi " + doggoZone.getId() );
-                parkName.setText(doggoZone.getName());
-                parkArea.setText("Fläche: " + doggoZone.getArea() );
-                type.setText("Typ: " + doggoZone.getTyp());
-                fence.setText("Einfriedung: " + doggoZone.getFence());
-                selectedDogoZone = doggoZone;
+                Log.i("DZF","DoggoZone on changed " + doggoZone.getName());
+                selectedDoggoZone=doggoZone;
+                binding.setDoggoZone(doggoZone);
+                doggoZoneViewModel.getListDoggosJoining(doggoZone);
             }
         });
-        setEvents();
+        doggoZoneViewModel.getListEvents().observe(this, new Observer<ArrayList<DoggoEvent>>() {
+            @Override
+            public void onChanged(ArrayList<DoggoEvent> doggoEvents) {
+                createGrid(doggoEvents);
+            }
+        });
+
         TextView doggos = (TextView) view.findViewById(R.id.doggos_joining);
         MainActivity mainActivity;
         mainActivity=(MainActivity) getActivity();
@@ -154,7 +128,6 @@ public class DoggozoneFragment extends Fragment {
             }
         });
 
-        gridView = (GridView) view.findViewById(R.id.grid_view);
         ProfileFirestoreCallback afterDoggoRetrieved = new ProfileFirestoreCallback() {
             @Override
             public void onDataRetrieved(Doggo doggo) {
@@ -211,47 +184,15 @@ public class DoggozoneFragment extends Fragment {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 Toast.makeText(getContext(),"Scheduled walk at " + selectedHour + ":" +  (selectedMinute < 10? "0"+selectedMinute:selectedMinute),Toast.LENGTH_LONG).show();
-                DoggoEvent doggoEvent = new DoggoEvent();
+                final DoggoEvent doggoEvent = new DoggoEvent();
                 doggoEvent.setCreator(activeDoggo);
-                doggoEvent.setZone(selectedDogoZone);
+                doggoEvent.setZone(selectedDoggoZone);
                 doggoEvent.setTime(LocalDateTime.of(selectedDate,LocalTime.of(timePicker.getHour(),timePicker.getMinute())));
                 doggoZoneViewModel.addEvent(doggoEvent);
             }
         }, hour, minute, true);//Yes 24 hour time
         mTimePicker.setTitle("Select Time");
         mTimePicker.show();
-    }
-
-    void setEvents(){
-        /*FirestoreEventCallback firestoreCallback = new FirestoreEventCallback() {
-            @Override
-            public void onDataRetrieved(ArrayList<DoggoEvent> events) {
-                createGrid(events);
-            }
-        };
-
-        doggoZoneViewModel.getListDoggosJoining(firestoreCallback,selectedDogoZone).observe(this, new Observer<ArrayList<DoggoEvent>>() {
-            @Override
-            public void onChanged(ArrayList<DoggoEvent> events) {
-                createGrid(events);
-
-            }
-        });*/
-        FirestoreCallback firestoreCallback = new FirestoreCallback() {
-            @Override
-            public void onDataRetrieved(ArrayList<Doggo> doggos) {
-                Log.i("DZF","doggos "+ doggos);
-                createGrid(doggos);
-            }
-        };
-        doggoZoneViewModel.getAllDoggos(firestoreCallback);
-        doggoZoneViewModel.getAlld().observe(this, new Observer<ArrayList<Doggo>>() {
-            @Override
-            public void onChanged(ArrayList<Doggo> doggos) {
-                createGrid(doggos);
-            }
-        });
-
     }
 
     private void pickDate() {
@@ -282,20 +223,23 @@ public class DoggozoneFragment extends Fragment {
         datePickerDialog.show();
     }
 
-    private void createGrid(ArrayList<Doggo> events){
+    private void createGrid(ArrayList<DoggoEvent> events){
         ArrayList<Doggo> doggos = new ArrayList<>();
+        for(DoggoEvent e:events){
+            doggos.add(e.getCreator());
+        }
         Log.i("DZF","Doggos joining retrieved" + doggos);
         SearchImageAdapter sa = new SearchImageAdapter(((MainActivity) getActivity()).getApplicationContext(), ((MainActivity) getActivity()),doggos );
         sa.setZone(true);
         sa.setComesIn("jetzt");
-        gridView.setAdapter(new SearchImageAdapter(((MainActivity)getActivity()).getApplicationContext(), ((MainActivity)getActivity()), doggos));
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        binding.gridView.setAdapter(sa);
+        binding.gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
                 ((MainActivity)getActivity()).toOtherProfile(position, 2);
-            };
+            }
         });
     }
 }

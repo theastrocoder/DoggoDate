@@ -760,8 +760,8 @@ public class MainActivity extends AppCompatActivity {
         favoritesItem.setVisible(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Log.i(TAG,"Go to Doggo Zone " + selectedDoggoZone.getName());
-        doggoZoneFragment = new DoggozoneFragment();
-        ((DoggozoneFragment)doggoZoneFragment).setSelectedDogoZone(selectedDoggoZone);
+        doggoZoneFragment = new DoggoZoneFragment();
+        ((DoggoZoneFragment)doggoZoneFragment).setSelectedDogoZone(selectedDoggoZone);
         active=doggoZoneFragment;
 
     }*/

@@ -42,7 +42,7 @@ public class SearchFragment extends Fragment {
     public static void bindGridViewAdapterSearch(final GridView view, final SearchFragment fragment)
     {
         MainActivity mainActivity = ((MainActivity)fragment.getActivity());
-       // view.setAdapter(new SearchImageAdapter(mainActivity.getApplicationContext(), mainActivity));
+        // view.setAdapter(new SearchImageAdapter(mainActivity.getApplicationContext(), mainActivity));
 
        /* view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -52,7 +52,7 @@ public class SearchFragment extends Fragment {
                 openProfile(position, 0);
             }
         });*/
-       // view.setAdapter(new ImageAdapter( ((MainActivity)fragment.getActivity()).getApplicationContext(),(AppCompatActivity) ((MainActivity)fragment.getActivity()),images));
+        // view.setAdapter(new ImageAdapter( ((MainActivity)fragment.getActivity()).getApplicationContext(),(AppCompatActivity) ((MainActivity)fragment.getActivity()),images));
 
     }
     @Override

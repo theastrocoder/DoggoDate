@@ -98,7 +98,7 @@
                 android:paddingStart="10dp">
                 <TextView
                     android:id="@+id/area"
-                    android:text="@={selectedDoggoZone.area}"
+                    android:text='@{"Fläche : " + selectedDoggoZone.area}'
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
@@ -107,7 +107,7 @@
 
                 <TextView
                     android:id="@+id/type"
-                    android:text="@={selectedDoggoZone.typ}"
+                    android:text='@{"Typ : " + selectedDoggoZone.typ}'
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
@@ -115,7 +115,7 @@
 
                 <TextView
                     android:id="@+id/fence"
-                    android:text="@={selectedDoggoZone.fence}"
+                    android:text='@{"Einfriedigung : " + selectedDoggoZone.fence}'
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"

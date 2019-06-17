@@ -7,20 +7,16 @@
         <variable
             name="doggoZone"
             type="io.mse.doggodate.entity.DoggoZone" />
-
         <variable
             name="handler"
-            type="io.mse.doggodate.map.DoggozoneFragment" />
+            type="io.mse.doggodate.doggozone.DoggoZoneFragment" />
 
-        <variable
-            name="manager"
-            type="androidx.fragment.app.FragmentManager" />
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".map.DoggozoneFragment">
+        tools:context=".doggozone.DoggoZoneFragment">
 
 
         <LinearLayout
@@ -34,6 +30,7 @@
 
             <TextView
                 android:id="@+id/park_name"
+                android:text="@{doggoZone.name}"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textSize="25sp"
@@ -41,6 +38,7 @@
 
             <TextView
                 android:id="@+id/area"
+                android:text='@{"Fläche :" + doggoZone.area}'
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textSize="17sp"
@@ -48,6 +46,7 @@
 
             <TextView
                 android:id="@+id/type"
+                android:text='@{"Typ: " + doggoZone.typ}'
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textSize="17sp"
@@ -55,6 +54,7 @@
 
             <TextView
                 android:id="@+id/fence"
+                android:text='@{"Einfriedung: " + doggoZone.fence}'
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textSize="17sp"
@@ -111,8 +111,7 @@
                     android:numColumns="auto_fit"
                     android:paddingTop="10dp"
                     android:stretchMode="columnWidth"
-                    android:verticalSpacing="2dp"
-                    app:handler="@{handler}"/>
+                    android:verticalSpacing="2dp"/>
 
                 <!--<include
                     android:id="@+id/grid_view"
