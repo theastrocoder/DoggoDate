@@ -1,7 +1,6 @@
 package io.mse.doggodate.search;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,7 +10,7 @@ import android.widget.GridView;
 
 import androidx.appcompat.app.ActionBar;
 import android.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
+
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -20,7 +19,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import java.util.ArrayList;
 
-import io.mse.doggodate.MainActivity;
+import io.mse.doggodate.main.MainActivity;
 import io.mse.doggodate.R;
 import io.mse.doggodate.adapters.SearchImageAdapter;
 import io.mse.doggodate.databinding.SearchFragmentBinding;

@@ -2,6 +2,7 @@ package io.mse.doggodate.map;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -13,11 +14,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -39,23 +41,32 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.api.Property;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.maps.android.data.Feature;
+import com.google.maps.android.data.Layer;
 import com.google.maps.android.data.geojson.GeoJsonFeature;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.maps.android.data.geojson.GeoJsonPointStyle;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Objects;
 
-import io.mse.doggodate.MainActivity;
+import io.mse.doggodate.main.MainActivity;
 import io.mse.doggodate.R;
 import io.mse.doggodate.databinding.MapsFragmentBinding;
 import io.mse.doggodate.doggozone.DoggoZoneViewModel;
+import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoZone;
-import io.mse.doggodate.helpers.HelperViewModel;
+import io.mse.doggodate.main.MainActivityViewModel;
+import io.mse.doggodate.profile.ProfileViewModel;
 
 
 /**
@@ -69,14 +80,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
     private static final String TAG = "MapFragment";
     private GoogleMap mMap;
     private Context context;
-    private TextView zoneName;
-    private ImageButton favoritesBtn;
-    private ImageButton goToDoggoZone;
-    private DoggoZone park1;
-    private SlidingUpPanelLayout slider;
-    private TextView parkArea;
-    private TextView fence;
-    private TextView type;
     private TextView doggosJoining;
     private Fragment thisF;
     private Observer<DoggoZone> selectedDoggoZone;
@@ -85,6 +88,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
     private MapViewModel mapViewModel;
     private GeoJsonLayer geoJsonLayer;
     private DoggoZoneViewModel doggoZoneViewModel;
+    private Doggo activeDoggo;
+    private MapsFragmentBinding binding;
+    private JSONObject JSONFile;
+    private GeoJsonPointStyle style;
 
     public MapFragment() {
         // Required empty public constructor
@@ -126,7 +133,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
         Log.i("MAP","on create map view");
         mapViewModel = ViewModelProviders.of(this).get(MapViewModel.class);
         doggoZoneViewModel = ViewModelProviders.of(getActivity()).get(DoggoZoneViewModel.class);
-        final MapsFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.maps_fragment, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.maps_fragment, container, false);
+        final MainActivityViewModel main = ViewModelProviders.of(getActivity()).get(MainActivityViewModel.class);
+        main.getLoggedInDoggo().observe(this, new Observer<Doggo>() {
+            @Override
+            public void onChanged(Doggo doggo) {
+                Log.i(TAG,"Active doggo is " + doggo);
+                activeDoggo = doggo;
+            }
+        });
+
         context = container.getContext();
         view = binding.getRoot();
         selectedDoggoZone = new Observer<DoggoZone>() {
@@ -143,26 +159,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
         assert mainActivity != null;
         Objects.requireNonNull(mainActivity.getSupportActionBar()).setTitle("DoggoZones");
         mainActivity.invalidateOptionsMenu();
-        park1 = ((MainActivity)getActivity()).getPark1();
 
-        slider = (SlidingUpPanelLayout) view.findViewById(R.id.slider);
-        slider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-        Log.i("MAP","PAN Steate " + slider.getPanelState());
-        zoneName = (TextView) view.findViewById(R.id.zone_name);
-        favoritesBtn = (ImageButton) view.findViewById(R.id.add_favorites);
-        parkArea = (TextView)view.findViewById(R.id.area);
-        fence= (TextView)view.findViewById(R.id.fence);
-        type=(TextView)view.findViewById(R.id.type);
+        binding.slider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         doggosJoining=(TextView)view.findViewById(R.id.doggos_joining);
-        goToDoggoZone = (ImageButton) view.findViewById(R.id.join_zone);
 
 
         return view;
     }
 
-    public void setFavorites(){
-        favoritesBtn.setImageResource(R.drawable.heart);
-    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -193,22 +197,32 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
 
         mapViewModel.getFeatures().observe(this, new Observer<JSONObject>() {
             @Override
-            public void onChanged(JSONObject featuresResponse) {
+            public void onChanged(final JSONObject featuresResponse) {
                 if (featuresResponse != null) {
-                    Log.i("Map", "Adds Park Layer to Map");
+                    JSONFile = featuresResponse;
+                    Log.i(TAG, "Adds Park Layer to Map");
                     geoJsonLayer = new GeoJsonLayer(mMap,featuresResponse);
+
                     Iterator<GeoJsonFeature> featureIterator = geoJsonLayer.getFeatures().iterator();
                     while (featureIterator.hasNext()) {
                         GeoJsonFeature geoJsonFeature = featureIterator.next();
-                        GeoJsonPointStyle style = new GeoJsonPointStyle();
-                        style.setIcon(bitmapDescriptorFromVector(getContext(), R.drawable.park,R.drawable.tree_outline));
+                        style = new GeoJsonPointStyle();
+
+                        if(isFavorite(geoJsonFeature)){
+                            style.setIcon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav,R.drawable.tree_outline));
+                        }else {
+                            style.setIcon(bitmapDescriptorFromVector(getContext(), R.drawable.park,R.drawable.tree_outline));
+                        }
                         geoJsonFeature.setPointStyle(style);
 
                     }
 
+
+                    geoJsonLayer.addLayerToMap();
+
                     geoJsonLayer.setOnFeatureClickListener(new GeoJsonLayer.GeoJsonOnFeatureClickListener() {
                         @Override
-                        public void onFeatureClick(Feature feature) {
+                        public void onFeatureClick(final Feature feature) {
                             String name = feature.getProperty("PARK");
                             String area = feature.getProperty("FLAECHE");
                             String fenceS = feature.getProperty("EINFRIEDUNG");
@@ -219,29 +233,77 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
                                     fenceS,
                                     typ,
                                     false);
-                            doggoZone.setId(doggoZone.getName()+doggoZone.getArea());
 
                             doggoZoneViewModel.setSelectedDoggoZone(doggoZone);
-                            slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                            binding.slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                            if(isFavorite(feature)){
+                                binding.addFavorites.setImageResource(R.drawable.heart);
+                            }else {
+                                binding.addFavorites.setImageResource(R.drawable.heart_outline);
+                            }
                             doggoZoneViewModel.createNewDoggoZone(doggoZone);
                             doggosJoining.setText("8 others are joining");
-
-                            goToDoggoZone.setOnClickListener(new View.OnClickListener() {
+                            final JSONObject jsonObjectFeature = getJSONObject(feature);
+                            binding.addFavorites.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if(isFavorite(feature)){
+                                        removeFromFavorites(jsonObjectFeature,v,(GeoJsonFeature)feature);
+                                    }else {
+                                        addToFavorites(jsonObjectFeature, v, (GeoJsonFeature) feature);
+                                    }
+                                }
+                            });
+                            binding.joinZone.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     navigateToDoggoZone(v);
                                 }
                             });
-
                         }
                     });
 
-                    geoJsonLayer.addLayerToMap();
                 }
             }
         });
 
 
+    }
+
+
+    private boolean isFavorite(Feature feature){
+
+        if(feature.getProperty("fav")!=null){
+            if(feature.getProperty("fav").equals("true")){
+                return true;
+            }else {
+                return false;
+            }
+        }else {
+            return false;
+        }
+    }
+
+    private JSONObject getJSONObject(Feature feature){
+        Log.i(TAG,"Creating a JSONObject of feature");
+        JSONObject featureObj = JSONFile;
+        try {
+            JSONArray a = JSONFile.optJSONArray("features");
+            JSONObject obA = a.toJSONObject(a);
+            Iterator<String> i = obA.keys();
+            int k = 0;
+            while (i.hasNext()){
+                String s = i.next();
+                JSONObject ob = new JSONObject(s);
+                if(ob.get("id").equals(feature.getId())){
+                    featureObj =(JSONObject)JSONFile.getJSONArray("features").get(k);
+                }
+                k++;
+            }
+        } catch (JSONException e) {
+            Log.i(TAG,"Failed to get JSONObject of feature " + e.getLocalizedMessage());
+        }
+        return featureObj;
     }
 
     @Override
@@ -287,5 +349,79 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
         Log.i(TAG,"DoggoZone created callback");
         doggoZoneViewModel.loadDoggoZoneFromFirestore(doggoZone);
 
+    }
+
+    private void addToFavorites(final JSONObject feature, final View view,final GeoJsonFeature geoJsonFeature) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(view.getContext());
+        alertDialogBuilder.setMessage("Sie können DoggoZone to Favorites hinzufügen");
+        alertDialogBuilder.setTitle("In Favorites hinzufügen ?");
+
+        alertDialogBuilder.setCancelable(false);
+
+        alertDialogBuilder.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                Toast.makeText(view.getContext(), "In Favorites hinzugefügt", Toast.LENGTH_LONG).show();
+                binding.addFavorites.setImageResource(R.drawable.heart);
+                try {
+                    feature.getJSONObject("properties").put("fav",true);
+                    doggoZoneViewModel.updateJSONObject(activeDoggo,JSONFile);
+                    style.setIcon(bitmapDescriptorFromVector(getContext(),R.drawable.park_fav,R.drawable.tree_outline));
+                    geoJsonFeature.setPointStyle(style);
+                } catch (JSONException e) {
+                    Log.i(TAG,"Failed to add fav property to JSON file " + e.getLocalizedMessage());
+                }
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton("Nein", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                Toast.makeText(view.getContext(), "Hinzufügen abgelehnt!", Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    private void removeFromFavorites(final JSONObject feature,final View view,final GeoJsonFeature geoJsonFeature) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(view.getContext());
+        alertDialogBuilder.setMessage("DoggoZone wird aus Favorites entfernt");
+        alertDialogBuilder.setTitle("DoggoZone aus Favorites entfernen? ");
+
+        alertDialogBuilder.setCancelable(false);
+
+        alertDialogBuilder.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                Toast.makeText(view.getContext(), "Aus Favorites entfernt", Toast.LENGTH_LONG).show();
+                binding.addFavorites.setImageResource(R.drawable.heart_outline);
+                try {
+                    feature.getJSONObject("properties").put("fav",false);
+                    doggoZoneViewModel.updateJSONObject(activeDoggo,JSONFile);
+                    style.setIcon(bitmapDescriptorFromVector(getContext(),R.drawable.park,R.drawable.tree_outline));
+                    geoJsonFeature.setPointStyle(style);
+                } catch (JSONException e) {
+                    Log.i(TAG,"Failed to add fav property to JSON file " + e.getLocalizedMessage());
+                }
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton("Nein", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                Toast.makeText(view.getContext(), "Entfernen abgelehnt!", Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 }

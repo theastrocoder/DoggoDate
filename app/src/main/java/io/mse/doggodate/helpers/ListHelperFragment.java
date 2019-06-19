@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,7 +15,6 @@ import androidx.lifecycle.ViewModelProviders;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-import io.mse.doggodate.MainActivity;
 import io.mse.doggodate.R;
 import io.mse.doggodate.databinding.FragmentListBinding;
 import io.mse.doggodate.adapters.CustomAdapter;

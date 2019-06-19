@@ -6,35 +6,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
 import io.mse.doggodate.databinding.OtherProfileFragmentBinding;
-import io.mse.doggodate.databinding.ProfileFragmentBinding;
 import io.mse.doggodate.entity.Doggo;
-import io.mse.doggodate.MainActivity;
+import io.mse.doggodate.main.MainActivity;
 import io.mse.doggodate.R;
 import io.mse.doggodate.adapters.ViewPagerAdapter;
 import io.mse.doggodate.entity.DoggoEvent;
 import io.mse.doggodate.helpers.HelperViewModel;
-import io.mse.doggodate.search.SearchFragment;
-import io.mse.doggodate.search.SearchViewModel;
 
 
 /**

@@ -1,4 +1,4 @@
-package io.mse.doggodate;
+package io.mse.doggodate.main;
 
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import io.mse.doggodate.R;
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoEvent;
 import io.mse.doggodate.entity.DoggoPOJO;
@@ -37,6 +38,7 @@ import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.helpers.HelperViewModel;
 import io.mse.doggodate.home.HomeFragment;
 import io.mse.doggodate.map.MapFragment;
+import io.mse.doggodate.profile.ProfileFirestoreCallback;
 import io.mse.doggodate.profile.ProfileViewModel;
 import io.mse.doggodate.search.FirestoreCallback;
 import io.mse.doggodate.search.FirestoreEventCallback;
@@ -347,6 +349,10 @@ public class MainActivity extends AppCompatActivity {
         //set context so doggo can get ressources
         Doggo.setContextStatic(getApplicationContext());
 //addDoggosToDB();
+        final MainActivityViewModel mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+
+        mainActivityViewModel.loadLoggedInDogg();
+
         navController = Navigation.findNavController(this,R.id.main_container);
         NavigationUI.setupWithNavController(navView,navController);
 
@@ -517,35 +523,6 @@ public class MainActivity extends AppCompatActivity {
         this.selectedDoggoZone = selectedDoggoZone;
     }
 
-    public void addToFavorites(View view) {
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-        alertDialogBuilder.setMessage("You can add DoggoZones to your favorites for easy search");
-        alertDialogBuilder.setTitle("Wanna add this DoggoZone to Favorites? ");
-
-        alertDialogBuilder.setCancelable(false);
-
-        alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                Toast.makeText(MainActivity.this, "Added to Favorites", Toast.LENGTH_LONG).show();
-                ((MapFragment)fragment2).setFavorites();
-            }
-        });
-
-        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                Toast.makeText(MainActivity.this, "Add to Favorites rejected!", Toast.LENGTH_LONG).show();
-
-            }
-        });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-    }
 
     public DoggoZone getPark4() {
         return park4;

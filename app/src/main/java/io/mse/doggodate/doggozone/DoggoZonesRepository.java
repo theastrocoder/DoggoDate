@@ -35,6 +35,7 @@ import java.util.Map;
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoEvent;
 import io.mse.doggodate.entity.DoggoZone;
+import io.mse.doggodate.main.MainActivity;
 import io.mse.doggodate.map.MapFirestoreCallback;
 import io.mse.doggodate.rest.DogZoneAPI;
 import io.mse.doggodate.search.FirestoreCallback;
@@ -53,7 +54,6 @@ public class DoggoZonesRepository {
     private MutableLiveData<JSONObject> featureCollection;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Retrofit retrofit;
-    private Doggo activeDoggo;
     private MutableLiveData<ArrayList<DoggoEvent>> eventList;
     private String TAG = "DZRepository";
 
@@ -180,8 +180,22 @@ public class DoggoZonesRepository {
         });
     }
 
-    public void updateJSONData(JSONObject jsonObject){
-
+    public void updateJSONData(Doggo activeDoggo,JSONObject jsonObject){
+        Map<String,String> map = new HashMap<>();
+        map.put("json",jsonObject.toString());
+        db.collection("OpenDataFile")
+                .document("DATA="+activeDoggo.getId())
+                .set(map)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Log.i(TAG,"JSON data successfully updated");
+                        }else {
+                            Log.i(TAG,"Failed to update JSON data");
+                        }
+                    }
+                });
     }
 
     public void createDoggoZone(final DoggoZone doggoZone){
@@ -197,7 +211,7 @@ public class DoggoZonesRepository {
                         if(task.isSuccessful()){
                             if(task.getResult().isEmpty()){
                                 db.collection("DoggoZone")
-                                        .document(doggoZone.getId())
+                                        .document()
                                         .set(doggoZone)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
@@ -221,7 +235,7 @@ public class DoggoZonesRepository {
                 doggoZone.getName() + " " +doggoZone.getArea());
         db.collection("DoggoZone")
                 .whereEqualTo("name",doggoZone.getName())
-                .whereEqualTo("area",doggoZone.getName())
+                .whereEqualTo("area",doggoZone.getArea())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -248,8 +262,11 @@ public class DoggoZonesRepository {
                 " ID: " + doggoZone.getId());
         eventList.setValue(new ArrayList<DoggoEvent>());
         DocumentReference zone = db.collection( "DoggoZone").document(doggoZone.getId());
-        Log.i("DZREO", " " + zone);
-        db.collection("Event").whereEqualTo("zone",zone).get()
+        Timestamp now = Timestamp.now();
+        Log.i(TAG,"TIMESTAMP NOW  " + now.getNanoseconds());
+        db.collection("Event")
+                .whereEqualTo("zone",zone)
+                .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -261,6 +278,7 @@ public class DoggoZonesRepository {
 
                                 //set date and time
                                 Timestamp time = document.getTimestamp("time");
+                                Log.i(TAG,"TIme " + time);
                                 LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(time.getSeconds() * 1000 + time.getNanoseconds() / 1000000), ZoneId.systemDefault());
                                 event.setTime(localDateTime);
                                 Log.i("DZRepository", "time of event is: " + localDateTime.toString());
@@ -272,12 +290,14 @@ public class DoggoZonesRepository {
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         if (task.isSuccessful()) {
                                             Log.i(TAG, "Task to retrieve doggo successful");
-                                            DocumentSnapshot document = task.getResult();
+                                            if(task.getResult().exists()) {
+                                                DocumentSnapshot document = task.getResult();
 
-                                            Doggo doggo = document.toObject(Doggo.class);
-                                            doggo.setId(document.getId());
-                                            event.setCreator(doggo);
-                                            Log.i(TAG, "name of creator is "+event.getCreator().getName());
+                                                Doggo doggo = document.toObject(Doggo.class);
+                                                doggo.setId(document.getId());
+                                                event.setCreator(doggo);
+                                                Log.i(TAG, "name of creator is " + event.getCreator().getName());
+                                            }
                                             doggoEvents.add(event);
                                             eventList.setValue(doggoEvents);
 
@@ -327,8 +347,6 @@ public class DoggoZonesRepository {
         Log.i("ProfileViewModel", "time that actually came to db of new event " + doggoEvent.getTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")));
         final Map<String, Object> eventFS = new HashMap<>();
         eventFS.put("time",timestamp);
-
-        Log.d("DZREPO", "addEvent: " + doggoEvent.getCreator() + " " + doggoEvent.getZone().getId() );
         eventFS.put("creator", db.collection("Doggo").document(doggoEvent.getCreator().getId()));
         eventFS.put("zone", db.collection("DoggoZone").document(doggoEvent.getZone().getId()));
 

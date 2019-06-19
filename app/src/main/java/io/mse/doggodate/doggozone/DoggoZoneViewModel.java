@@ -8,8 +8,11 @@ import androidx.lifecycle.ViewModel;
 
 import com.google.android.material.tabs.TabLayout;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
+import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoEvent;
 import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.map.MapFirestoreCallback;
@@ -18,6 +21,7 @@ public class DoggoZoneViewModel extends ViewModel implements DoggoZoneFirestoreC
 
     private DoggoZonesRepository doggoZonesRepository;
     private MutableLiveData<DoggoZone> selectedDoggoZone;
+    private LiveData<DoggoZone> selectedDoggoZoneWithID;
     private MutableLiveData<ArrayList<DoggoEvent>> listEvents;
     private String TAG = "DZViewModel";
 
@@ -77,5 +81,14 @@ public class DoggoZoneViewModel extends ViewModel implements DoggoZoneFirestoreC
     public void onSelectedDoggoZoneRetrieved(DoggoZone doggoZone) {
         Log.i(TAG,"Selected DoggoZone retrieved " + doggoZone.getId());
         doggoZonesRepository.getDoggoZoneEvents(doggoZone);
+    }
+
+    public void updateJSONObject(Doggo activeDoggo, JSONObject jsonFile) {
+        doggoZonesRepository.updateJSONData(activeDoggo,jsonFile);
+    }
+
+    public LiveData<DoggoZone> getSelectedDoggoZoneWithID() {
+        selectedDoggoZoneWithID = doggoZonesRepository.getSelectedDoggoZoneLiveData();
+        return selectedDoggoZoneWithID;
     }
 }

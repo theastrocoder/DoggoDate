@@ -12,15 +12,17 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import io.mse.doggodate.entity.Doggo;
-import io.mse.doggodate.MainActivity;
+import io.mse.doggodate.entity.DoggoEvent;
+import io.mse.doggodate.main.MainActivity;
 import io.mse.doggodate.R;
 
 
 public class SearchImageAdapter extends BaseAdapter {
     // Keep all Images in array
     public ArrayList<Doggo> doggos = new ArrayList<>();
+    private ArrayList<DoggoEvent> doggoEvents;
     private boolean isZone;
-    private String comesIn;
+    private ArrayList<String> comesIn;
     private MainActivity activity;
 
     private Context mContext;
@@ -78,7 +80,7 @@ public class SearchImageAdapter extends BaseAdapter {
 
         // get the TextView from the ViewHolder and then set the text (item name) and tag (item ID) values
 
-            viewHolder.textViewItem.setText((isZone ? comesIn:doggos.get(position).getName()) + " " +
+            viewHolder.textViewItem.setText((isZone ? comesIn.get(position):doggos.get(position).getName()) + " " +
                     ((activity.getActiveDog().getFollowings().contains(doggos.get(position))) ? "" : "+"));
             viewHolder.textViewItem.setTag(position);
             viewHolder.textViewItem.setBackgroundColor(((Activity) activity).getResources().getColor((activity.getActiveDog().getFollowings().contains(doggos.get(position))) ? R.color.colorPrimaryLight : R.color.colorPrimaryLighter));
@@ -93,8 +95,12 @@ public class SearchImageAdapter extends BaseAdapter {
         isZone = zone;
     }
 
-    public void setComesIn(String comesIn) {
+    public void setComesIn(ArrayList<String> comesIn) {
         this.comesIn = comesIn;
+    }
+
+    public void setDoggoEvents(ArrayList<DoggoEvent> doggoEvents) {
+        this.doggoEvents = doggoEvents;
     }
 
     // our ViewHolder.

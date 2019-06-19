@@ -22,23 +22,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import io.mse.doggodate.OpenWeatherAPI;
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoEvent;
-import io.mse.doggodate.MainActivity;
+import io.mse.doggodate.main.MainActivity;
 import io.mse.doggodate.R;
 import io.mse.doggodate.adapters.EventAdapter;
 import io.mse.doggodate.profile.ProfileFirestoreCallback;
 import io.mse.doggodate.profile.ProfileViewModel;
-import io.mse.doggodate.search.FirestoreCallback;
 
 
 /**

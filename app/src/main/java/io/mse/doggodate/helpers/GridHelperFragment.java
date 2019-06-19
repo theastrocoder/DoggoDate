@@ -3,34 +3,24 @@ package io.mse.doggodate.helpers;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.library.baseAdapters.BR;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.viewpager.widget.ViewPager;
-
-import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
-import io.mse.doggodate.MainActivity;
+import io.mse.doggodate.main.MainActivity;
 import io.mse.doggodate.R;
-import io.mse.doggodate.adapters.ViewPagerAdapter;
 import io.mse.doggodate.databinding.FragmentGridHelperBinding;
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.adapters.ImageAdapter;
-import io.mse.doggodate.profile.ProfileFragment;
-import io.mse.doggodate.profile.ProfileViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
