@@ -231,6 +231,7 @@ public class SearchViewModel extends ViewModel {
                                 //get ready for retrieving custom objects
                                 final DocumentReference doggoID =  document.getDocumentReference("creator");
                                 final DocumentReference zoneID =  document.getDocumentReference("zone");
+                                Log.i(TAG,"ZONEE ==> " + zoneID.getId());
 
                                 //get doggo java object
                                 doggoID.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

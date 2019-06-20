@@ -228,7 +228,7 @@ public class DoggoZoneFragment extends Fragment{
 
         for(DoggoEvent e : events){
 
-            String st= e.getTime().getHour() + ":" + e.getTime().getMinute()    ;
+            String st= e.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
             strings.add(st);
         }
         return strings;

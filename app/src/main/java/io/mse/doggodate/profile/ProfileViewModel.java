@@ -136,14 +136,16 @@ public class ProfileViewModel extends ViewModel {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                 if (task.isSuccessful()) {
-                                                    Log.i(TAG, "Task to retrieve zone successful");
-                                                    DocumentSnapshot document = task.getResult();
+                                                    if(task.getResult().exists()) {
+                                                        Log.i(TAG, "Task to retrieve zone successful");
+                                                        DocumentSnapshot document = task.getResult();
 
-                                                    DoggoZone zone = document.toObject(DoggoZone.class);
-                                                    zone.setId(document.getId());
-                                                    event.setZone(zone);
-                                                    Log.i(TAG, "zone name is "+event.getZone().getName());
-                                                    eventArrayList.add(event);
+                                                        DoggoZone zone = document.toObject(DoggoZone.class);
+                                                        zone.setId(document.getId());
+                                                        event.setZone(zone);
+                                                        Log.i(TAG, "zone name is " + event.getZone().getName());
+                                                        eventArrayList.add(event);
+                                                    }
 
                                                 }else {
                                                     Log.w(TAG, "Error getting documents.", task.getException());
