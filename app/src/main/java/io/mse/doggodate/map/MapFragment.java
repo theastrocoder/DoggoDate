@@ -41,9 +41,6 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.api.Property;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.maps.android.data.Feature;
 import com.google.maps.android.data.Layer;
 import com.google.maps.android.data.geojson.GeoJsonFeature;
@@ -55,7 +52,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -66,7 +62,6 @@ import io.mse.doggodate.doggozone.DoggoZoneViewModel;
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.main.MainActivityViewModel;
-import io.mse.doggodate.profile.ProfileViewModel;
 
 
 /**
@@ -82,7 +77,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
     private Context context;
     private TextView doggosJoining;
     private Fragment thisF;
-    private Observer<DoggoZone> selectedDoggoZone;
     private View view;
     private MainActivity mainActivity;
     private MapViewModel mapViewModel;
@@ -92,6 +86,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
     private MapsFragmentBinding binding;
     private JSONObject JSONFile;
     private GeoJsonPointStyle style;
+    private DoggoZone selectedDoggoZone;
+    private DoggoZone selectedDoggoZoneWithId;
 
     public MapFragment() {
         // Required empty public constructor
@@ -104,6 +100,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient((MainActivity) getActivity());
         getCurrentLocation();
     }
+
 
     private void getCurrentLocation() {
         if (((MainActivity)getActivity()).checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ((MainActivity)getActivity()).checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -135,26 +132,37 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
         doggoZoneViewModel = ViewModelProviders.of(getActivity()).get(DoggoZoneViewModel.class);
         binding = DataBindingUtil.inflate(inflater, R.layout.maps_fragment, container, false);
         final MainActivityViewModel main = ViewModelProviders.of(getActivity()).get(MainActivityViewModel.class);
-        main.getLoggedInDoggo().observe(this, new Observer<Doggo>() {
+        main.getLoggedInDoggo().observe(getViewLifecycleOwner(), new Observer<Doggo>() {
             @Override
             public void onChanged(Doggo doggo) {
                 Log.i(TAG,"Active doggo is " + doggo);
                 activeDoggo = doggo;
             }
         });
-
         context = container.getContext();
         view = binding.getRoot();
-        selectedDoggoZone = new Observer<DoggoZone>() {
+        final Observer<DoggoZone> selectedDoggoZoneObserver = new Observer<DoggoZone>() {
             @Override
             public void onChanged(DoggoZone doggoZone) {
-                Log.i(TAG,"On doggoZone changed " + doggoZone);
+                Log.i(TAG, "On doggoZone changed " + doggoZone);
                 binding.setSelectedDoggoZone(doggoZone);
+                selectedDoggoZone = doggoZone;
+                if (doggoZone.isFavorite()) {
+                    binding.addFavorites.setImageResource(R.drawable.heart);
+                } else {
+                    binding.addFavorites.setImageResource(R.drawable.heart_outline);
+                }
             }
         };
-        doggoZoneViewModel.getSelectedDoggoZone().observe(this,selectedDoggoZone);
+        doggoZoneViewModel.getSelectedDoggoZone().observe(getViewLifecycleOwner(), selectedDoggoZoneObserver);
         doggoZoneViewModel.setMapFirestoreCallback(this);
-
+        doggoZoneViewModel.getSelectedDoggoZoneWithID().observe(getViewLifecycleOwner(), new Observer<DoggoZone>() {
+            @Override
+            public void onChanged(DoggoZone doggoZone) {
+                selectedDoggoZoneWithId = doggoZone;
+                doggoZoneViewModel.setSelectedDoggoZone(doggoZone);
+            }
+        });
         mainActivity = (MainActivity)getActivity();
         assert mainActivity != null;
         Objects.requireNonNull(mainActivity.getSupportActionBar()).setTitle("DoggoZones");
@@ -162,7 +170,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
 
         binding.slider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         doggosJoining=(TextView)view.findViewById(R.id.doggos_joining);
-
 
         return view;
     }
@@ -193,9 +200,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
             Log.e("MapsFragment", "Style parsing failed.");
         }
 
-
-
-        mapViewModel.getFeatures().observe(this, new Observer<JSONObject>() {
+        mapViewModel.getFeatures().observe(getViewLifecycleOwner(), new Observer<JSONObject>() {
             @Override
             public void onChanged(final JSONObject featuresResponse) {
                 if (featuresResponse != null) {
@@ -217,58 +222,59 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
 
                     }
 
-
                     geoJsonLayer.addLayerToMap();
 
-                    geoJsonLayer.setOnFeatureClickListener(new GeoJsonLayer.GeoJsonOnFeatureClickListener() {
-                        @Override
-                        public void onFeatureClick(final Feature feature) {
-                            String name = feature.getProperty("PARK");
-                            String area = feature.getProperty("FLAECHE");
-                            String fenceS = feature.getProperty("EINFRIEDUNG");
-                            String typ = feature.getProperty("TYP");
-                            final DoggoZone doggoZone = new DoggoZone(
-                                    name,
-                                    area,
-                                    fenceS,
-                                    typ,
-                                    false);
-
-                            doggoZoneViewModel.setSelectedDoggoZone(doggoZone);
-                            binding.slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-                            if(isFavorite(feature)){
-                                binding.addFavorites.setImageResource(R.drawable.heart);
-                            }else {
-                                binding.addFavorites.setImageResource(R.drawable.heart_outline);
-                            }
-                            doggoZoneViewModel.createNewDoggoZone(doggoZone);
-                            doggosJoining.setText("8 others are joining");
-                            final JSONObject jsonObjectFeature = getJSONObject(feature);
-                            binding.addFavorites.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if(isFavorite(feature)){
-                                        removeFromFavorites(jsonObjectFeature,v,(GeoJsonFeature)feature);
-                                    }else {
-                                        addToFavorites(jsonObjectFeature, v, (GeoJsonFeature) feature);
-                                    }
-                                }
-                            });
-                            binding.joinZone.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    navigateToDoggoZone(v);
-                                }
-                            });
-                        }
-                    });
-
+                    geoJsonLayer.setOnFeatureClickListener(onFeatureClickListener);
                 }
             }
         });
 
 
     }
+
+    private Layer.OnFeatureClickListener onFeatureClickListener = new Layer.OnFeatureClickListener() {
+        @Override
+        public void onFeatureClick(final Feature feature) {
+            String name = feature.getProperty("PARK");
+            String area = feature.getProperty("FLAECHE");
+            String fenceS = feature.getProperty("EINFRIEDUNG");
+            String typ = feature.getProperty("TYP");
+            final DoggoZone doggoZone = new DoggoZone(
+                    name,
+                    area,
+                    fenceS,
+                    typ,
+                    false);
+
+            doggoZoneViewModel.setSelectedDoggoZone(doggoZone);
+            binding.slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            if(isFavorite(feature)){
+                binding.addFavorites.setImageResource(R.drawable.heart);
+            }else {
+                binding.addFavorites.setImageResource(R.drawable.heart_outline);
+            }
+            doggoZoneViewModel.createNewDoggoZone(doggoZone);
+            doggoZoneViewModel.loadDoggoZoneFromFirestore(doggoZone);
+            doggosJoining.setText("8 others are joining");
+            final JSONObject jsonObjectFeature = getJSONObject(feature);
+            binding.addFavorites.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(isFavorite(feature)){
+                        removeFromFavorites(jsonObjectFeature,v,(GeoJsonFeature)feature);
+                    }else {
+                        addToFavorites(jsonObjectFeature, v, (GeoJsonFeature) feature);
+                    }
+                }
+            });
+            binding.joinZone.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    navigateToDoggoZone(v);
+                }
+            });
+        }
+    };
 
 
     private boolean isFavorite(Feature feature){
@@ -351,7 +357,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
 
     }
 
-    private void addToFavorites(final JSONObject feature, final View view,final GeoJsonFeature geoJsonFeature) {
+    private void addToFavorites(final JSONObject feature, final View view, final GeoJsonFeature geoJsonFeature) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(view.getContext());
         alertDialogBuilder.setMessage("Sie können DoggoZone to Favorites hinzufügen");
         alertDialogBuilder.setTitle("In Favorites hinzufügen ?");
@@ -366,9 +372,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
                 binding.addFavorites.setImageResource(R.drawable.heart);
                 try {
                     feature.getJSONObject("properties").put("fav",true);
-                    doggoZoneViewModel.updateJSONObject(activeDoggo,JSONFile);
+
+                    selectedDoggoZoneWithId.setFavorite(true);
+                    doggoZoneViewModel.updateDoggoZone(selectedDoggoZoneWithId,activeDoggo,JSONFile);
                     style.setIcon(bitmapDescriptorFromVector(getContext(),R.drawable.park_fav,R.drawable.tree_outline));
                     geoJsonFeature.setPointStyle(style);
+
                 } catch (JSONException e) {
                     Log.i(TAG,"Failed to add fav property to JSON file " + e.getLocalizedMessage());
                 }
@@ -388,7 +397,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
         alertDialog.show();
     }
 
-    private void removeFromFavorites(final JSONObject feature,final View view,final GeoJsonFeature geoJsonFeature) {
+    private void removeFromFavorites(final JSONObject feature, final View view, final GeoJsonFeature geoJsonFeature) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(view.getContext());
         alertDialogBuilder.setMessage("DoggoZone wird aus Favorites entfernt");
         alertDialogBuilder.setTitle("DoggoZone aus Favorites entfernen? ");
@@ -403,9 +412,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
                 binding.addFavorites.setImageResource(R.drawable.heart_outline);
                 try {
                     feature.getJSONObject("properties").put("fav",false);
-                    doggoZoneViewModel.updateJSONObject(activeDoggo,JSONFile);
+
+                    selectedDoggoZoneWithId.setFavorite(false);
+                    doggoZoneViewModel.updateDoggoZone(selectedDoggoZoneWithId,activeDoggo,JSONFile);
                     style.setIcon(bitmapDescriptorFromVector(getContext(),R.drawable.park,R.drawable.tree_outline));
                     geoJsonFeature.setPointStyle(style);
+
                 } catch (JSONException e) {
                     Log.i(TAG,"Failed to add fav property to JSON file " + e.getLocalizedMessage());
                 }

@@ -94,9 +94,6 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     Log.i(TAG,"Active " + active);
-                    if(!active.equals(homeFragment)) {
-                        Log.i(TAG, "NOT DOuble");
-                    }
                     item.setChecked(true);
                     ActionBar ab = getSupportActionBar();
                     ab.show();
@@ -111,9 +108,6 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_map:
                     item.setChecked(true);
                     getSupportActionBar().show();
-                    if(active!=fragment2) {
-                        Log.i(TAG, "NOT DOuble");
-                    }
                     setActive(fragment2,active);
                     getSupportActionBar().setTitle("DoggoZones");
                     getSupportActionBar().setDisplayHomeAsUpEnabled(false);

@@ -83,8 +83,8 @@ public class DoggoZoneViewModel extends ViewModel implements DoggoZoneFirestoreC
         doggoZonesRepository.getDoggoZoneEvents(doggoZone);
     }
 
-    public void updateJSONObject(Doggo activeDoggo, JSONObject jsonFile) {
-        doggoZonesRepository.updateJSONData(activeDoggo,jsonFile);
+    public void updateDoggoZone(DoggoZone doggoZone,Doggo activeDoggo, JSONObject jsonFile) {
+        doggoZonesRepository.updateDoggoZone(doggoZone,activeDoggo,jsonFile);
     }
 
     public LiveData<DoggoZone> getSelectedDoggoZoneWithID() {

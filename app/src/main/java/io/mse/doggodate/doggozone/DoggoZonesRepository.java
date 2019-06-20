@@ -181,7 +181,7 @@ public class DoggoZonesRepository {
         });
     }
 
-    public void updateJSONData(Doggo activeDoggo,JSONObject jsonObject){
+    public void updateDoggoZone(DoggoZone doggoZone,Doggo activeDoggo,JSONObject jsonObject){
         Map<String,String> map = new HashMap<>();
         map.put("json",jsonObject.toString());
         db.collection("OpenDataFile")
@@ -197,6 +197,11 @@ public class DoggoZonesRepository {
                         }
                     }
                 });
+
+        Log.i(TAG,"di " + doggoZone.getId());
+        db.collection("DoggoZone").document(doggoZone.getId())
+                .update("favorite",doggoZone.isFavorite());
+
     }
 
     public void createDoggoZone(final DoggoZone doggoZone){

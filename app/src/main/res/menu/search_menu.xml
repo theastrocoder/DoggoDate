@@ -10,7 +10,7 @@
     <item android:title="Favorites"
         android:id="@+id/favorites"
         app:showAsAction="always"
-        android:icon="@drawable/heart_white">
+        android:icon="@drawable/filter_variant">
     </item>
 
 </menu>

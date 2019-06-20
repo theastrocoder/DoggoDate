@@ -69,7 +69,7 @@ public class DoggoZoneFragment extends Fragment{
         final MainActivityViewModel main = ViewModelProviders.of(getActivity()).get(MainActivityViewModel.class);
         View view = binding.getRoot();
         binding.setHandler(this);
-        doggoZoneViewModel.getSelectedDoggoZoneWithID().observe(this, new Observer<DoggoZone>() {
+        doggoZoneViewModel.getSelectedDoggoZoneWithID().observe(getViewLifecycleOwner(), new Observer<DoggoZone>() {
             @Override
             public void onChanged(DoggoZone doggoZone) {
                 selectedDoggoZone=doggoZone;
@@ -79,7 +79,7 @@ public class DoggoZoneFragment extends Fragment{
                 }
             }
         });
-        doggoZoneViewModel.getListEvents().observe(this, new Observer<ArrayList<DoggoEvent>>() {
+        doggoZoneViewModel.getListEvents().observe(getViewLifecycleOwner(), new Observer<ArrayList<DoggoEvent>>() {
             @Override
             public void onChanged(ArrayList<DoggoEvent> doggoEvents) {
                 createGrid(doggoEvents);
