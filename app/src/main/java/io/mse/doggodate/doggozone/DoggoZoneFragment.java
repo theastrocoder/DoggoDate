@@ -2,6 +2,8 @@ package io.mse.doggodate.doggozone;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +23,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -55,6 +58,9 @@ public class DoggoZoneFragment extends Fragment implements DatePickerDialog.OnDa
     private Doggo activeDoggo;
     private DoggozoneFragmentBinding binding;
     private LocalDateTime pickedDate;
+    private int spinnerSel;
+
+    View view;
 
     public DoggoZoneFragment() {
 
@@ -68,7 +74,7 @@ public class DoggoZoneFragment extends Fragment implements DatePickerDialog.OnDa
                 getActivity()).
                 get(DoggoZoneViewModel.class);
         final MainActivityViewModel main = ViewModelProviders.of(getActivity()).get(MainActivityViewModel.class);
-        View view = binding.getRoot();
+        view = binding.getRoot();
         binding.setHandler(this);
         selectedDate = LocalDateTime.now();
         doggoZoneViewModel.getSelectedDoggoZoneWithID().observe(getViewLifecycleOwner(), new Observer<DoggoZone>() {
@@ -96,37 +102,51 @@ public class DoggoZoneFragment extends Fragment implements DatePickerDialog.OnDa
         doggos.setText("8 other are joining");
 
         spinner = (Spinner) view.findViewById(R.id.spinner);
-        arrayAdapter =new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, date );
+        arrayAdapter =new ArrayAdapter<>(view.getContext(), android.R.layout.simple_spinner_dropdown_item, date );
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(arrayAdapter);
+
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
+
                         Toast.makeText(getContext(),"Doggos at Park Today",Toast.LENGTH_LONG).show();
-                        selectedDate = LocalDateTime.now();
-                        doggoZoneViewModel.getListDoggosJoining(selectedDoggoZone,selectedDate);
+                        //check if data already loaded, when date picker canceled
+                        if(selectedDate.toLocalDate().compareTo(LocalDateTime.now().toLocalDate())!=0) {
+                            selectedDate = LocalDateTime.now();
+                            doggoZoneViewModel.getListDoggosJoining(selectedDoggoZone, selectedDate);
+                            spinnerSel = 0;
+                        }
                         break;
                     case 1:
                         Toast.makeText(getContext(),"Doggos at Park Tomorrow",Toast.LENGTH_LONG).show();
                         LocalDate tomorrow = LocalDate.now().plus(1,ChronoUnit.DAYS);
-                        selectedDate = LocalDateTime.of(tomorrow,LocalTime.of(0,0,0));
-                        doggoZoneViewModel.getListDoggosJoining(selectedDoggoZone,selectedDate);
+                        //check if data already loaded, when date picker canceled
+                        if(selectedDate.toLocalDate().compareTo(tomorrow) != 0) {
+                            selectedDate = LocalDateTime.of(tomorrow, LocalTime.of(0, 0, 0));
+                            doggoZoneViewModel.getListDoggosJoining(selectedDoggoZone, selectedDate);
+                            spinnerSel = 1;
+                        }
                         break;
                     case 2:
                         if(date.size()==3){
-                            pickDate(view);
+                            pickDate();
                         }else {
                             Toast.makeText(getContext(), "Doggos in Park on " + pickedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))+ " shown", Toast.LENGTH_LONG).show();
-                            selectedDate = pickedDate;
-                            doggoZoneViewModel.getListDoggosJoining(selectedDoggoZone,pickedDate);
+                            //check if data already loaded, when date picker canceled
+                            if(selectedDate.toLocalDate().compareTo(pickedDate.toLocalDate())!= 0) {
+                                selectedDate = pickedDate;
+                                doggoZoneViewModel.getListDoggosJoining(selectedDoggoZone, pickedDate);
+                                spinnerSel = 2;
+                            }
                         }
                         break;
                     case 3:
                         if(date.get(3)!= null) {
-                           pickDate(view);
+                           pickDate();
                         }
                         break;
                 }
@@ -156,6 +176,12 @@ public class DoggoZoneFragment extends Fragment implements DatePickerDialog.OnDa
             }
         });
 
+        binding.refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                doggoZoneViewModel.getListDoggosJoining(selectedDoggoZone,selectedDate);
+            }
+        });
         return view;
     }
 
@@ -182,14 +208,21 @@ public class DoggoZoneFragment extends Fragment implements DatePickerDialog.OnDa
         mTimePicker.show();
     }
 
-    private void pickDate(View view) {
+    private void pickDate() {
 
         final DatePickerDialog datePickerDialog;
         datePickerDialog = new DatePickerDialog(view.getContext(),
                 this,
                 Calendar.getInstance().get(Calendar.YEAR),
                 Calendar.getInstance().get(Calendar.MONTH),
-                Calendar.getInstance().get(java.util.Calendar.DAY_OF_MONTH));
+                Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+        datePickerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                binding.spinner.setSelection(spinnerSel);
+            }
+        });
         datePickerDialog.setTitle("Pick a date");
         datePickerDialog.show();
     }
@@ -245,6 +278,7 @@ public class DoggoZoneFragment extends Fragment implements DatePickerDialog.OnDa
         }
     }
 
+
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
         if(date.size()==4){
@@ -253,14 +287,18 @@ public class DoggoZoneFragment extends Fragment implements DatePickerDialog.OnDa
         }else {
             date.remove(date.size()-1);
         }
+        view.setMinDate(LocalDate.now().toEpochDay());
         Calendar c = Calendar.getInstance();
         c.set(year,month,dayOfMonth);
         LocalDate temp = LocalDateTime.ofInstant(c.toInstant(), ZoneId.systemDefault()).toLocalDate();
         date.add(temp.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         date.add("Pick a date");
         arrayAdapter.notifyDataSetChanged();
-        spinner.setSelection(2);
+        spinnerSel = 2;
         pickedDate = LocalDateTime.of(temp,LocalTime.of(0,0,0));
+        if(pickedDate.toLocalDate().compareTo(LocalDate.now())==0){
+            pickedDate=LocalDateTime.now();
+        }
         selectedDate = pickedDate;
         doggoZoneViewModel.getListDoggosJoining(selectedDoggoZone,pickedDate);
     }

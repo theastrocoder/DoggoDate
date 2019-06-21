@@ -209,19 +209,21 @@ public class HomeFragment extends Fragment {
         protected void onPostExecute(String xml) {
 
             try {
-                JSONObject json = new JSONObject(xml);
-                if (json != null) {
-                    JSONObject details = json.getJSONArray("weather").getJSONObject(0);
-                    JSONObject main = json.getJSONObject("main");
-                    DateFormat df = DateFormat.getDateTimeInstance();
+                if(xml!=null) {
+                    JSONObject json = new JSONObject(xml);
+                    if (json != null) {
+                        JSONObject details = json.getJSONArray("weather").getJSONObject(0);
+                        JSONObject main = json.getJSONObject("main");
+                        DateFormat df = DateFormat.getDateTimeInstance();
 
-                    gowalk.setText(json.getString("name").toUpperCase(Locale.US) + ", " + json.getJSONObject("sys").getString("country"));
-                    weather.setText(String.format("%.2f", main.getDouble("temp")) + "°");
-                    weatherIcon.setText(Html.fromHtml(OpenWeatherAPI.setWeatherIcon(details.getInt("id"),
-                            json.getJSONObject("sys").getLong("sunrise") * 1000,
-                            json.getJSONObject("sys").getLong("sunset") * 1000)));
+                        gowalk.setText(json.getString("name").toUpperCase(Locale.US) + ", " + json.getJSONObject("sys").getString("country"));
+                        weather.setText(String.format("%.2f", main.getDouble("temp")) + "°");
+                        weatherIcon.setText(Html.fromHtml(OpenWeatherAPI.setWeatherIcon(details.getInt("id"),
+                                json.getJSONObject("sys").getLong("sunrise") * 1000,
+                                json.getJSONObject("sys").getLong("sunset") * 1000)));
 
 
+                    }
                 }
             } catch (JSONException e) {
                 Toast.makeText(getContext(), "Error, Check City", Toast.LENGTH_SHORT).show();
