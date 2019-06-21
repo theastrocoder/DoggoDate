@@ -10,6 +10,8 @@ import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONObject;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import io.mse.doggodate.entity.Doggo;
@@ -28,14 +30,12 @@ public class DoggoZoneViewModel extends ViewModel implements DoggoZoneFirestoreC
 
     public DoggoZoneViewModel(){
         doggoZonesRepository = new DoggoZonesRepository();
-        doggoZonesRepository.setDoggoZoneFirestoreCallback(this);
         listEvents = doggoZonesRepository.getEventList();
         selectedDoggoZone = new MutableLiveData<>();
     }
 
-    public void getListDoggosJoining(DoggoZone doggoZone) {
-        doggoZonesRepository.getDoggoZoneEvents(doggoZone);
-        Log.i("DZVIEV","do" + listEvents.getValue());
+    public void getListDoggosJoining(DoggoZone doggoZone, LocalDateTime selectedDate) {
+        doggoZonesRepository.getDoggoZoneEvents(doggoZone,selectedDate);
     }
 
     public void loadDoggoZoneFromFirestore(DoggoZone doggoZone){
@@ -64,10 +64,6 @@ public class DoggoZoneViewModel extends ViewModel implements DoggoZoneFirestoreC
         this.selectedDoggoZone.setValue(selectedDoggoZone);
     }
 
-    public void setDoggoZoneFirestoreCallback(DoggoZoneFirestoreCallback doggoZoneFirestoreCallback) {
-        doggoZonesRepository.setDoggoZoneFirestoreCallback(doggoZoneFirestoreCallback);
-    }
-
     public void setMapFirestoreCallback(MapFirestoreCallback mapFirestoreCallback){
         doggoZonesRepository.setMapFirestoreCallback(mapFirestoreCallback);
     }
@@ -79,8 +75,7 @@ public class DoggoZoneViewModel extends ViewModel implements DoggoZoneFirestoreC
 
     @Override
     public void onSelectedDoggoZoneRetrieved(DoggoZone doggoZone) {
-        Log.i(TAG,"Selected DoggoZone retrieved " + doggoZone.getId());
-        doggoZonesRepository.getDoggoZoneEvents(doggoZone);
+        //doggoZonesRepository.getDoggoZoneEvents(doggoZone);
     }
 
     public void updateDoggoZone(DoggoZone doggoZone,Doggo activeDoggo, JSONObject jsonFile) {

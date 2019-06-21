@@ -76,7 +76,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
     private GoogleMap mMap;
     private Context context;
     private TextView doggosJoining;
-    private Fragment thisF;
     private View view;
     private MainActivity mainActivity;
     private MapViewModel mapViewModel;
@@ -86,8 +85,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
     private MapsFragmentBinding binding;
     private JSONObject JSONFile;
     private GeoJsonPointStyle style;
-    private DoggoZone selectedDoggoZone;
     private DoggoZone selectedDoggoZoneWithId;
+    private JSONObject jsonObjectFeature;
+    private Feature selectedFeature;
 
     public MapFragment() {
         // Required empty public constructor
@@ -96,7 +96,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        thisF = this;
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient((MainActivity) getActivity());
         getCurrentLocation();
     }
@@ -146,7 +145,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
             public void onChanged(DoggoZone doggoZone) {
                 Log.i(TAG, "On doggoZone changed " + doggoZone);
                 binding.setSelectedDoggoZone(doggoZone);
-                selectedDoggoZone = doggoZone;
                 if (doggoZone.isFavorite()) {
                     binding.addFavorites.setImageResource(R.drawable.heart);
                 } else {
@@ -169,6 +167,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
         mainActivity.invalidateOptionsMenu();
 
         binding.slider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+        binding.addFavorites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(selectedDoggoZoneWithId.isFavorite()){
+                    removeFromFavorites(jsonObjectFeature,v,(GeoJsonFeature)selectedFeature);
+                }else {
+                    addToFavorites(jsonObjectFeature, v, (GeoJsonFeature) selectedFeature);
+                }
+            }
+        });
+
+        binding.joinZone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToDoggoZone(v);
+            }
+        });
         doggosJoining=(TextView)view.findViewById(R.id.doggos_joining);
 
         return view;
@@ -235,6 +250,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
     private Layer.OnFeatureClickListener onFeatureClickListener = new Layer.OnFeatureClickListener() {
         @Override
         public void onFeatureClick(final Feature feature) {
+            selectedFeature = feature;
             String name = feature.getProperty("PARK");
             String area = feature.getProperty("FLAECHE");
             String fenceS = feature.getProperty("EINFRIEDUNG");
@@ -256,23 +272,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
             doggoZoneViewModel.createNewDoggoZone(doggoZone);
             doggoZoneViewModel.loadDoggoZoneFromFirestore(doggoZone);
             doggosJoining.setText("8 others are joining");
-            final JSONObject jsonObjectFeature = getJSONObject(feature);
-            binding.addFavorites.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(isFavorite(feature)){
-                        removeFromFavorites(jsonObjectFeature,v,(GeoJsonFeature)feature);
-                    }else {
-                        addToFavorites(jsonObjectFeature, v, (GeoJsonFeature) feature);
-                    }
-                }
-            });
-            binding.joinZone.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    navigateToDoggoZone(v);
-                }
-            });
+            jsonObjectFeature = getJSONObject(feature);
+
         }
     };
 
@@ -372,7 +373,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
                 binding.addFavorites.setImageResource(R.drawable.heart);
                 try {
                     feature.getJSONObject("properties").put("fav",true);
-
                     selectedDoggoZoneWithId.setFavorite(true);
                     doggoZoneViewModel.updateDoggoZone(selectedDoggoZoneWithId,activeDoggo,JSONFile);
                     style.setIcon(bitmapDescriptorFromVector(getContext(),R.drawable.park_fav,R.drawable.tree_outline));

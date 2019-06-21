@@ -26,9 +26,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +52,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class DoggoZonesRepository {
 
     private DogZoneAPI dogZoneAPI;
-    private DoggoZoneFirestoreCallback doggoZoneFirestoreCallback;
     private MapFirestoreCallback mapFirestoreCallback;
     private MutableLiveData<DoggoZone> selectedDoggoZone;
     private MutableLiveData<JSONObject> featureCollection;
@@ -181,7 +183,7 @@ public class DoggoZonesRepository {
         });
     }
 
-    public void updateDoggoZone(DoggoZone doggoZone,Doggo activeDoggo,JSONObject jsonObject){
+    public void updateDoggoZone(final DoggoZone doggoZone, Doggo activeDoggo, JSONObject jsonObject){
         Map<String,String> map = new HashMap<>();
         map.put("json",jsonObject.toString());
         db.collection("OpenDataFile")
@@ -197,10 +199,18 @@ public class DoggoZonesRepository {
                         }
                     }
                 });
-
-        Log.i(TAG,"di " + doggoZone.getId());
         db.collection("DoggoZone").document(doggoZone.getId())
-                .update("favorite",doggoZone.isFavorite());
+                .update("favorite",doggoZone.isFavorite()).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Log.i(TAG,"DoggoZone successfully updated");
+                    selectedDoggoZone.setValue(doggoZone);
+                }else {
+                    Log.i(TAG,"DoggoZone update failed");
+                }
+            }
+        });
 
     }
 
@@ -263,16 +273,20 @@ public class DoggoZonesRepository {
 
     }
 
-    public void getDoggoZoneEvents(DoggoZone doggoZone){
+    public void getDoggoZoneEvents(DoggoZone doggoZone, LocalDateTime selectedDate){
         Log.i("DZRepository","Retrieving doggos joining " + doggoZone.getName() +
                 " ID: " + doggoZone.getId());
         eventList.setValue(new ArrayList<DoggoEvent>());
+        LocalDateTime endOfTheDay = LocalDateTime.of(selectedDate.toLocalDate(), LocalTime.of(23,59,59));
+        long e = endOfTheDay.atZone(ZoneId.systemDefault()).toEpochSecond();
+        Timestamp end = new Timestamp(e,0);
         DocumentReference zone = db.collection( "DoggoZone").document(doggoZone.getId());
-        Timestamp now = Timestamp.now();
-        Log.i(TAG,"TIMESTAMP NOW  " + now.getNanoseconds());
-
+        selectedDate = selectedDate.minus(30, ChronoUnit.MINUTES);
+        long s = selectedDate.atZone(ZoneId.systemDefault()).toEpochSecond();
+        Timestamp now = new Timestamp(s,0);
         db.collection("Event")
                 .whereGreaterThanOrEqualTo("time",now)
+                .whereLessThanOrEqualTo("time",end)
                 .orderBy("time", Query.Direction.ASCENDING)
                 .whereEqualTo("zone",zone)
                 .get()
@@ -383,9 +397,6 @@ public class DoggoZonesRepository {
         return selectedDoggoZone;
     }
 
-    public void setDoggoZoneFirestoreCallback(DoggoZoneFirestoreCallback doggoZoneFirestoreCallback) {
-        this.doggoZoneFirestoreCallback = doggoZoneFirestoreCallback;
-    }
 
     public void setMapFirestoreCallback(MapFirestoreCallback mapFirestoreCallback) {
         this.mapFirestoreCallback = mapFirestoreCallback;
