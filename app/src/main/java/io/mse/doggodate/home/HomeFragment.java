@@ -13,7 +13,9 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,8 +31,10 @@ import java.util.List;
 import java.util.Locale;
 
 import io.mse.doggodate.OpenWeatherAPI;
+import io.mse.doggodate.databinding.FragmentHomeBinding;
 import io.mse.doggodate.entity.Doggo;
 import io.mse.doggodate.entity.DoggoEvent;
+import io.mse.doggodate.entity.DoggoZone;
 import io.mse.doggodate.main.MainActivity;
 import io.mse.doggodate.R;
 import io.mse.doggodate.adapters.EventAdapter;
@@ -43,6 +47,8 @@ import io.mse.doggodate.profile.ProfileViewModel;
  */
 public class HomeFragment extends Fragment {
 
+
+    private static final String TAG = "HomeFragment";
     private MainActivity mainActivity;
     private HomeViewModel homeViewModel;
     private TextView weather;
@@ -50,7 +56,11 @@ public class HomeFragment extends Fragment {
     private TextView weatherIcon;
     private Typeface weatherFont;
     private ProfileViewModel profileViewModel;
-    String OPEN_WEATHER_MAP_API ="b9c1970e210e7c88afeb6b9afc432480";
+    String OPEN_WEATHER_MAP_API ="7a8da3901faf5d90aee10bbc13a104b9";
+    private View view;
+    private Doggo activeDoggo;
+    private List<DoggoZone> doggoZoneList;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -58,7 +68,8 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        FragmentHomeBinding binding = DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false);
+        view=binding.getRoot();
 
         mainActivity = (MainActivity)getActivity();
         mainActivity.getSupportActionBar().setTitle("DoggoDate");
@@ -66,13 +77,29 @@ public class HomeFragment extends Fragment {
         homeViewModel = ViewModelProviders.of(getActivity()).get(HomeViewModel.class);
         profileViewModel = ViewModelProviders.of(getActivity()).get(ProfileViewModel.class);
 
-        RecyclerView recList = (RecyclerView) view.findViewById(R.id.cardList);
+        final RecyclerView recList = binding.cardList;
+        homeViewModel.getDoggoZoneLiveData().observe(getViewLifecycleOwner(), new Observer<List<DoggoZone>>() {
+            @Override
+            public void onChanged(List<DoggoZone> doggoZones) {
+                Log.i(TAG,"DoggoEvents: " + doggoZones.size());
+                doggoZoneList = doggoZones;
+                /*EventAdapter ca = new EventAdapter(createEventList(), new EventAdapter.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(DoggoEvent item) {
+                        selectTimeOfJoining(item);
+                    }});
+
+                recList.setAdapter(ca);*/
+            }
+        });
+
+        homeViewModel.retrieveDoggoEvents();
         recList.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(RecyclerView.VERTICAL);
         recList.setLayoutManager(llm);
-
-        EventAdapter ca = new EventAdapter(createEventList(15), new EventAdapter.OnItemClickListener() {
+        EventAdapter ca = new EventAdapter(createEventList(), new EventAdapter.OnItemClickListener() {
 
             @Override
             public void onItemClick(DoggoEvent item) {
@@ -81,11 +108,12 @@ public class HomeFragment extends Fragment {
 
         recList.setAdapter(ca);
 
-         weather = (TextView) view.findViewById(R.id.weather);
-         gowalk = (TextView) view.findViewById(R.id.goforwalk);
-        TextView lastwalk = (TextView) view.findViewById(R.id.lastwalk);
-        lastwalk.setText("The last walk was 29 hours ago!");
-        weatherIcon = (TextView) view.findViewById(R.id.weather_icons);
+
+
+        weather = binding.weather;
+        gowalk = binding.goforwalk;
+        binding.lastwalk.setText("The last walk was 29 hours ago!");
+        weatherIcon = binding.weatherIcons;
         weatherFont = Typeface.createFromAsset(getContext().getAssets(), "fonts/weathericons-regular-webfont.ttf");
         weatherIcon.setTypeface(weatherFont);
         taskLoadUp("Vienna, AT");
@@ -117,6 +145,7 @@ public class HomeFragment extends Fragment {
 
     public void taskLoadUp(String query) {
         if (OpenWeatherAPI.isNetworkAvailable(getContext())) {
+            Log.i("HOME","Downloading weather api");
             DownloadWeather task = new DownloadWeather();
             task.execute(query);
         } else {
@@ -180,7 +209,7 @@ public class HomeFragment extends Fragment {
         profileViewModel.getActiveDoggo(profileFirestoreCallback);
     }
 
-    private List<DoggoEvent> createEventList(int size) {
+    private List<DoggoEvent> createEventList() {
 
         List<DoggoEvent> result = new ArrayList<DoggoEvent>();
         for (int i=0; i < ((MainActivity)getActivity()).getActiveDoggoEvents().size(); i++) {
@@ -190,19 +219,30 @@ public class HomeFragment extends Fragment {
             result.add(event);
 
         }
+        /*for (int i = 0; i < doggoZoneList.size(); i++) {
+
+            DoggoEvent event = doggoZoneList.get(i);
+            Log.i(TAG,"NAMGE " + event.getZone().getName());
+            event.setDoggosJoining(((MainActivity)getActivity()).getDefaultSearch());
+            result.add(event);
+
+        }*/
 
         return result;
     }
+
     class DownloadWeather extends AsyncTask< String, Void, String > {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-           // loader.setVisibility(View.VISIBLE);
+            // loader.setVisibility(View.VISIBLE);
 
         }
         protected String doInBackground(String...args) {
+
             String xml = OpenWeatherAPI.excuteGet("http://api.openweathermap.org/data/2.5/weather?q=" + args[0] +
                     "&units=metric&appid=" + OPEN_WEATHER_MAP_API);
+            Log.i("HOME","Do in background, get xml " + xml);
             return xml;
         }
         @Override

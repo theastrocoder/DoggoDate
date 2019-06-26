@@ -26,7 +26,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     private List<DoggoEvent> eventList;
 
-    public EventAdapter(List<DoggoEvent> eventList, OnItemClickListener listener) {
+    public  EventAdapter(List<DoggoEvent> eventList, OnItemClickListener listener) {
         this.eventList = eventList;
         this.listener = listener;
     }
