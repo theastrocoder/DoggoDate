@@ -99,8 +99,10 @@ public class SearchViewModel extends ViewModel {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Doggo doggo = document.toObject(Doggo.class);
                                 doggo.setId(document.getId());
-                                d.add(doggo);
-                            }
+                                if (!doggo.getId().toString().equals("97XuSnfcOmfW8pKF7B8y")) {
+                                    d.add(doggo);
+
+                                }                            }
                             allDoggos.setValue(d);
                             //call the callback implementation from SearchFragment to bind data
                             searchFirestoreCallback.onDataRetrieved(allDoggos.getValue());
@@ -127,8 +129,10 @@ public class SearchViewModel extends ViewModel {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Doggo doggo = document.toObject(Doggo.class);
                                 doggo.setId(document.getId());
-                                d.add(doggo);
-                            }
+                                if (!doggo.getId().toString().equals("97XuSnfcOmfW8pKF7B8y")) {
+                                    d.add(doggo);
+
+                                }                            }
                             allDoggos.setValue(d);
 
                         } else {
@@ -155,8 +159,10 @@ public class SearchViewModel extends ViewModel {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Doggo doggo = document.toObject(Doggo.class);
                                 doggo.setId(document.getId());
-                                d.add(doggo);
-                            }
+                                if (!doggo.getId().toString().equals("97XuSnfcOmfW8pKF7B8y")) {
+                                    d.add(doggo);
+
+                                }                            }
                             allDoggos.setValue(d);
                             //call the callback implementation from SearchFragment to bind data
                             searchFirestoreCallback.onDataRetrieved(allDoggos.getValue());
