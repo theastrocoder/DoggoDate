@@ -41,7 +41,7 @@ public class HomeRepository {
     }
 
     public void retrieveDoggoEvents(){
-        final List<DoggoEvent> tempDoggoEvents = new ArrayList<>();
+        final List<DoggoEvent> tempDoggoEvents= new ArrayList<>();
         final List<DoggoZone> tempDoggoZone = new ArrayList<>();
          db.collection("DoggoZone")
                 .whereEqualTo("favorite",true).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -66,6 +66,8 @@ public class HomeRepository {
                                         if(!task.getResult().isEmpty()){
                                             for(QueryDocumentSnapshot document : task.getResult()){
                                                 //create new empty instance to perform custom mapping
+                                                Log.i(TAG,"CLEAR");
+                                                tempDoggoEvents.clear();
                                                 final DoggoEvent event = new DoggoEvent();
                                                 event.setZone(doggoZone);
                                                 //set date and time
@@ -88,12 +90,13 @@ public class HomeRepository {
                                                                 event.setCreator(doggo);
                                                             }
 
+                                                            Log.i(TAG,"Zone " + doggoZone.getName() + " add " + event.getCreator() + " at" + event.getTime());
+                                                            Log.i(TAG,"LIST " + tempDoggoEvents.size());
                                                             tempDoggoEvents.add(event);
-
+                                                            if(!tempDoggoZone.contains(doggoZone)) {
+                                                                tempDoggoZone.add(doggoZone);
+                                                            }
                                                             doggoZone.setEventList(tempDoggoEvents);
-
-                                                            tempDoggoZone.add(doggoZone);
-                                                            
                                                             doggoZoneList.setValue(tempDoggoZone);
                                                         } else {
                                                             Log.w(TAG, "Error getting documents.", task.getException());

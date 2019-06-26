@@ -2,6 +2,7 @@ package io.mse.doggodate.adapters;
 
 
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import io.mse.doggodate.entity.DoggoEvent;
 import io.mse.doggodate.R;
+import io.mse.doggodate.entity.DoggoZone;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
@@ -24,29 +26,31 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     private final OnItemClickListener listener;
 
-    private List<DoggoEvent> eventList;
+    private List<DoggoZone> zoneList;
 
-    public  EventAdapter(List<DoggoEvent> eventList, OnItemClickListener listener) {
-        this.eventList = eventList;
+    public  EventAdapter(List<DoggoZone> zoneList, OnItemClickListener listener) {
+        this.zoneList = zoneList;
         this.listener = listener;
     }
 
     @Override
     public int getItemCount() {
-        return eventList.size();
+        return zoneList.size();
     }
 
     @Override
     public void onBindViewHolder(EventViewHolder eventViewHolder, int i) {
-        DoggoEvent event = eventList.get(i);
-        eventViewHolder.zone.setText(event.getZone().getName());
+        DoggoZone zone = zoneList.get(i);
+        Log.i("ADAPTER","Zone " + zone.getName() + " list " +zone.getEventList());
+        eventViewHolder.zone.setText(zone.getName());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
 
+        DoggoEvent event =  zone.getEventList().get(0);
         String formatDateTime = event.getTime().format(formatter);
         eventViewHolder.creator.setText(event.getCreator().getName() + " is going for a walk at " + formatDateTime);
-        eventViewHolder.others.setText(event.getDoggosJoining().size() + " others are joining.");
+        eventViewHolder.others.setText(zone.getEventList().size() + " others are joining.");
 
-        eventViewHolder.bind(eventList.get(i), listener);
+        eventViewHolder.bind(event, listener);
 
     }
 

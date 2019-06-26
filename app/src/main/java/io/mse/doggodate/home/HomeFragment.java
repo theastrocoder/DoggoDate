@@ -81,16 +81,16 @@ public class HomeFragment extends Fragment {
         homeViewModel.getDoggoZoneLiveData().observe(getViewLifecycleOwner(), new Observer<List<DoggoZone>>() {
             @Override
             public void onChanged(List<DoggoZone> doggoZones) {
-                Log.i(TAG,"DoggoEvents: " + doggoZones.size());
                 doggoZoneList = doggoZones;
-                /*EventAdapter ca = new EventAdapter(createEventList(), new EventAdapter.OnItemClickListener() {
+                Log.i(TAG,"SIZEE " + doggoZones.size());
+                EventAdapter ca = new EventAdapter(doggoZones, new EventAdapter.OnItemClickListener() {
 
                     @Override
                     public void onItemClick(DoggoEvent item) {
                         selectTimeOfJoining(item);
                     }});
 
-                recList.setAdapter(ca);*/
+                recList.setAdapter(ca);
             }
         });
 
@@ -99,14 +99,14 @@ public class HomeFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(RecyclerView.VERTICAL);
         recList.setLayoutManager(llm);
-        EventAdapter ca = new EventAdapter(createEventList(), new EventAdapter.OnItemClickListener() {
+        /*EventAdapter ca = new EventAdapter(createEventList(), new EventAdapter.OnItemClickListener() {
 
             @Override
             public void onItemClick(DoggoEvent item) {
                 selectTimeOfJoining(item);
             }});
 
-        recList.setAdapter(ca);
+        recList.setAdapter(ca);*/
 
 
 
@@ -209,24 +209,23 @@ public class HomeFragment extends Fragment {
         profileViewModel.getActiveDoggo(profileFirestoreCallback);
     }
 
-    private List<DoggoEvent> createEventList() {
+    private List<DoggoZone> createEventList() {
 
-        List<DoggoEvent> result = new ArrayList<DoggoEvent>();
-        for (int i=0; i < ((MainActivity)getActivity()).getActiveDoggoEvents().size(); i++) {
+        List<DoggoZone> result = new ArrayList<>();
+        /*for (int i=0; i < ((MainActivity)getActivity()).getActiveDoggoEvents().size(); i++) {
 
             DoggoEvent event = ((MainActivity)getActivity()).getActiveDoggoEvents().get(i);
             event.setDoggosJoining(((MainActivity)getActivity()).getDefaultSearch());
             result.add(event);
 
-        }
-        /*for (int i = 0; i < doggoZoneList.size(); i++) {
-
-            DoggoEvent event = doggoZoneList.get(i);
-            Log.i(TAG,"NAMGE " + event.getZone().getName());
-            event.setDoggosJoining(((MainActivity)getActivity()).getDefaultSearch());
-            result.add(event);
-
         }*/
+        for (int i = 0; i < doggoZoneList.size(); i++) {
+
+            DoggoZone zone = doggoZoneList.get(i);
+
+            result.add(zone);
+
+        }
 
         return result;
     }
