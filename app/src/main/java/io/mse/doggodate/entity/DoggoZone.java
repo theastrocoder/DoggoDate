@@ -7,6 +7,7 @@ import androidx.databinding.InverseBindingMethod;
 import androidx.databinding.InverseMethod;
 
 import java.io.Serializable;
+import java.util.List;
 
 import io.mse.doggodate.R;
 
@@ -18,6 +19,7 @@ public class DoggoZone extends BaseObservable {
     private String typ;
     private boolean isFavorite;
     private String id;
+    private List<DoggoEvent> eventList;
 
     public DoggoZone(String name, String area, String fence, String typ, boolean isFavorite) {
         this.name = name;
@@ -81,5 +83,13 @@ public class DoggoZone extends BaseObservable {
 
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
+    }
+
+    public List<DoggoEvent> getEventList() {
+        return eventList;
+    }
+
+    public void setEventList(List<DoggoEvent> eventList) {
+        this.eventList = eventList;
     }
 }

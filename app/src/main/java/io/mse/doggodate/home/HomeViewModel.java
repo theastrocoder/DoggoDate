@@ -9,20 +9,26 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import io.mse.doggodate.entity.DoggoEvent;
+import io.mse.doggodate.entity.DoggoZone;
 
 public class HomeViewModel extends AndroidViewModel {
 
-    LiveData<List<DoggoEvent>> doggoEventLiveData;
-    LiveData<List<DoggoEvent>> eventsOfDoggosInFollowings;
+    HomeRepository homeRepository;
+
+    LiveData<List<DoggoZone>> doggoZoneLiveData;
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
+        homeRepository = new HomeRepository();
     }
 
-    public LiveData<List<DoggoEvent>> getDoggoEventLiveData() {
-        return doggoEventLiveData;
+    public LiveData<List<DoggoZone>> getDoggoZoneLiveData() {
+        return homeRepository.getDoggoZoneList();
     }
 
+    public void retrieveDoggoEvents(){
+        homeRepository.retrieveDoggoEvents();
+    }
     public void addToDoggoEvent() {
 
     }

@@ -1,5 +1,6 @@
 package io.mse.doggodate.doggozone;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -59,7 +60,8 @@ public class DoggoZoneFragment extends Fragment implements DatePickerDialog.OnDa
     private DoggozoneFragmentBinding binding;
     private LocalDateTime pickedDate;
     private int spinnerSel;
-
+    private ArrayList<Doggo> joiningDoggos;
+    private ArrayList<DoggoEvent> events;
     View view;
 
     public DoggoZoneFragment() {
@@ -91,6 +93,7 @@ public class DoggoZoneFragment extends Fragment implements DatePickerDialog.OnDa
             @Override
             public void onChanged(ArrayList<DoggoEvent> doggoEvents) {
                 createGrid(doggoEvents);
+                binding.refresh.setRefreshing(false);
             }
         });
 
@@ -146,7 +149,7 @@ public class DoggoZoneFragment extends Fragment implements DatePickerDialog.OnDa
                         break;
                     case 3:
                         if(date.get(3)!= null) {
-                           pickDate();
+                            pickDate();
                         }
                         break;
                 }
@@ -182,6 +185,15 @@ public class DoggoZoneFragment extends Fragment implements DatePickerDialog.OnDa
                 doggoZoneViewModel.getListDoggosJoining(selectedDoggoZone,selectedDate);
             }
         });
+
+        binding.gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Log.i(TAG,"Doggo " + joiningDoggos.get(position).getName() + " at " + events.get(position).getTime());
+                return false;
+            }
+        });
         return view;
     }
 
@@ -194,19 +206,34 @@ public class DoggoZoneFragment extends Fragment implements DatePickerDialog.OnDa
         mTimePicker = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                Toast.makeText(getContext(),"Scheduled walk at " + selectedHour + ":" +  (selectedMinute < 10? "0"+selectedMinute:selectedMinute),Toast.LENGTH_LONG).show();
+                LocalTime pickedTime = LocalTime.of(selectedHour,selectedMinute);
                 final DoggoEvent doggoEvent = new DoggoEvent();
                 doggoEvent.setCreator(activeDoggo);
                 doggoEvent.setZone(selectedDoggoZone);
-                doggoEvent.setTime(LocalDateTime.of(selectedDate.toLocalDate(),LocalTime.of(timePicker.getHour(),timePicker.getMinute())));
-                Log.i(TAG,"add event at " + doggoEvent.getTime());
+                LocalDateTime time;
+                if(selectedDate.toLocalDate().equals(LocalDate.now())){
+                    if(pickedTime.isBefore(LocalTime.now().minus(1,ChronoUnit.MINUTES))){
+                        time = LocalDateTime.of(LocalDate.now().plus(1,ChronoUnit.DAYS),pickedTime);
+                        binding.spinner.setSelection(1);
+                    }else {
+                        time = LocalDateTime.of(selectedDate.toLocalDate(),pickedTime);
+                    }
+                }else {
+                    time = LocalDateTime.of(selectedDate.toLocalDate(),pickedTime);
+                }
+                doggoEvent.setTime(time);
+                Toast.makeText(getContext(),"Scheduled walk at " + selectedHour + ":" +  (selectedMinute < 10? "0"+selectedMinute:selectedMinute),Toast.LENGTH_LONG).show();
+
+                Log.i(TAG, "add event at " + doggoEvent.getTime());
                 doggoZoneViewModel.addEvent(doggoEvent);
+
 
             }
         }, hour, minute, true);//Yes 24 hour time
         mTimePicker.setTitle("Select Time");
         mTimePicker.show();
     }
+
 
     private void pickDate() {
 
@@ -228,24 +255,18 @@ public class DoggoZoneFragment extends Fragment implements DatePickerDialog.OnDa
     }
 
     private void createGrid(ArrayList<DoggoEvent> events){
-        ArrayList<Doggo> doggos = new ArrayList<>();
+        this.events = events;
+        joiningDoggos = new ArrayList<>();
         for(DoggoEvent e:events){
-            doggos.add(e.getCreator());
+            joiningDoggos.add(e.getCreator());
         }
-        Log.i(TAG,"Doggos joining retrieved" + doggos);
-        SearchImageAdapter sa = new SearchImageAdapter(((MainActivity) getActivity()).getApplicationContext(), ((MainActivity) getActivity()),doggos );
+        Log.i(TAG,"Doggos joining retrieved" + joiningDoggos);
+        SearchImageAdapter sa = new SearchImageAdapter(((MainActivity) getActivity()).getApplicationContext(), ((MainActivity) getActivity()),joiningDoggos );
         sa.setZone(true);
         sa.setComesIn(setAttendances(events));
         //sa.setDoggoEvents(events);
         binding.gridView.setAdapter(sa);
-        binding.gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
 
-                ((MainActivity)getActivity()).toOtherProfile(position, 2);
-            }
-        });
     }
 
     private ArrayList<String> setAttendances(ArrayList<DoggoEvent> events){

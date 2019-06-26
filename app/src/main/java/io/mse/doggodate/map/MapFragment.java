@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
@@ -42,9 +43,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.maps.android.data.Feature;
+import com.google.maps.android.data.Geometry;
 import com.google.maps.android.data.Layer;
 import com.google.maps.android.data.geojson.GeoJsonFeature;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
+import com.google.maps.android.data.geojson.GeoJsonPoint;
 import com.google.maps.android.data.geojson.GeoJsonPointStyle;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -52,6 +55,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -67,7 +71,7 @@ import io.mse.doggodate.main.MainActivityViewModel;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback,MapFirestoreCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback, MapFirestoreCallback, GoogleMap.OnMyLocationButtonClickListener {
 
     private Location currentLocation;
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -102,21 +106,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
 
 
     private void getCurrentLocation() {
-        if (((MainActivity)getActivity()).checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ((MainActivity)getActivity()).checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ((MainActivity)getActivity()).requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_CODE);
+        if (((MainActivity) getActivity()).checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ((MainActivity) getActivity()).checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ((MainActivity) getActivity()).requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
             return;
         }
         Task<Location> task = fusedLocationProviderClient.getLastLocation();
         task.addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
-                if(location != null){
+                if (location != null) {
                     currentLocation = location;
                     // Obtain the SupportMapFragment and get notified when the map is ready to be used.
                     SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                             .findFragmentById(R.id.map);
                     assert mapFragment != null;
-                    mapFragment.getMapAsync(MapFragment.this);
+                      mapFragment.getMapAsync(MapFragment.this);
 
                 }
             }
@@ -126,7 +130,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i("MAP","on create map view");
+        Log.i("MAP", "on create map view");
         mapViewModel = ViewModelProviders.of(this).get(MapViewModel.class);
         doggoZoneViewModel = ViewModelProviders.of(getActivity()).get(DoggoZoneViewModel.class);
         binding = DataBindingUtil.inflate(inflater, R.layout.maps_fragment, container, false);
@@ -134,7 +138,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
         main.getLoggedInDoggo().observe(getViewLifecycleOwner(), new Observer<Doggo>() {
             @Override
             public void onChanged(Doggo doggo) {
-                Log.i(TAG,"Active doggo is " + doggo);
+                Log.i(TAG, "Active doggo is " + doggo);
                 activeDoggo = doggo;
             }
         });
@@ -161,7 +165,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
                 doggoZoneViewModel.setSelectedDoggoZone(doggoZone);
             }
         });
-        mainActivity = (MainActivity)getActivity();
+        mainActivity = (MainActivity) getActivity();
         assert mainActivity != null;
         Objects.requireNonNull(mainActivity.getSupportActionBar()).setTitle("DoggoZones");
         mainActivity.invalidateOptionsMenu();
@@ -170,9 +174,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
         binding.addFavorites.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(selectedDoggoZoneWithId.isFavorite()){
-                    removeFromFavorites(jsonObjectFeature,v,(GeoJsonFeature)selectedFeature);
-                }else {
+                if (selectedDoggoZoneWithId.isFavorite()) {
+                    removeFromFavorites(jsonObjectFeature, v, (GeoJsonFeature) selectedFeature);
+                } else {
                     addToFavorites(jsonObjectFeature, v, (GeoJsonFeature) selectedFeature);
                 }
             }
@@ -184,20 +188,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
                 navigateToDoggoZone(v);
             }
         });
-        doggosJoining=(TextView)view.findViewById(R.id.doggos_joining);
+        doggosJoining = (TextView) view.findViewById(R.id.doggos_joining);
 
         return view;
     }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
 
-        LatLng myLocation = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions().position(myLocation).icon(bitmapDescriptorFromVector(getContext(),R.drawable.park_fav,R.drawable.dog_white));
-        mMap.addMarker(markerOptions);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation,15));
+        final LatLng myLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(myLocation));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 17));
 
         try {
             // Customise the styling of the base map using a JSON object defined
@@ -221,58 +225,100 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
                 if (featuresResponse != null) {
                     JSONFile = featuresResponse;
                     Log.i(TAG, "Adds Park Layer to Map");
-                    geoJsonLayer = new GeoJsonLayer(mMap,featuresResponse);
+                    geoJsonLayer = new GeoJsonLayer(mMap, featuresResponse);
+
+                    //Doggo
+                    GeoJsonPoint p = new GeoJsonPoint(myLocation);
+                    HashMap<String, String> m = new HashMap<>();
+                    m.put("doggo", activeDoggo.getName());
+                    GeoJsonFeature doggo = new GeoJsonFeature(p, "myDoggo", m, null);
+                    GeoJsonPointStyle doggoStyle = new GeoJsonPointStyle();
+                    doggoStyle.setIcon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav, R.drawable.dog_white));
+                    doggoStyle.setTitle("My Doggo");
+                    doggo.setPointStyle(doggoStyle);
 
                     Iterator<GeoJsonFeature> featureIterator = geoJsonLayer.getFeatures().iterator();
                     while (featureIterator.hasNext()) {
                         GeoJsonFeature geoJsonFeature = featureIterator.next();
                         style = new GeoJsonPointStyle();
 
-                        if(isFavorite(geoJsonFeature)){
-                            style.setIcon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav,R.drawable.tree_outline));
-                        }else {
-                            style.setIcon(bitmapDescriptorFromVector(getContext(), R.drawable.park,R.drawable.tree_outline));
+                        if (isFavorite(geoJsonFeature)) {
+                            style.setIcon(bitmapDescriptorFromVector(getContext(), R.drawable.park_fav, R.drawable.tree_outline));
+                        } else {
+                            style.setIcon(bitmapDescriptorFromVector(getContext(), R.drawable.park, R.drawable.tree_outline));
                         }
                         geoJsonFeature.setPointStyle(style);
 
                     }
 
+                    geoJsonLayer.addFeature(doggo);
                     geoJsonLayer.addLayerToMap();
 
                     geoJsonLayer.setOnFeatureClickListener(onFeatureClickListener);
                 }
             }
         });
+        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    Activity#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+        }
+        mMap.setMyLocationEnabled(true);
 
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_CODE) {
+            if (permissions.length == 1 &&
+                    permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.i(TAG,"YESSS ");
+                getCurrentLocation();
+                final LatLng myLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 17));
+
+            } else {
+                Log.d(TAG,"NOOOOpe");
+                // Permission was denied. Display an error message.
+            }
+        }
     }
 
     private Layer.OnFeatureClickListener onFeatureClickListener = new Layer.OnFeatureClickListener() {
         @Override
         public void onFeatureClick(final Feature feature) {
             selectedFeature = feature;
-            String name = feature.getProperty("PARK");
-            String area = feature.getProperty("FLAECHE");
-            String fenceS = feature.getProperty("EINFRIEDUNG");
-            String typ = feature.getProperty("TYP");
-            final DoggoZone doggoZone = new DoggoZone(
-                    name,
-                    area,
-                    fenceS,
-                    typ,
-                    false);
-
-            doggoZoneViewModel.setSelectedDoggoZone(doggoZone);
-            binding.slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-            if(isFavorite(feature)){
-                binding.addFavorites.setImageResource(R.drawable.heart);
+            if(feature.hasProperty("doggo")){
+                binding.slider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
             }else {
-                binding.addFavorites.setImageResource(R.drawable.heart_outline);
+                String name = feature.getProperty("PARK");
+                String area = feature.getProperty("FLAECHE");
+                String fenceS = feature.getProperty("EINFRIEDUNG");
+                String typ = feature.getProperty("TYP");
+                final DoggoZone doggoZone = new DoggoZone(
+                        name,
+                        area,
+                        fenceS,
+                        typ,
+                        false);
+
+                doggoZoneViewModel.setSelectedDoggoZone(doggoZone);
+                binding.slider.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                if (isFavorite(feature)) {
+                    binding.addFavorites.setImageResource(R.drawable.heart);
+                } else {
+                    binding.addFavorites.setImageResource(R.drawable.heart_outline);
+                }
+                doggoZoneViewModel.createNewDoggoZone(doggoZone);
+                doggoZoneViewModel.loadDoggoZoneFromFirestore(doggoZone);
+                doggosJoining.setText("8 others are joining");
+                jsonObjectFeature = getJSONObject(feature);
             }
-            doggoZoneViewModel.createNewDoggoZone(doggoZone);
-            doggoZoneViewModel.loadDoggoZoneFromFirestore(doggoZone);
-            doggosJoining.setText("8 others are joining");
-            jsonObjectFeature = getJSONObject(feature);
 
         }
     };
@@ -313,16 +359,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
         return featureObj;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case REQUEST_CODE:
-                if(grantResults.length>1 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    getCurrentLocation();
-                }
-                break;
-        }
-    }
 
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int pin,int icon) {
         float dpsLeft = 8;
@@ -435,5 +471,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,MapFires
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        Log.i(TAG,"HII LOC");
+        return false;
     }
 }

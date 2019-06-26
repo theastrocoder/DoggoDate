@@ -86,4 +86,8 @@ public class DoggoZoneViewModel extends ViewModel implements DoggoZoneFirestoreC
         selectedDoggoZoneWithID = doggoZonesRepository.getSelectedDoggoZoneLiveData();
         return selectedDoggoZoneWithID;
     }
+
+    public void onRef(){
+        Log.i(TAG,"HIIIII");
+    }
 }

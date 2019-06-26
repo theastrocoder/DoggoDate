@@ -1,0 +1,63 @@
+
+Zsquid:UnusedPrivateMethod"2Remove this unused private "addDoggosToDB" method.(¼š‡ÿÿÿÿÿ
+Isquid:EmptyStatementUsageCheck"Remove this empty statement.(ôŸìúÿÿÿÿ
+S"squid:SwitchLastCaseIsDefaultCheck""Add a default case to this switch.(øå´¡ÿÿÿÿÿ
+hsquid:S1192"NDefine a constant instead of duplicating this literal "akita_profile" 3 times.(–°Ÿùúÿÿÿÿ
+fsquid:S1192"QDefine a constant instead of duplicating this literal "labrador_profile" 4 times.(Äåï
+_squid:S1192"JDefine a constant instead of duplicating this literal "chivava_1" 3 times.(æùÍ
+^squid:S1192"IDefine a constant instead of duplicating this literal "Labrador" 3 times.(Äåï
+csquid:S1192"NDefine a constant instead of duplicating this literal "profile_image" 3 times.(ØµƒÍ
+bsquid:S1192"HDefine a constant instead of duplicating this literal "golden2" 3 times.(Ø»ñ½úÿÿÿÿ
+esquid:S1192"KDefine a constant instead of duplicating this literal "DoggoZones" 3 times.(Ú²êàøÿÿÿÿ
+Isquid:S1068"4Remove this unused "profileViewModel" private field.(í¥ƒ‚
+Osquid:S1068"5Remove this unused "selectedDoggoZone" private field.(°ÄˆÍøÿÿÿÿ
+ssquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(ï´ú×úÿÿÿÿ
+zsquid:S1450"`Remove the "selectedDoggoZone" field and declare it as a local variable in the relevant methods.(°ÄˆÍøÿÿÿÿ
+esquid:S1301"KReplace this "switch" statement by "if" statements to increase readability.(øå´¡ÿÿÿÿÿ
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(ˆª…­üÿÿÿÿ
+`squid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(‚ñ¡‘
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(±Ñî¦üÿÿÿÿ
+`squid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(Ñ÷ßÀ
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(—õ€êûÿÿÿÿ
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(±œšÆûÿÿÿÿ
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(Õ®ÙĞÿÿÿÿÿ
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(ÓŒÇúÿÿÿÿ
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(¿àªµşÿÿÿÿ
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(…‰ÿŠùÿÿÿÿ
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(éØ»Úûÿÿÿÿ
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(À•Åšşÿÿÿÿ
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(ŒÜ¹µùÿÿÿÿ
+`squid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(¢Éª
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(Äıµıüÿÿÿÿ
+`squid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(ıàØ˜
+…squid:S1319"pThe return type of this method should be an interface such as "List" rather than the implementation "ArrayList".(Úğ£Ş
+’squid:S1319"xThe type of the "defaultSearch" object should be an interface such as "List" rather than the implementation "ArrayList".(¾‡Ù¸üÿÿÿÿ
+‹squid:S1319"qThe type of the "doggos" object should be an interface such as "List" rather than the implementation "ArrayList".(ı¼‡¯ÿÿÿÿÿ
+‰squid:S1319"tThe type of the "followers" object should be an interface such as "List" rather than the implementation "ArrayList".(†á
+‘squid:S1319"wThe type of the "myFollowings" object should be an interface such as "List" rather than the implementation "ArrayList".(õãÇ´şÿÿÿÿ
+…squid:S1319"qThe type of the "events" object should be an interface such as "List" rather than the implementation "ArrayList".(õÇßi
+‹squid:S1319"qThe type of the "doggos" object should be an interface such as "List" rather than the implementation "ArrayList".(ı¼‡¯ÿÿÿÿÿ
+…squid:S1319"pThe return type of this method should be an interface such as "List" rather than the implementation "ArrayList".(ÎÖ
+‘squid:S1319"|The type of the "activeDoggoEvents" object should be an interface such as "List" rather than the implementation "ArrayList".(ê€Ô¥
+Dsquid:S1481"*Remove this unused "resID" local variable.(ô½‹§üÿÿÿÿ
+Ssquid:S1854"9Remove this useless assignment to local variable "resID".(ô½‹§üÿÿÿÿ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ØµƒÍ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Äåï
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(åéÀêøÿÿÿÿ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÌíşØ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(–°Ÿùúÿÿÿÿ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¤ì¦şÿÿÿÿ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‘Î˜Îşÿÿÿÿ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(†ıÆ€şÿÿÿÿ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¶ÎÂ°
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(É¦¢«
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¶ô–ïúÿÿÿÿ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(£¹Úé
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¬ºÅş
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ç “
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(°ÃĞíüÿÿÿÿ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¤ì¦şÿÿÿÿ
+fsquid:UselessImportCheck"?Remove this unused import 'androidx.appcompat.app.AlertDialog'.(¼Ìï¨üÿÿÿÿ
+psquid:UselessImportCheck"NRemove this unused import 'io.mse.doggodate.profile.ProfileFirestoreCallback'.( ùÎÇ
+Xsquid:UselessImportCheck"1Remove this unused import 'android.widget.Toast'.(©›ïÍúÿÿÿÿ
+csquid:UselessImportCheck"<Remove this unused import 'android.content.DialogInterface'.(Š­›¨şÿÿÿÿ
