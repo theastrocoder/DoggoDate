@@ -41,8 +41,9 @@ public class HomeRepository {
     }
 
     public void retrieveDoggoEvents(){
-        final List<DoggoEvent> tempDoggoEvents= new ArrayList<>();
+
         final List<DoggoZone> tempDoggoZone = new ArrayList<>();
+        final DoggoZone currZone;
          db.collection("DoggoZone")
                 .whereEqualTo("favorite",true).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -51,7 +52,7 @@ public class HomeRepository {
                     if(!task.getResult().isEmpty()){
                         for(QueryDocumentSnapshot doc : task.getResult()){
                             final DoggoZone doggoZone = doc.toObject(DoggoZone.class);
-                            long e = LocalDateTime.now().minus(20, ChronoUnit.MINUTES)
+                            final long e = LocalDateTime.now().minus(20, ChronoUnit.MINUTES)
                                     .atZone(ZoneId.systemDefault())
                                     .toEpochSecond();
                             Timestamp now = new Timestamp(e,0);
@@ -64,10 +65,9 @@ public class HomeRepository {
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if(task.isSuccessful()){
                                         if(!task.getResult().isEmpty()){
+                                            final List<DoggoEvent> tempDoggoEvents= new ArrayList<>();
                                             for(QueryDocumentSnapshot document : task.getResult()){
                                                 //create new empty instance to perform custom mapping
-                                                Log.i(TAG,"CLEAR");
-                                                tempDoggoEvents.clear();
                                                 final DoggoEvent event = new DoggoEvent();
                                                 event.setZone(doggoZone);
                                                 //set date and time
@@ -75,6 +75,9 @@ public class HomeRepository {
                                                 LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(time.getSeconds() * 1000 + time.getNanoseconds() / 1000000), ZoneId.systemDefault());
                                                 event.setTime(localDateTime);
 
+
+
+                                                //Log.i(TAG,"Zone " + doggoZone.getName() + " List "+ tempDoggoEvents);
                                                 //get ready for retrieving custom objects
                                                 final DocumentReference doggoID =  document.getDocumentReference("creator");
                                                 doggoID.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -83,20 +86,23 @@ public class HomeRepository {
                                                         if (task.isSuccessful()) {
                                                             Log.i(TAG, "Task to retrieve doggo successful");
                                                             if(task.getResult().exists()) {
+
                                                                 DocumentSnapshot document = task.getResult();
 
                                                                 Doggo doggo = document.toObject(Doggo.class);
                                                                 doggo.setId(document.getId());
                                                                 event.setCreator(doggo);
                                                             }
-
-                                                            Log.i(TAG,"Zone " + doggoZone.getName() + " add " + event.getCreator() + " at" + event.getTime());
-                                                            Log.i(TAG,"LIST " + tempDoggoEvents.size());
-                                                            tempDoggoEvents.add(event);
-                                                            if(!tempDoggoZone.contains(doggoZone)) {
+                                                            if(doggoZone.equals(event.getZone())){
+                                                                doggoZone.setEventList(tempDoggoEvents);
+                                                                tempDoggoEvents.add(event);
+                                                            }else{
+                                                                tempDoggoEvents.clear();
+                                                            }
+                                                            if(!tempDoggoZone.contains(doggoZone)){
                                                                 tempDoggoZone.add(doggoZone);
                                                             }
-                                                            doggoZone.setEventList(tempDoggoEvents);
+                                                            Log.i(TAG,"Zone " + doggoZone.getName() + " List "+ tempDoggoEvents);
                                                             doggoZoneList.setValue(tempDoggoZone);
                                                         } else {
                                                             Log.w(TAG, "Error getting documents.", task.getException());
@@ -124,6 +130,11 @@ public class HomeRepository {
 
             }
         });
+
+    }
+
+    private void setDoggoZoneList(List<DoggoEvent> events){
+
 
     }
 }
