@@ -464,11 +464,17 @@ public class MainActivity extends AppCompatActivity {
 
         /** Creating Doggo Zones*/
         park1 = new DoggoZone("Hugo-Wolf-Park" ,"8169 m2", "Nein", "HundenZone", false);
-        park2 = new DoggoZone("GA Aspernstraße","323 m2", "Ja", "Hundenzone", false);
-        park3 = new DoggoZone("Reithofferpark" ,"671", "true", "HZ", false);
-        park4 = new DoggoZone("Hernalser Gürtel","672", "true", "HZ", false);
-        park5 = new DoggoZone("PA Blériotgasse" ,"1850", "true" ," HZ", false);
-        park6 = new DoggoZone("PA Gitlbauergasse","1983", "true","HZ", false);
+        park1.setId("AubsOD1u11LbyooFB8h1");
+        park2 = new DoggoZone("Türkenschanzpark","323 m2", "Ja", "Hundenzone", false);
+        park2.setId("U29IRzqYHfYAelXTQPEg");
+        park3 = new DoggoZone("GA Esteplatz" ,"671", "true", "HZ", false);
+        park3.setId("pep7Pr7s8sZmPzCEwCkR");
+        park4 = new DoggoZone("Wilhelm-Kienzl-Park","672", "true", "HZ", false);
+        park4.setId("ma1ABz1IBM5cCJYbFOX7");
+        park5 = new DoggoZone("Mortarapark" ,"1850", "true" ," HZ", false);
+        park5.setId("U815wISTCb8O86kJzI1F");
+        park6 = new DoggoZone("Esterházypark","1983", "true","HZ", false);
+        park6.setId("Pzev3HitbpOWLGGdqJoW");
         DoggoEvent e1 = new DoggoEvent(LocalDateTime.of(2019, 6, 15, 14,30),park3, Nina);
         DoggoEvent e2 = new DoggoEvent(LocalDateTime.of(2019, 5, 17, 10,30),park2, Chichi);
         DoggoEvent e3 = new DoggoEvent(LocalDateTime.of(2019, 5, 20, 11,30),park1, Bonnie);

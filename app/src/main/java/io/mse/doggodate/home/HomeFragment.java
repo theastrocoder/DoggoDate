@@ -147,7 +147,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void createEvent(DoggoEvent item, int selectedHour, int selectedMinute) {
-        item.getZone().setId("h8xuuF7wRpHSxnCFAftQ");
+      //  item.getZone().setId("h8xuuF7wRpHSxnCFAftQ");
         final DoggoEvent event = new DoggoEvent();
         LocalDateTime originalEventTime = item.getTime();
         event.setTime(LocalDateTime.of(originalEventTime.getYear(), originalEventTime.getMonth(), originalEventTime.getDayOfMonth(), selectedHour,selectedMinute));
